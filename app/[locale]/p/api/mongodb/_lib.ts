@@ -1,8 +1,6 @@
 import { Collection, Db, MongoClient } from "mongodb";
 
-const MONGODB_URI = process.env.DATABASE_URL || ""
-console.log({MONGODB_URI})
-//"mongodb://127.0.0.1:27017";
+const MONGODB_URI = process.env.DATABASE_URL  
 const MONGODB_DB_NAME = process.env.MONGODB_DB_NAME || "options_model";
 const COUNTERS_COLLECTION = "counters";
 
