@@ -50,7 +50,7 @@ export default async function RootLayout(
   return (
     <html lang={params.locale} dir={dir}>
       <head>
-        {/* ✅ Google Analytics */}
+        {/* ✅ Google Analytics 
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-2WW4N8MP60"
           strategy="afterInteractive"
@@ -66,7 +66,7 @@ export default async function RootLayout(
           `}
         </Script>
 
-        
+        */}
       </head>
       <body className={`${fontClass} ${dir === "rtl" ? "font-arabic" : "font-sans"} bg-gray-50 text-gray-900 min-h-screen antialiased pb-24 lg:pb-0`}>
         <Providers locale={params.locale}>

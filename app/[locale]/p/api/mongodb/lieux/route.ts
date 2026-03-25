@@ -9,7 +9,7 @@ import {
 } from "../_lib";
 
 const LIEUX_COLLECTION = process.env.MONGODB_LIEUX_COLLECTION || "lieux";
-
+ 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
