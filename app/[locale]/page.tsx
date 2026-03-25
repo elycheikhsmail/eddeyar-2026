@@ -24,19 +24,9 @@ export default async function Home({
   const t = await getI18n();
 
   const { annonces, totalPages, currentPage, totalCount, isSamsar, favoriteIds } = await getAnnonces(sp);
-  // //sqlite api endpoints
-  // let lieuxEndpoint = `/${locale}/p/api/sqlite/lieux`;
-  // let optionsEndpoint = `/${locale}/p/api/sqlite/options`;
-  // // si on est en production alors on utilise les endpoints turso
-  // console.log("NODE_ENV:", process.env.NODE_ENV);
-  // if (process.env.NODE_ENV === "production") {
-  //   // turso api endpoints
-  //   optionsEndpoint = `/${locale}/p/api/tursor/options`;
-  //   lieuxEndpoint = `/${locale}/p/api/tursor/lieux`;
-  // }
-  const optionsEndpoint = `/${locale}/p/api/tursor/options`;
-  const lieuxEndpoint = `/${locale}/p/api/tursor/lieux`;
 
+ const optionsEndpoint = `/${locale}/p/api/mongodb/options`;
+  const lieuxEndpoint = `/${locale}/p/api/mongodb/lieux`;
   const isRTL = locale.startsWith("ar");
 
   return (
