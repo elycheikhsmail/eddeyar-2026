@@ -147,7 +147,7 @@ useEffect(() => {
   useEffect(() => {
     (async () => {
       try {
-        const res = await axios.get(`/${lang}/p/api/tursor/lieux?tag=wilaya`);
+        const res = await axios.get(`/${lang}/p/api/mongodb/lieux?tag=wilaya`);
         setWilayas(res.data?.data || []);
       } catch {
         toast.error(t("editForm.fetchWilayaError"));
@@ -164,7 +164,7 @@ useEffect(() => {
     }
     (async () => {
       try {
-        const res = await axios.get(`/${lang}/p/api/tursor/lieux?parentId=${selectedWilayaId}&tag=moughataa`);
+        const res = await axios.get(`/${lang}/p/api/mongodb/lieux?parentId=${selectedWilayaId}&tag=moughataa`);
         setMoughataas(res.data?.data || []);
       } catch {
         toast.error(t("editForm.fetchMoughataasError"));

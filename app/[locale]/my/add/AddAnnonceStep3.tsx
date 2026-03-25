@@ -12,8 +12,8 @@ type Lieu = { id: number; name: string; nameAr: string };
 
 type Props = {
   lang?: string;
-  lieuxApiBase: string;             // `/${lang}/p/api/tursor/lieux`
-  createAnnonceEndpoint: string;    // `/${lang}/api/annonces`
+  lieuxApiBase: string;              
+  createAnnonceEndpoint: string;    
   urlboot: string;               // `/${lang}/api/telegram`
   onBack: () => void;
   draft: {

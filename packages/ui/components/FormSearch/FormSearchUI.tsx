@@ -28,7 +28,7 @@ interface InputProps {
   categoriesEndpoint: string;
   subCategoriesEndpoint: string;
   // 👇 nouveaux
-  lieuxEndpoint: string;             // ex: /fr/p/api/tursor/lieux
+  lieuxEndpoint: string;             
   wilayaLabel?: string;
   selectWilayaLabel?: string;
   moughataaLabel?: string;

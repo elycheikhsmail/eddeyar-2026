@@ -34,7 +34,7 @@ export default async function Home({
     userId
   );
   let apiBase = process.env.NEXT_PUBLIC_OPTIONS_API_MODE
-  const lieuxEndpoint = `/${locale}/p/api/tursor/lieux`;
+  const lieuxEndpoint = `/${locale}/p/api/mongodb/lieux`;
 
   // 6) UI
   return (

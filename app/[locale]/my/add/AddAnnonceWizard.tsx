@@ -226,7 +226,7 @@ export default function AddAnnonceWizard({
         {step === 3 && (
           <AddAnnonceStep3
             lang={lang}
-            lieuxApiBase={`/${lang}/p/api/tursor/lieux`}
+            lieuxApiBase={`/${lang}/p/api/mongodb/lieux`}
             createAnnonceEndpoint={`${relavieUrlAnnonce}`}
             urlboot={`/api/telegram`}
             onBack={onStep3Back}
