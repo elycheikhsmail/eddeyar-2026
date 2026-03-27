@@ -7,9 +7,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const SQLITE_PATH = process.env.SQLITE_DB_PATH || path.join(__dirname, "..", "database.db");
-const MONGO_URI = process.env.MONGODB_URI || ""
+const MONGO_URI = process.env.DATABASE_URL || "";
 console.log("mongo uri = ", MONGO_URI)
- 
+
 const MONGO_DB_NAME = process.env.MONGODB_DB_NAME || "options_model";
 const MONGO_OPTIONS_COLLECTION =
   process.env.MONGODB_OPTIONS_COLLECTION || process.env.MONGODB_COLLECTION_NAME || "options";
@@ -86,4 +86,3 @@ main().catch((error) => {
   console.error("[erreur] migration echouee:", error);
   process.exit(1);
 });
- 
