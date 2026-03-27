@@ -17,7 +17,7 @@ export async function POST(
   try {
     // 1. Vérifie le Token via les Headers
     const token = request.headers.get("Validation-token");
-    if (!token || token !== "demo-token") {
+    if (!token || token !== process.env.CHINGUISOFT_VALIDATION_TOKEN) {
       return NextResponse.json(
         {
           code: 401,
@@ -81,6 +81,7 @@ export async function POST(
       const min = Math.pow(10, length - 1);
       const max = Math.pow(10, length) - 1;
       finalCode = String(Math.floor(min + Math.random() * (max - min + 1)));
+      console.log({ finalCode })
     } else {
       if (!/^\d{3,6}$/.test(finalCode)) {
         return NextResponse.json(

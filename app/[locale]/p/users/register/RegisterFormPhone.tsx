@@ -31,7 +31,7 @@ export default function RegisterFormPhone({ lang = "ar", urlboot }: { lang?: str
     if (!password) {
       newErrors.password = t("register.passwordRequired");
       isValid = false;
-    } 
+    }
     // else if (password.length < 6) {
     //   newErrors.password = t("register.passwordMinLength");
     //   isValid = false;
@@ -125,7 +125,7 @@ export default function RegisterFormPhone({ lang = "ar", urlboot }: { lang?: str
             onClick={() => setShowPassword(!showPassword)}
             className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-primary-600 transition-colors"
           >
-            {showPassword ? <FaEyeSlash className="w-5 h-5"/> : <FaEye className="w-5 h-5"/>}
+            {showPassword ? <FaEyeSlash className="w-5 h-5" /> : <FaEye className="w-5 h-5" />}
           </button>
         </div>
         {errors.password && <p className="mt-1.5 text-xs font-bold text-red-500">{errors.password}</p>}
@@ -151,7 +151,7 @@ export default function RegisterFormPhone({ lang = "ar", urlboot }: { lang?: str
             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
             className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-primary-600 transition-colors"
           >
-            {showConfirmPassword ? <FaEyeSlash className="w-5 h-5"/> : <FaEye className="w-5 h-5"/>}
+            {showConfirmPassword ? <FaEyeSlash className="w-5 h-5" /> : <FaEye className="w-5 h-5" />}
           </button>
         </div>
         {errors.confirmPassword && <p className="mt-1.5 text-xs font-bold text-red-500">{errors.confirmPassword}</p>}

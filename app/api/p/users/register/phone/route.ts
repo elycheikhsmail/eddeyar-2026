@@ -1,4 +1,4 @@
-// app/.../route.js  (use the same path you provided)
+import { after } from 'next/server'
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import crypto from "node:crypto";
@@ -7,8 +7,10 @@ import { ObjectId } from "mongodb";
 import { Roles } from "../../../../../../DATA/roles";
 import { env } from "node:process";
 
-const CHINGUI_KEY = process.env.CHINGUISOFT_VALIDATION_KEY;
-const CHINGUI_TOKEN = process.env.CHINGUISOFT_VALIDATION_TOKEN;
+const CHINGUI_KEY = String(process.env.CHINGUISOFT_VALIDATION_KEY);
+const CHINGUI_TOKEN = String(process.env.CHINGUISOFT_VALIDATION_TOKEN);
+const SMS_OTP_URL = String(process.env.SMS_OTP_URL);
+console.log({ CHINGUI_KEY, CHINGUI_TOKEN, SMS_OTP_URL })
 
 // helper: validate phone according to Chinguisoft rules: starts with 2/3/4 and 8 digits
 function isValidChinguPhone(p: string): boolean {
@@ -70,7 +72,7 @@ export async function POST(request: NextRequest) {
         await db.collection("contacts").deleteOne({ _id: existingContact._id });
         if (existingContact.userId) {
           try {
-             await db.collection("users").deleteOne({ _id: new ObjectId(existingContact.userId) });
+            await db.collection("users").deleteOne({ _id: new ObjectId(existingContact.userId) });
           } catch (e) {
             console.error("Error deleting unverified user:", e);
           }
@@ -148,7 +150,7 @@ export async function POST(request: NextRequest) {
     }
 
     try {
-      const chinguUrl = `https://chinguisoft.com/api/sms/validation/${encodeURIComponent(CHINGUI_KEY)}`;
+      const chinguUrl = `${SMS_OTP_URL}/${encodeURIComponent(CHINGUI_KEY)}`;
       // default language 'fr' — change to 'ar' if you want Arabic SMS
       const payload = { phone: contact, lang: "fr" };
 
@@ -180,29 +182,32 @@ export async function POST(request: NextRequest) {
           { status: 201 }
         );
       }
+      after(async () => {
+        const chinguJson = await resp.json();
+        // chinguisoft returns: { code: 654321, balance: 95 } per docs
+        const otpCode = String(chinguJson.code ?? "");
+        const balance = chinguJson.balance;
 
-      const chinguJson = await resp.json();
-      // chinguisoft returns: { code: 654321, balance: 95 } per docs
-      const otpCode = String(chinguJson.code ?? "");
-      const balance = chinguJson.balance;
+        // compute expiry: 5 minutes
+        const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
 
-      // compute expiry: 5 minutes
-      const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
+        // update the contact document with the real OTP and expiry
+        await db.collection("contacts").updateOne(
+          { _id: contactInsert.insertedId },
+          {
+            $set: {
+              verifyCode: otpCode,
+              verifyTokenExpires: expiresAt,
+              verifyAttempts: 0,
+            },
+          }
+        );
 
-      // update the contact document with the real OTP and expiry
-      await db.collection("contacts").updateOne(
-        { _id: contactInsert.insertedId },
-        {
-          $set: {
-            verifyCode: otpCode,
-            verifyTokenExpires: expiresAt,
-            verifyAttempts: 0,
-          },
-        }
-      );
+        // optional: log balance somewhere or send to admin if low
+        console.log("Chinguisoft OTP sent, balance:", balance);
 
-      // optional: log balance somewhere or send to admin if low
-      console.log("Chinguisoft OTP sent, balance:", balance);
+
+      })
 
       // 9) Response (do NOT return OTP code to client)
       return NextResponse.json(
