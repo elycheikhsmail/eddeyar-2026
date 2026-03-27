@@ -126,6 +126,23 @@ export async function POST(request: NextRequest) {
     };
 
     const contactInsert = await db.collection("contacts").insertOne(contactDoc);
+    const otpCode = "1234";
+
+
+    // compute expiry: 5 minutes
+    const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
+
+    // update the contact document with the real OTP and expiry
+    await db.collection("contacts").updateOne(
+      { _id: contactInsert.insertedId },
+      {
+        $set: {
+          verifyCode: otpCode,
+          verifyTokenExpires: expiresAt,
+          verifyAttempts: 0,
+        },
+      }
+    );
 
     // --------------------
     // 8) Send OTP via Chinguisoft and store in the contact document
@@ -185,23 +202,8 @@ export async function POST(request: NextRequest) {
       after(async () => {
         const chinguJson = await resp.json();
         // chinguisoft returns: { code: 654321, balance: 95 } per docs
-        const otpCode = String(chinguJson.code ?? "");
+
         const balance = chinguJson.balance;
-
-        // compute expiry: 5 minutes
-        const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
-
-        // update the contact document with the real OTP and expiry
-        await db.collection("contacts").updateOne(
-          { _id: contactInsert.insertedId },
-          {
-            $set: {
-              verifyCode: otpCode,
-              verifyTokenExpires: expiresAt,
-              verifyAttempts: 0,
-            },
-          }
-        );
 
         // optional: log balance somewhere or send to admin if low
         console.log("Chinguisoft OTP sent, balance:", balance);
