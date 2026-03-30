@@ -62,3 +62,7 @@ node_modules/
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+
+# Claude Code & MCP (sensitive keys)
+.claude/
+.mcp.json
