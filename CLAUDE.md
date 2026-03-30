@@ -15,7 +15,8 @@ pnpm run check-types      # Vérification TypeScript stricte (sans emit)
 
 # MongoDB (Docker)
 docker compose -f docker-compose.mongo.yml up -d   # Démarrer MongoDB
-pnpm run mongo:init       # Initialisation de la base (première fois)
+pnpm run mongo:init       # Créer collections + index (première fois)
+pnpm run mongo:seed       # Insérer données de référence + démo (à faire après init)
 pnpm run mongo:migrate    # Migrations
 
 # Tests E2E

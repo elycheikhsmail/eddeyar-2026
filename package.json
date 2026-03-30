@@ -11,6 +11,7 @@
     "dev:test": "NODE_ENV=test next dev",
     "check-types": "tsc --noEmit",
     "mongo:init": "tsx -r dotenv/config script/initMongo.ts",
+    "mongo:seed": "tsx -r dotenv/config script/seedMongo.ts",
     "mongo:migrate": "tsx script/migrate.ts",
     "backup:atlas": "tsx script/backup-atlas.ts",
     "backup:db": "tsx script/backup-db.ts",
