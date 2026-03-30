@@ -164,10 +164,43 @@ Flux JWT + Cookies HTTP-Only :
 
 ## Tests
 
-- Framework : **Playwright** (E2E)
+- Framework : **Playwright** (E2E) + **TestSprite** (AI E2E)
 - Rapports HTML générés automatiquement
-- Dossiers : `tests/` (actif), `e2e/` (exemples legacy)
+- Dossiers : `tests/` (actif), `e2e/` (exemples legacy), `testsprite_tests/` (TestSprite)
 - Config : `playwright.config.ts` — Chromium, Firefox, WebKit
+
+---
+
+## Workflow Git
+
+### Branches
+```
+main          # Production — merge uniquement depuis dev, via PR revue
+dev           # Intégration — toutes les features passent par ici avant main
+claude/<nom>  # Branche de travail Claude par feature (ex: claude/auth-fix)
+```
+
+### Cycle de vie d'une feature
+```
+1. Créer la branche depuis dev
+   git checkout dev && git pull origin dev
+   git checkout -b claude/<nom-feature>
+
+2. Développer + committer sur claude/<nom-feature>
+
+3. Ouvrir une PR : claude/<nom-feature> → dev
+   gh pr create --base dev
+
+4. Review + merge dans dev
+
+5. Quand dev est stable → ouvrir une PR : dev → main
+   gh pr create --base main
+```
+
+### Règles
+- Ne jamais committer directement sur `main` ou `dev`
+- Toute PR doit passer `pnpm run check-types` et `pnpm run build` avant merge
+- Les branches `claude/*` sont supprimées après merge
 
 ---
 
@@ -175,6 +208,6 @@ Flux JWT + Cookies HTTP-Only :
 
 - **Dev local** : `pnpm dev` + Docker MongoDB
 - **Preview** : ngrok pour partage local
-- **Staging** : Netlify / Firebase / Fly.io / Render
-- **Production** : VPS (Contabo / Hostinger)
+- **Staging** : branche `dev` → Netlify / Firebase / Fly.io / Render
+- **Production** : branche `main` → VPS (Contabo / Hostinger)
 - **CI/CD** : GitHub Actions → build + check-types + deploy
