@@ -1,0 +1,12 @@
+{"timestamp":"2026-03-30T08:24:00.294Z","level":"debug","message":"Generate code and execute params","context":{"projectName":"rim-ebay","projectPath":"c:\\Users\\Dell\\Documents\\eddeyar\\rim-ebay-aut-2025-main\\eddeyar-2026","testIds":[],"serverMode":"production"}}
+{"timestamp":"2026-03-30T08:24:40.811Z","level":"debug","message":"Generate code and execute params","context":{"projectName":"rim-ebay","projectPath":"c:\\Users\\Dell\\Documents\\eddeyar\\rim-ebay-aut-2025-main\\eddeyar-2026","testIds":[],"serverMode":"production"}}
+{"timestamp":"2026-03-30T08:27:10.582Z","level":"debug","message":"Generate code and execute params","context":{"projectName":"rim-ebay","projectPath":"c:\\Users\\Dell\\Documents\\eddeyar\\rim-ebay-aut-2025-main\\eddeyar-2026","testIds":[],"serverMode":"production"}}
+{"timestamp":"2026-03-30T08:27:56.775Z","level":"debug","message":"Generate code and execute params","context":{"projectName":"rim-ebay","projectPath":"c:\\Users\\Dell\\Documents\\eddeyar\\rim-ebay-aut-2025-main\\eddeyar-2026","testIds":[],"serverMode":"production"}}
+{"timestamp":"2026-03-30T08:27:56.825Z","level":"info","message":"Attempting to start server (attempt 1/3)"}
+{"timestamp":"2026-03-30T08:28:40.565Z","level":"debug","message":"Generate code and execute params","context":{"projectName":"rim-ebay","projectPath":"c:\\Users\\Dell\\Documents\\eddeyar\\rim-ebay-aut-2025-main\\eddeyar-2026","testIds":[],"serverMode":"production"}}
+{"timestamp":"2026-03-30T08:28:40.617Z","level":"info","message":"HTTP server started successfully on port 53195"}
+{"timestamp":"2026-03-30T08:30:01.123Z","level":"debug","message":"Generate code and execute params","context":{"projectName":"rim-ebay","projectPath":"c:\\Users\\Dell\\Documents\\eddeyar\\rim-ebay-aut-2025-main\\eddeyar-2026","testIds":[],"serverMode":"production"}}
+{"timestamp":"2026-03-30T08:30:01.169Z","level":"info","message":"Attempting to start server (attempt 1/3)"}
+{"timestamp":"2026-03-30T08:30:01.251Z","level":"info","message":"Attempting to start HTTP proxy (attempt 1/3)"}
+{"timestamp":"2026-03-30T08:30:01.176Z","level":"info","message":"HTTP server started successfully on port 65324"}
+{"timestamp":"2026-03-30T08:30:01.254Z","level":"info","message":"HTTP proxy started successfully on port 65326"}

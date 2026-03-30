@@ -1,0 +1,15 @@
+{
+  "status": "commited",
+  "type": "frontend",
+  "scope": "codebase",
+  "localEndpoint": "http://localhost:3000",
+  "executionArgs": {
+    "projectName": "rim-ebay",
+    "projectPath": "c:\\Users\\Dell\\Documents\\eddeyar\\rim-ebay-aut-2025-main\\eddeyar-2026",
+    "testIds": [],
+    "additionalInstruction": "Full test execution for the marketplace platform features described in the PRD using the manually generated test plan.",
+    "serverMode": "production",
+    "envs": {}
+  },
+  "serverPort": 65324
+}

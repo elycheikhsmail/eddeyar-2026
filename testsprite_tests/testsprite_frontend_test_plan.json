@@ -1,0 +1,63 @@
+[
+  {
+    "id": "TC-001",
+    "title": "Home Page Rendering",
+    "priority": "High",
+    "steps": [
+      "Navigate to /",
+      "Assert main search bar is visible",
+      "Assert featured ads are displayed"
+    ],
+    "expected_result": "User should see the landing page with ads and search capability."
+  },
+  {
+    "id": "TC-002",
+    "title": "Navigation to Browse Ads",
+    "priority": "High",
+    "steps": [
+      "Click on Browse/Search button",
+      "Assert URL contains /p/annonces",
+      "Assert list of ads is displayed"
+    ],
+    "expected_result": "User should be taken to the ads listing page."
+  },
+  {
+    "id": "TC-003",
+    "title": "Ad Filtering (Wilaya)",
+    "priority": "Medium",
+    "steps": [
+      "Navigate to /p/annonces",
+      "Select a Wilaya from the filter",
+      "Click apply",
+      "Assert ads are filtered by location"
+    ],
+    "expected_result": "Ads should be filtered based on the selected region."
+  },
+  {
+    "id": "TC-004",
+    "title": "Login Flow (OTP)",
+    "priority": "High",
+    "steps": [
+      "Navigate to /",
+      "Open login modal/page",
+      "Enter test phone number",
+      "Click Send OTP",
+      "Enter valid test OTP",
+      "Assert user is logged in"
+    ],
+    "expected_result": "User should successfully authenticate and see their profile link."
+  },
+  {
+    "id": "TC-005",
+    "title": "Create Ad (Requires Auth)",
+    "priority": "High",
+    "steps": [
+      "Ensure user is logged in",
+      "Navigate to /my/add",
+      "Fill in title, description, price",
+      "Click Submit",
+      "Assert ad appears in /my/list"
+    ],
+    "expected_result": "User should be able to create and view their own advertisement."
+  }
+]

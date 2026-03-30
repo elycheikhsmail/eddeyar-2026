@@ -1,0 +1,70 @@
+﻿
+Ôó░Ôí¥ÔóÂÔúñÔíÇÔáÇÔáÇÔúÇÔú┤Ôá¥ÔóÂÔíéÔáÇÔáÇÔóáÔúñÔúñÔúñÔúñÔúñÔáäÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔúÇÔíÇÔáÇÔóÇÔúáÔúñÔúñÔúäÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔóáÔúñÔáÇÔóÇÔíÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇ
+Ôó¢ÔíâÔáÇÔóêÔúøÔíÀÔú¥ÔúÖÔáüÔáÇÔó╝ÔíÅÔáÇÔáÇÔáêÔáêÔó©Ôí┐ÔáüÔóíÔúÁÔó┤ÔúñÔíäÔóÇÔí┤Ôá┤ÔúñÔíäÔúªÔú┐ÔúÀÔíäÔó¥ÔúÅÔúÇÔíêÔáøÔáúÔúªÔúäÔú┤Ôú┤ÔúñÔíÇÔú┤ÔúäÔúñÔíªÔú░ÔíÁÔó░Ôú¢Ôú┐ÔíäÔóÇÔú┤Ôí┤ÔúñÔíä
+Ôó╣ÔúçÔúÂÔáƒÔáïÔáüÔáêÔáøÔáÀÔóåÔúÿÔáâÔáÇÔáÇÔáÇÔáÇÔó¢ÔíçÔóáÔú┐ÔóªÔóªÔá¥ÔíùÔá╣Ôó┐ÔúÂÔú¼ÔíüÔó¿Ôú┐ÔáÇÔáÇÔíêÔáÖÔáøÔá╗Ôú┐ÔíäÔú║ÔíÅÔáÇÔáÇÔó¢ÔíçÔó©Ôú┐ÔáÇÔáÇÔú╗ÔíçÔáÇÔú┐ÔáàÔóáÔú┐ÔóºÔáªÔí¥Ôá┐
+ÔáÇÔáëÔá▓ÔóÂÔúñÔúÇÔúäÔú┤Ôá¥ÔáøÔáüÔáÇÔáÇÔáÇÔáÇÔááÔó┐ÔáâÔáêÔá┐ÔíªÔíªÔáÂÔáéÔáÀÔíªÔíªÔá┐ÔáüÔá╝ÔóÀÔó┤ÔáÿÔá┐ÔíÂÔí┤Ôí┤ÔáƒÔáÇÔú¥Ôí┐ÔóªÔá¥ÔáƒÔáüÔó©ÔáƒÔáÇÔáÇÔí┐ÔáâÔáÉÔí┐ÔóÁÔáêÔá┐ÔíªÔíªÔáÂÔáâ
+ÔáÇÔáÇÔáÇÔáÇÔáêÔáëÔáëÔáêÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔóÉÔú┐ÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇ
+
+Starting test execution...
+node : [31mTest execution failed:[0m 
+Error: Failed to generate and execute 
+tests: TypeError: testPlanObj.map is 
+not a function
+Au caractère Ligne:1 : 168
++ ... LW3q6KiVw"; node C:\Users\Dell\App
+Data\Local\npm-cache\_npx\8ddf6bea0 ...
++                 ~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : 
+NotSpecified    : ([31mTest execu... 
+not a function:S    tring) [], 
+RemoteException
+    + FullyQualifiedErrorId : 
+NativeComman    dError
+ 
+    at _generateCodeAndExecute (file:///
+C:/Users/Dell/AppData/Local/npm-cache/_n
+px/8ddf6bea01b2519d/node_modules/@testsp
+rite/testsprite-mcp/dist/index.js:167886
+:47)
+    at async file:///C:/Users/Dell/AppDa
+ta/Local/npm-cache/_npx/8ddf6bea01b2519d
+/node_modules/@testsprite/testsprite-mcp
+/dist/index.js:167403:24
+    at async Command.<anonymous> (file:/
+//C:/Users/Dell/AppData/Local/npm-cache/
+_npx/8ddf6bea01b2519d/node_modules/@test
+sprite/testsprite-mcp/dist/index.js:1727
+13:9)
+    at async Command.parseAsync (file://
+/C:/Users/Dell/AppData/Local/npm-cache/_
+npx/8ddf6bea01b2519d/node_modules/@tests
+prite/testsprite-mcp/dist/index.js:17097
+3:6)
+    at async main (file:///C:/Users/Dell
+/AppData/Local/npm-cache/_npx/8ddf6bea01
+b2519d/node_modules/@testsprite/testspri
+te-mcp/dist/index.js:172933:9)
+    at _generateCodeAndExecute (file:///
+C:/Users/Dell/AppData/Local/npm-cache/_n
+px/8ddf6bea01b2519d/node_modules/@testsp
+rite/testsprite-mcp/dist/index.js:168160
+:15)
+    at async file:///C:/Users/Dell/AppDa
+ta/Local/npm-cache/_npx/8ddf6bea01b2519d
+/node_modules/@testsprite/testsprite-mcp
+/dist/index.js:167403:24
+    at async Command.<anonymous> (file:/
+//C:/Users/Dell/AppData/Local/npm-cache/
+_npx/8ddf6bea01b2519d/node_modules/@test
+sprite/testsprite-mcp/dist/index.js:1727
+13:9)
+    at async Command.parseAsync (file://
+/C:/Users/Dell/AppData/Local/npm-cache/_
+npx/8ddf6bea01b2519d/node_modules/@tests
+prite/testsprite-mcp/dist/index.js:17097
+3:6)
+    at async main (file:///C:/Users/Dell
+/AppData/Local/npm-cache/_npx/8ddf6bea01
+b2519d/node_modules/@testsprite/testspri
+te-mcp/dist/index.js:172933:9)

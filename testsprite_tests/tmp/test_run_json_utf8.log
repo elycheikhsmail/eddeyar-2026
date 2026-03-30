@@ -1,0 +1,118 @@
+﻿
+Ôó░Ôí¥ÔóÂÔúñÔíÇÔáÇÔáÇÔúÇÔú┤Ôá¥ÔóÂÔíéÔáÇÔáÇÔóáÔúñÔúñÔúñÔúñÔúñÔáäÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔúÇÔíÇÔáÇÔóÇÔúáÔúñÔúñÔúäÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔóáÔúñÔáÇÔóÇÔíÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇ
+Ôó¢ÔíâÔáÇÔóêÔúøÔíÀÔú¥ÔúÖÔáüÔáÇÔó╝ÔíÅÔáÇÔáÇÔáêÔáêÔó©Ôí┐ÔáüÔóíÔúÁÔó┤ÔúñÔíäÔóÇÔí┤Ôá┤ÔúñÔíäÔúªÔú┐ÔúÀÔíäÔó¥ÔúÅÔúÇÔíêÔáøÔáúÔúªÔúäÔú┤Ôú┤ÔúñÔíÇÔú┤ÔúäÔúñÔíªÔú░ÔíÁÔó░Ôú¢Ôú┐ÔíäÔóÇÔú┤Ôí┤ÔúñÔíä
+Ôó╣ÔúçÔúÂÔáƒÔáïÔáüÔáêÔáøÔáÀÔóåÔúÿÔáâÔáÇÔáÇÔáÇÔáÇÔó¢ÔíçÔóáÔú┐ÔóªÔóªÔá¥ÔíùÔá╣Ôó┐ÔúÂÔú¼ÔíüÔó¿Ôú┐ÔáÇÔáÇÔíêÔáÖÔáøÔá╗Ôú┐ÔíäÔú║ÔíÅÔáÇÔáÇÔó¢ÔíçÔó©Ôú┐ÔáÇÔáÇÔú╗ÔíçÔáÇÔú┐ÔáàÔóáÔú┐ÔóºÔáªÔí¥Ôá┐
+ÔáÇÔáëÔá▓ÔóÂÔúñÔúÇÔúäÔú┤Ôá¥ÔáøÔáüÔáÇÔáÇÔáÇÔáÇÔááÔó┐ÔáâÔáêÔá┐ÔíªÔíªÔáÂÔáéÔáÀÔíªÔíªÔá┐ÔáüÔá╝ÔóÀÔó┤ÔáÿÔá┐ÔíÂÔí┤Ôí┤ÔáƒÔáÇÔú¥Ôí┐ÔóªÔá¥ÔáƒÔáüÔó©ÔáƒÔáÇÔáÇÔí┐ÔáâÔáÉÔí┐ÔóÁÔáêÔá┐ÔíªÔíªÔáÂÔáâ
+ÔáÇÔáÇÔáÇÔáÇÔáêÔáëÔáëÔáêÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔóÉÔú┐ÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇÔáÇ
+
+Starting test execution...
+node : [testsprite-mcp] Unhandled 
+rejection: TypeError: Use `delete()` to 
+clear values
+Au caractère Ligne:1 : 168
++ ... LW3q6KiVw"; node C:\Users\Dell\AppDat
+a\Local\npm-cache\_npx\8ddf6bea0 ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified 
+   : ([testsprite-mcp...to clear values:S  
+  tring) [], RemoteException
+    + FullyQualifiedErrorId : NativeComman 
+   dError
+ 
+    at Conf.set (file:///C:/Users/Dell/AppD
+ata/Local/npm-cache/_npx/8ddf6bea01b2519d/n
+ode_modules/@testsprite/testsprite-mcp/dist
+/index.js:163996:19)
+    at set apikey (file:///C:/Users/Dell/Ap
+pData/Local/npm-cache/_npx/8ddf6bea01b2519d
+/node_modules/@testsprite/testsprite-mcp/di
+st/index.js:164365:20)
+    at Service.login (file:///C:/Users/Dell
+/AppData/Local/npm-cache/_npx/8ddf6bea01b25
+19d/node_modules/@testsprite/testsprite-mcp
+/dist/index.js:164378:21)
+    at _generateCodeAndExecute (file:///C:/
+Users/Dell/AppData/Local/npm-cache/_npx/8dd
+f6bea01b2519d/node_modules/@testsprite/test
+sprite-mcp/dist/index.js:167818:45)
+    at async file:///C:/Users/Dell/AppData/
+Local/npm-cache/_npx/8ddf6bea01b2519d/node_
+modules/@testsprite/testsprite-mcp/dist/ind
+ex.js:167403:24
+    at async Command.<anonymous> (file:///C
+:/Users/Dell/AppData/Local/npm-cache/_npx/8
+ddf6bea01b2519d/node_modules/@testsprite/te
+stsprite-mcp/dist/index.js:172713:9)
+    at async Command.parseAsync (file:///C:
+/Users/Dell/AppData/Local/npm-cache/_npx/8d
+df6bea01b2519d/node_modules/@testsprite/tes
+tsprite-mcp/dist/index.js:170973:6)
+    at async main (file:///C:/Users/Dell/Ap
+pData/Local/npm-cache/_npx/8ddf6bea01b2519d
+/node_modules/@testsprite/testsprite-mcp/di
+st/index.js:172933:9)
+Proxy port: 65326
+
+[1m[32mRunning tests...[0m [32mThis 
+process may take anywhere from several 
+minutes up to 15 minutes to complete.[0m
+
+[1mPlease ensure:[0m
+ÔÇó Your local servers are running and 
+reachable
+ÔÇó Your internet connection remains 
+stable throughout the process
+
+[31mTest execution failed:[0m Error: 
+Failed to generate and execute tests: 
+McpTunnelError: Failed to set up testing 
+tunnel: Request failed: 401 Unauthorized
+    at TunnelClientWrapper.startV1 (file://
+/C:/Users/Dell/AppData/Local/npm-cache/_npx
+/8ddf6bea01b2519d/node_modules/@testsprite/
+testsprite-mcp/dist/index.js:166137:19)
+    at process.processTicksAndRejections 
+(node:internal/process/task_queues:103:5)
+    at async _generateCodeAndExecute (file:
+///C:/Users/Dell/AppData/Local/npm-cache/_n
+px/8ddf6bea01b2519d/node_modules/@testsprit
+e/testsprite-mcp/dist/index.js:167914:23)
+    at async file:///C:/Users/Dell/AppData/
+Local/npm-cache/_npx/8ddf6bea01b2519d/node_
+modules/@testsprite/testsprite-mcp/dist/ind
+ex.js:167403:24
+    at async Command.<anonymous> (file:///C
+:/Users/Dell/AppData/Local/npm-cache/_npx/8
+ddf6bea01b2519d/node_modules/@testsprite/te
+stsprite-mcp/dist/index.js:172713:9)
+    at async Command.parseAsync (file:///C:
+/Users/Dell/AppData/Local/npm-cache/_npx/8d
+df6bea01b2519d/node_modules/@testsprite/tes
+tsprite-mcp/dist/index.js:170973:6)
+    at async main (file:///C:/Users/Dell/Ap
+pData/Local/npm-cache/_npx/8ddf6bea01b2519d
+/node_modules/@testsprite/testsprite-mcp/di
+st/index.js:172933:9)
+    at _generateCodeAndExecute (file:///C:/
+Users/Dell/AppData/Local/npm-cache/_npx/8dd
+f6bea01b2519d/node_modules/@testsprite/test
+sprite-mcp/dist/index.js:168160:15)
+    at process.processTicksAndRejections 
+(node:internal/process/task_queues:103:5)
+    at async file:///C:/Users/Dell/AppData/
+Local/npm-cache/_npx/8ddf6bea01b2519d/node_
+modules/@testsprite/testsprite-mcp/dist/ind
+ex.js:167403:24
+    at async Command.<anonymous> (file:///C
+:/Users/Dell/AppData/Local/npm-cache/_npx/8
+ddf6bea01b2519d/node_modules/@testsprite/te
+stsprite-mcp/dist/index.js:172713:9)
+    at async Command.parseAsync (file:///C:
+/Users/Dell/AppData/Local/npm-cache/_npx/8d
+df6bea01b2519d/node_modules/@testsprite/tes
+tsprite-mcp/dist/index.js:170973:6)
+    at async main (file:///C:/Users/Dell/Ap
+pData/Local/npm-cache/_npx/8ddf6bea01b2519d
+/node_modules/@testsprite/testsprite-mcp/di
+st/index.js:172933:9)

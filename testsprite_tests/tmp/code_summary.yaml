@@ -1,0 +1,81 @@
+version: "2"
+type: frontend
+tech_stack:
+  - TypeScript
+  - Next.js (App Router)
+  - Tailwind CSS
+  - React 19
+  - Lucide Icons
+  - Swiper
+  - React Leaflet
+  - better-sqlite3
+  - MongoDB
+  - Vercel Blob
+routes:
+  - path: /
+    file: app/[locale]/page.tsx
+    auth_required: false
+    description: Home page with featured ads and search.
+  - path: /about
+    file: app/[locale]/about/page.tsx
+    auth_required: false
+    description: About page for eddeyar.
+  - path: /my/add
+    file: app/[locale]/my/add/page.tsx
+    auth_required: true
+    description: Page to add new listings/ads.
+  - path: /my/details
+    file: app/[locale]/my/details/page.tsx
+    auth_required: true
+    description: User profile and account details.
+  - path: /my/favorite
+    file: app/[locale]/my/favorite/page.tsx
+    auth_required: true
+    description: Saved/Favorite listings.
+  - path: /p/annonces
+    file: app/[locale]/p/annonces/page.tsx
+    auth_required: false
+    description: Browse and filter advertisements.
+features:
+  - name: Browse Advertisements
+    description: Users can view a list of real estate or items for rent/sale.
+    files:
+      - app/[locale]/p/annonces/page.tsx
+      - app/api/annonces/route.ts
+    entry_route: /p/annonces
+    user_interactions:
+      - Scroll through the list of ads
+      - Click on an ad to view details
+      - Use filters to refine results
+    api_calls:
+      - method: GET
+        endpoint: /api/annonces
+    auth_required: false
+  - name: Create Advertisement
+    description: Registered users can post new ads.
+    files:
+      - app/[locale]/my/add/page.tsx
+      - app/api/annonces/route.ts
+    entry_route: /my/add
+    user_interactions:
+      - Fill in ad details (title, description, price, etc.)
+      - Upload images using Vercel Blob
+      - Submit form to create ad
+    api_calls:
+      - method: POST
+        endpoint: /api/annonces
+    auth_required: true
+  - name: Authentication (OTP)
+    description: Login or register using a phone number and OTP code.
+    files:
+      - app/api/otp/route.ts
+      - app/api/sms/route.ts
+    entry_route: /
+    user_interactions:
+      - Enter phone number
+      - Receive and enter OTP code
+    api_calls:
+      - method: POST
+        endpoint: /api/otp
+    auth_required: false
+known_limitations: []
