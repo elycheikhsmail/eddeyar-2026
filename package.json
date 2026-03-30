@@ -12,12 +12,15 @@
     "check-types": "tsc --noEmit",
     "mongo:init": "tsx -r dotenv/config script/initMongo.ts",
     "mongo:seed": "tsx -r dotenv/config script/seedMongo.ts",
+    "mongo:init:test": "dotenv -e .env.test -- tsx script/initMongo.ts",
+    "mongo:seed:test": "dotenv -e .env.test -- tsx script/seedMongo.ts",
     "mongo:migrate": "tsx script/migrate.ts",
     "backup:atlas": "tsx script/backup-atlas.ts",
     "backup:db": "tsx script/backup-db.ts",
     "restore:temp": "tsx script/restore-temp-db.ts",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
+    "test:e2e:setup": "pnpm run mongo:init:test && pnpm run mongo:seed:test",
      "migrate:options:mongo": "node --env-file=.env scripts/sqlite-options-to-mongodb.mjs"
   },
   "dependencies": {

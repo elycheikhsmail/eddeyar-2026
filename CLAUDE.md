@@ -19,6 +19,11 @@ pnpm run mongo:init       # Créer collections + index (première fois)
 pnpm run mongo:seed       # Insérer données de référence + démo (à faire après init)
 pnpm run mongo:migrate    # Migrations
 
+# Base de test séparée (rim-ebay-test) — copier .env.test.exemple vers .env.test
+pnpm run test:e2e:setup   # init + seed la base de test (raccourci)
+pnpm run mongo:init:test  # init collections dans rim-ebay-test
+pnpm run mongo:seed:test  # seed données dans rim-ebay-test
+
 # Tests E2E
 pnpm run test:e2e         # Playwright headless
 pnpm run test:e2e:ui      # Playwright mode interactif
