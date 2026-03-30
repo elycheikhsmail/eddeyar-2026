@@ -2,14 +2,17 @@
   "status": "commited",
   "type": "frontend",
   "scope": "codebase",
-  "localEndpoint": "http://localhost:3000",
+  "localEndpoint": "http://localhost:3000/ar",
   "executionArgs": {
-    "projectName": "rim-ebay",
-    "projectPath": "c:\\Users\\Dell\\Documents\\eddeyar\\rim-ebay-aut-2025-main\\eddeyar-2026",
+    "projectName": "bold-curran",
+    "projectPath": "C:\\Users\\Dell\\Documents\\eddeyar\\rim-ebay-aut-2025-main\\eddeyar-2026\\.claude\\worktrees\\bold-curran",
     "testIds": [],
-    "additionalInstruction": "Full test execution for the marketplace platform features described in the PRD using the manually generated test plan.",
-    "serverMode": "production",
-    "envs": {}
+    "additionalInstruction": "",
+    "serverMode": "development",
+    "envs": {
+      "API_KEY": "sk-user-QxMHs9LNNGjXHCwem1xBaHobDy_Yu7kxL82KXrSfGMEqhSzlAuIma81hSk1L62ExX48rVc3It1m3OqpmiVW-c7CYzBFLexhXNElYqLWGCLl6UoXa0YgTJOI0Gvp1NCFVX3U"
+    }
   },
-  "serverPort": 65324
+  "serverPort": 63917,
+  "proxy": "http://9dd8d32d-d863-4eb1-a052-0b65d57213d4:RQipj4kp85XAFBYvbyA0cnxY5as0XQ72@tun.testsprite.com:8080"
 }

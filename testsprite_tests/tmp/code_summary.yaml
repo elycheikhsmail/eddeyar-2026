@@ -1,81 +1,328 @@
 version: "2"
 type: frontend
 tech_stack:
-  - TypeScript
-  - Next.js (App Router)
-  - Tailwind CSS
-  - React 19
-  - Lucide Icons
-  - Swiper
-  - React Leaflet
-  - better-sqlite3
-  - MongoDB
-  - Vercel Blob
+  - language: TypeScript
+  - framework: Next.js 16.2.1 (App Router, React 19)
+  - ui_library: Tailwind CSS 3.4.1, Headless UI, Heroicons, Lucide React, FontAwesome, Swiper, React Leaflet
+  - other: MongoDB, JWT, next-international (i18n), Vercel Blob, Chinguisoft SMS, Resend, Playwright
+
 routes:
-  - path: /
+  - path: /ar
     file: app/[locale]/page.tsx
     auth_required: false
-    description: Home page with featured ads and search.
-  - path: /about
+    description: Home page with listing search and browse
+  - path: /ar/about
     file: app/[locale]/about/page.tsx
     auth_required: false
-    description: About page for eddeyar.
-  - path: /my/add
+    description: About page
+  - path: /ar/p/users/connexion
+    file: app/[locale]/p/users/connexion/page.tsx
+    auth_required: false
+    description: Email/password login page
+  - path: /ar/p/users/register
+    file: app/[locale]/p/users/register/page.tsx
+    auth_required: false
+    description: User registration with email or phone
+  - path: /ar/p/users/forgot-password
+    file: app/[locale]/p/users/forgot-password/page.tsx
+    auth_required: false
+    description: Password recovery via phone OTP
+  - path: /ar/p/users/reset-password
+    file: app/[locale]/p/users/reset-password/page.tsx
+    auth_required: false
+    description: Reset password using OTP
+  - path: /ar/p/verification
+    file: app/[locale]/p/verification/page.tsx
+    auth_required: false
+    description: Account verification landing
+  - path: /ar/p/verification/otp
+    file: app/[locale]/p/verification/otp/page.tsx
+    auth_required: false
+    description: OTP input for phone verification
+  - path: /ar/p/annonces/details/[id]
+    file: app/[locale]/p/annonces/details/[id]/page.tsx
+    auth_required: false
+    description: Public listing details page
+  - path: /ar/my/list
+    file: app/[locale]/my/list/page.tsx
+    auth_required: true
+    description: User's own listings dashboard
+  - path: /ar/my/add
     file: app/[locale]/my/add/page.tsx
     auth_required: true
-    description: Page to add new listings/ads.
-  - path: /my/details
-    file: app/[locale]/my/details/page.tsx
-    auth_required: true
-    description: User profile and account details.
-  - path: /my/favorite
+    description: Create new listing (3-step wizard)
+  - path: /ar/my/favorite
     file: app/[locale]/my/favorite/page.tsx
     auth_required: true
-    description: Saved/Favorite listings.
-  - path: /p/annonces
-    file: app/[locale]/p/annonces/page.tsx
-    auth_required: false
-    description: Browse and filter advertisements.
+    description: Saved/favorite listings
+  - path: /ar/my/details/[id]
+    file: app/[locale]/my/details/[id]/page.tsx
+    auth_required: true
+    description: Edit a specific listing
+  - path: /ar/my/details/[id]/images
+    file: app/[locale]/my/details/[id]/images/page.tsx
+    auth_required: true
+    description: Manage images for a listing
+  - path: /ar/my/contact
+    file: app/[locale]/my/contact/page.tsx
+    auth_required: true
+    description: Contact management
+  - path: /ar/my/contact/confirm
+    file: app/[locale]/my/contact/confirm/page.tsx
+    auth_required: true
+    description: Contact confirmation page
+
 features:
-  - name: Browse Advertisements
-    description: Users can view a list of real estate or items for rent/sale.
+  - name: Browse & Search Listings
+    description: Home page with filter-based search for real estate and general marketplace listings
     files:
-      - app/[locale]/p/annonces/page.tsx
+      - app/[locale]/page.tsx
+      - lib/services/annoncesService.ts
       - app/api/annonces/route.ts
-    entry_route: /p/annonces
+    entry_route: /ar
     user_interactions:
-      - Scroll through the list of ads
-      - Click on an ad to view details
-      - Use filters to refine results
+      - View listing cards on the home page
+      - Filter by category, type, wilaya (region), moughataa (district)
+      - Filter by price range
+      - Search by keyword or AI-powered query
+      - Navigate to listing detail page
+      - Paginate through results
     api_calls:
       - method: GET
         endpoint: /api/annonces
+      - method: POST
+        endpoint: /api/p/search
     auth_required: false
-  - name: Create Advertisement
-    description: Registered users can post new ads.
+
+  - name: Listing Details
+    description: Public page showing full details of a listing including images, location, price and contact info
     files:
-      - app/[locale]/my/add/page.tsx
-      - app/api/annonces/route.ts
-    entry_route: /my/add
+      - app/[locale]/p/annonces/details/[id]/page.tsx
+    entry_route: /ar/p/annonces/details/[id]
     user_interactions:
-      - Fill in ad details (title, description, price, etc.)
-      - Upload images using Vercel Blob
-      - Submit form to create ad
+      - View listing images in carousel
+      - Read listing description, price, location
+      - View seller contact information
+      - Toggle favorite if logged in
+      - Share listing
+      - View map location
+    api_calls:
+      - method: GET
+        endpoint: /api/my/annonces/[id]
+      - method: PATCH
+        endpoint: /api/my/annonces/[id]/favorite
+    auth_required: false
+
+  - name: User Login
+    description: Login with email and password or phone OTP, JWT stored in httpOnly cookie
+    files:
+      - app/[locale]/p/users/connexion/page.tsx
+      - app/api/p/users/connexion/route.ts
+      - app/api/p/users/connexion/phone/route.ts
+    entry_route: /ar/p/users/connexion
+    user_interactions:
+      - Fill email input field
+      - Fill password input field
+      - Click login button to submit
+      - See error message on invalid credentials
+      - Redirect to home page on success
+      - Switch to phone login tab
+      - Enter phone number and receive OTP
     api_calls:
       - method: POST
-        endpoint: /api/annonces
-    auth_required: true
-  - name: Authentication (OTP)
-    description: Login or register using a phone number and OTP code.
+        endpoint: /api/p/users/connexion
+      - method: POST
+        endpoint: /api/p/users/connexion/phone
+    auth_required: false
+
+  - name: User Registration
+    description: Register a new account with email or phone
     files:
-      - app/api/otp/route.ts
-      - app/api/sms/route.ts
-    entry_route: /
+      - app/[locale]/p/users/register/page.tsx
+      - app/api/p/users/register/route.ts
+      - app/api/p/users/register/phone/route.ts
+    entry_route: /ar/p/users/register
+    user_interactions:
+      - Choose registration method (email or phone)
+      - Fill name, email, password fields for email flow
+      - Fill name and phone number for phone flow
+      - Submit form
+      - See validation errors
+      - Redirect to OTP verification page for phone flow
+    api_calls:
+      - method: POST
+        endpoint: /api/p/users/register
+      - method: POST
+        endpoint: /api/p/users/register/phone
+    auth_required: false
+
+  - name: OTP Verification
+    description: Verify phone number via SMS OTP code sent by Chinguisoft
+    files:
+      - app/[locale]/p/verification/otp/page.tsx
+      - app/api/otp/verify/route.ts
+      - app/api/otp/re-send/route.ts
+    entry_route: /ar/p/verification/otp
+    user_interactions:
+      - Enter 4-digit OTP code
+      - Submit OTP
+      - Request OTP resend if not received
+      - See error on wrong code or expiry
+      - Auto-login on successful verification
+    api_calls:
+      - method: POST
+        endpoint: /api/otp/verify
+      - method: POST
+        endpoint: /api/otp/re-send
+    auth_required: false
+
+  - name: Password Reset
+    description: Recover account access via phone OTP
+    files:
+      - app/[locale]/p/users/forgot-password/page.tsx
+      - app/[locale]/p/users/reset-password/page.tsx
+      - app/api/p/users/forgot-password/route.ts
+      - app/api/p/users/reset-password/route.ts
+    entry_route: /ar/p/users/forgot-password
     user_interactions:
       - Enter phone number
-      - Receive and enter OTP code
+      - Receive OTP via SMS
+      - Enter OTP code
+      - Enter new password and confirm
+      - Submit reset form
     api_calls:
       - method: POST
-        endpoint: /api/otp
+        endpoint: /api/p/users/forgot-password
+      - method: POST
+        endpoint: /api/p/users/reset-password
     auth_required: false
-known_limitations: []
+
+  - name: Create Listing (3-step wizard)
+    description: Multi-step form to publish a new annonce with details, location, and images
+    files:
+      - app/[locale]/my/add/page.tsx
+      - app/api/my/annonces/route.ts
+      - app/api/images/[annonceId]/route.ts
+    entry_route: /ar/my/add
+    user_interactions:
+      - Step 1 select category, type, fill title and description, set price
+      - Step 2 choose wilaya and moughataa location
+      - Step 3 upload up to 8 images
+      - Submit listing
+      - See validation errors per step
+      - Redirect to listing management after success
+    api_calls:
+      - method: POST
+        endpoint: /api/my/annonces
+      - method: POST
+        endpoint: /api/images/[annonceId]
+      - method: GET
+        endpoint: /api/wilayas
+      - method: GET
+        endpoint: /api/lieux/moughataas
+    auth_required: true
+
+  - name: Manage My Listings
+    description: Dashboard to view, edit, and delete user's own listings
+    files:
+      - app/[locale]/my/list/page.tsx
+      - app/api/my/annonces/route.ts
+      - app/api/my/annonces/[id]/route.ts
+    entry_route: /ar/my/list
+    user_interactions:
+      - View all own listings with status (active, pending, deleted)
+      - Click to edit a listing
+      - Delete a listing (soft delete)
+      - View listing details
+    api_calls:
+      - method: GET
+        endpoint: /api/my/annonces
+      - method: DELETE
+        endpoint: /api/my/annonces/[id]
+    auth_required: true
+
+  - name: Edit Listing
+    description: Update an existing listing's details
+    files:
+      - app/[locale]/my/details/[id]/page.tsx
+      - app/api/my/annonces/[id]/route.ts
+    entry_route: /ar/my/details/[id]
+    user_interactions:
+      - Edit title, description, price fields
+      - Change category or type
+      - Update location
+      - Save changes
+    api_calls:
+      - method: GET
+        endpoint: /api/my/annonces/[id]
+      - method: PUT
+        endpoint: /api/my/annonces/[id]
+    auth_required: true
+
+  - name: Manage Listing Images
+    description: Add or remove images for a specific listing
+    files:
+      - app/[locale]/my/details/[id]/images/page.tsx
+      - app/api/images/[annonceId]/route.ts
+    entry_route: /ar/my/details/[id]/images
+    user_interactions:
+      - View existing images
+      - Upload new images (JPEG, PNG, WebP, max 10MB each)
+      - Delete individual images
+      - Set main cover image
+    api_calls:
+      - method: GET
+        endpoint: /api/images/[annonceId]
+      - method: POST
+        endpoint: /api/images/[annonceId]
+      - method: DELETE
+        endpoint: /api/images/[annonceId]
+    auth_required: true
+
+  - name: Favorites
+    description: Save and view favorite listings
+    files:
+      - app/[locale]/my/favorite/page.tsx
+      - app/api/my/favorites/route.ts
+      - app/api/my/annonces/[id]/favorite/route.ts
+    entry_route: /ar/my/favorite
+    user_interactions:
+      - View all favorited listings
+      - Remove a listing from favorites
+      - Click to view listing detail
+    api_calls:
+      - method: GET
+        endpoint: /api/my/favorites
+      - method: PATCH
+        endpoint: /api/my/annonces/[id]/favorite
+    auth_required: true
+
+  - name: Logout
+    description: Sign out the current user and clear session
+    files:
+      - app/api/p/users/logout/route.ts
+    entry_route: /ar
+    user_interactions:
+      - Click logout button in navigation
+      - Redirect to home page after logout
+    api_calls:
+      - method: POST
+        endpoint: /api/p/users/logout
+    auth_required: true
+
+known_limitations:
+  - issue: Password reset endpoint returns 501 Not Implemented
+    location: app/api/p/users/reset-password/route.ts
+    impact: Users cannot complete the password reset flow
+  - issue: OTP code hardcoded as "1234" in some development paths
+    location: app/api/otp/verify/route.ts
+    impact: Security risk if left in production
+  - issue: Image physical deletion from Vercel Blob not implemented
+    location: app/api/images/[annonceId]/route.ts
+    impact: Deleted images still exist in cloud storage, only DB record removed
+  - issue: AI-powered search returns empty results on API failure with no fallback
+    location: lib/services/annoncesService.ts
+    impact: AI search failures show no listings instead of falling back to standard search
+  - issue: Moughataas and GPS location endpoints return empty data
+    location: app/api/lieux/moughataas/route.ts
+    impact: Location picker may not show district options

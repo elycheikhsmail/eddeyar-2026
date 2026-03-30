@@ -1,63 +1,1621 @@
 [
   {
-    "id": "TC-001",
-    "title": "Home Page Rendering",
+    "id": "TC001",
+    "title": "Home page loads and shows listing cards",
+    "description": "Verifies the home page renders its primary content and displays listing results cards.",
+    "category": "Browse & Search Listings",
     "priority": "High",
     "steps": [
-      "Navigate to /",
-      "Assert main search bar is visible",
-      "Assert featured ads are displayed"
-    ],
-    "expected_result": "User should see the landing page with ads and search capability."
+      {
+        "type": "action",
+        "description": "Navigate to /ar"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify listing cards are displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify search and filter controls are available"
+      }
+    ]
   },
   {
-    "id": "TC-002",
-    "title": "Navigation to Browse Ads",
+    "id": "TC002",
+    "title": "Filter listings by category, type, and location hierarchy",
+    "description": "Verifies users can narrow results using category/type and wilaya/moughataa filters.",
+    "category": "Browse & Search Listings",
     "priority": "High",
     "steps": [
-      "Click on Browse/Search button",
-      "Assert URL contains /p/annonces",
-      "Assert list of ads is displayed"
-    ],
-    "expected_result": "User should be taken to the ads listing page."
+      {
+        "type": "action",
+        "description": "Navigate to /ar"
+      },
+      {
+        "type": "action",
+        "description": "Select a category filter value"
+      },
+      {
+        "type": "action",
+        "description": "Select a type filter value"
+      },
+      {
+        "type": "action",
+        "description": "Select a wilaya (region) filter value"
+      },
+      {
+        "type": "action",
+        "description": "Select a moughataa (district) filter value"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify listing cards update to reflect the selected filters"
+      }
+    ]
   },
   {
-    "id": "TC-003",
-    "title": "Ad Filtering (Wilaya)",
+    "id": "TC003",
+    "title": "Filter listings by price range",
+    "description": "Verifies users can apply a price range and see results update accordingly.",
+    "category": "Browse & Search Listings",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /ar"
+      },
+      {
+        "type": "action",
+        "description": "Fill a valid minimum price into the minimum price field"
+      },
+      {
+        "type": "action",
+        "description": "Fill a valid maximum price into the maximum price field"
+      },
+      {
+        "type": "action",
+        "description": "Apply the price filter"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify listing cards update to reflect the selected price range"
+      }
+    ]
+  },
+  {
+    "id": "TC004",
+    "title": "Search by keyword query",
+    "description": "Verifies users can submit a keyword search and see results refresh.",
+    "category": "Browse & Search Listings",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /ar"
+      },
+      {
+        "type": "action",
+        "description": "Fill \"test\" into the search field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the search"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify listing results are displayed for the submitted query"
+      }
+    ]
+  },
+  {
+    "id": "TC005",
+    "title": "Paginate through listing results",
+    "description": "Verifies users can move to another page of results using pagination controls.",
+    "category": "Browse & Search Listings",
     "priority": "Medium",
     "steps": [
-      "Navigate to /p/annonces",
-      "Select a Wilaya from the filter",
-      "Click apply",
-      "Assert ads are filtered by location"
-    ],
-    "expected_result": "Ads should be filtered based on the selected region."
+      {
+        "type": "action",
+        "description": "Navigate to /ar"
+      },
+      {
+        "type": "action",
+        "description": "Scroll to the pagination controls"
+      },
+      {
+        "type": "action",
+        "description": "Click to go to the next page of results"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the listing cards refresh to a different set of results"
+      }
+    ]
   },
   {
-    "id": "TC-004",
-    "title": "Login Flow (OTP)",
+    "id": "TC006",
+    "title": "Navigate from listing card to listing detail page",
+    "description": "Verifies users can open a listing detail view from the results list.",
+    "category": "Browse & Search Listings",
     "priority": "High",
     "steps": [
-      "Navigate to /",
-      "Open login modal/page",
-      "Enter test phone number",
-      "Click Send OTP",
-      "Enter valid test OTP",
-      "Assert user is logged in"
-    ],
-    "expected_result": "User should successfully authenticate and see their profile link."
+      {
+        "type": "action",
+        "description": "Navigate to /ar"
+      },
+      {
+        "type": "action",
+        "description": "Click a listing card to open its details"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the listing detail view is displayed with key information such as price and description"
+      }
+    ]
   },
   {
-    "id": "TC-005",
-    "title": "Create Ad (Requires Auth)",
+    "id": "TC007",
+    "title": "AI-powered query returns no results then broaden to basic criteria and paginate",
+    "description": "Verifies the no-results state can be recovered by broadening filters and then navigating results pages.",
+    "category": "Browse & Search Listings",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /ar"
+      },
+      {
+        "type": "action",
+        "description": "Fill \"zzzz-unlikely-query\" into the search field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the search"
+      },
+      {
+        "type": "action",
+        "description": "Verify an empty state message is visible"
+      },
+      {
+        "type": "action",
+        "description": "Clear the search field"
+      },
+      {
+        "type": "action",
+        "description": "Select a broad category filter value"
+      },
+      {
+        "type": "action",
+        "description": "Submit the search"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify listing cards are displayed after broadening criteria"
+      }
+    ]
+  },
+  {
+    "id": "TC008",
+    "title": "Price range validation when minimum exceeds maximum",
+    "description": "Verifies the UI prevents or flags an invalid price range configuration.",
+    "category": "Browse & Search Listings",
+    "priority": "Low",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /ar"
+      },
+      {
+        "type": "action",
+        "description": "Fill a high valid number into the minimum price field"
+      },
+      {
+        "type": "action",
+        "description": "Fill a lower valid number into the maximum price field"
+      },
+      {
+        "type": "action",
+        "description": "Apply the price filter"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a price validation error is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC009",
+    "title": "Listing details page shows images, description, location, map, and contact section",
+    "description": "Verifies the listing details page renders its primary content areas for a listing.",
+    "category": "Listing Details",
     "priority": "High",
     "steps": [
-      "Ensure user is logged in",
-      "Navigate to /my/add",
-      "Fill in title, description, price",
-      "Click Submit",
-      "Assert ad appears in /my/list"
-    ],
-    "expected_result": "User should be able to create and view their own advertisement."
+      {
+        "type": "action",
+        "description": "Navigate to /ar"
+      },
+      {
+        "type": "action",
+        "description": "Click a listing card to open its details"
+      },
+      {
+        "type": "action",
+        "description": "Scroll through the listing details content"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify listing images are displayed in a carousel"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify seller contact information section is displayed"
+      }
+    ]
+  },
+  {
+    "id": "TC010",
+    "title": "Share listing from listing details",
+    "description": "Verifies the share action is available and produces a visible UI outcome without relying on native dialogs.",
+    "category": "Listing Details",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /ar"
+      },
+      {
+        "type": "action",
+        "description": "Click a listing card to open its details"
+      },
+      {
+        "type": "action",
+        "description": "Click the share listing action"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a share UI (such as a share panel or share options) is displayed"
+      }
+    ]
+  },
+  {
+    "id": "TC011",
+    "title": "View map location on listing details",
+    "description": "Verifies the map section renders for a listing with location information.",
+    "category": "Listing Details",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /ar"
+      },
+      {
+        "type": "action",
+        "description": "Click a listing card to open its details"
+      },
+      {
+        "type": "action",
+        "description": "Scroll to the map section"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a map location view is displayed"
+      }
+    ]
+  },
+  {
+    "id": "TC012",
+    "title": "Login with email and password succeeds and redirects to home",
+    "description": "Verifies successful email/password login redirects to the home page.",
+    "category": "User Login",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /ar/p/users/connexion"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the user lands on the home page"
+      }
+    ]
+  },
+  {
+    "id": "TC013",
+    "title": "Login with invalid email/password shows error",
+    "description": "Verifies invalid credentials produce a visible error state.",
+    "category": "User Login",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /ar/p/users/connexion"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with invalid@example.com"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with wrong-password"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a login error message is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC014",
+    "title": "Phone OTP login flow reaches OTP screen and completes with valid code",
+    "description": "Verifies phone login can proceed to OTP entry and complete authentication using a valid 4-digit code.",
+    "category": "User Login",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /ar/p/users/connexion"
+      },
+      {
+        "type": "action",
+        "description": "Switch to the phone login tab"
+      },
+      {
+        "type": "action",
+        "description": "Fill a valid phone number into the phone number field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the phone login request"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the OTP entry page to load"
+      },
+      {
+        "type": "action",
+        "description": "Fill \"1234\" into the OTP code field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the OTP form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the user lands on the home page"
+      }
+    ]
+  },
+  {
+    "id": "TC015",
+    "title": "Phone OTP login resend flow is available from OTP screen",
+    "description": "Verifies users can trigger the resend action from the OTP screen without relying on delivery timing.",
+    "category": "User Login",
+    "priority": "Low",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /ar/p/users/connexion"
+      },
+      {
+        "type": "action",
+        "description": "Switch to the phone login tab"
+      },
+      {
+        "type": "action",
+        "description": "Fill a valid phone number into the phone number field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the phone login request"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the OTP entry page to load"
+      },
+      {
+        "type": "action",
+        "description": "Click the resend OTP action"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a resend confirmation or loading state is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC016",
+    "title": "Register with email successfully redirects to home",
+    "description": "Verifies a user can complete email registration and is redirected to the home page on success.",
+    "category": "User Registration",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /ar/p/users/register"
+      },
+      {
+        "type": "action",
+        "description": "Choose registration method (email)"
+      },
+      {
+        "type": "action",
+        "description": "Fill Test User into the name field"
+      },
+      {
+        "type": "action",
+        "description": "Fill unique_test_user_1@example.com into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill a valid password into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the user is redirected to the home page"
+      }
+    ]
+  },
+  {
+    "id": "TC017",
+    "title": "Register with phone redirects to OTP verification page",
+    "description": "Verifies phone registration leads to the OTP verification screen.",
+    "category": "User Registration",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /ar/p/users/register"
+      },
+      {
+        "type": "action",
+        "description": "Choose registration method (phone)"
+      },
+      {
+        "type": "action",
+        "description": "Fill Test User into the name field"
+      },
+      {
+        "type": "action",
+        "description": "Fill a valid phone number into the phone number field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the user is redirected to the OTP verification page"
+      }
+    ]
+  },
+  {
+    "id": "TC018",
+    "title": "Registration shows validation errors for missing required fields",
+    "description": "Verifies client-side/server-side validation is shown when submitting empty registration form.",
+    "category": "User Registration",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /ar/p/users/register"
+      },
+      {
+        "type": "action",
+        "description": "Choose registration method (email)"
+      },
+      {
+        "type": "action",
+        "description": "Submit the form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify validation errors are displayed"
+      }
+    ]
+  },
+  {
+    "id": "TC019",
+    "title": "Email registration shows validation error for invalid email format",
+    "description": "Verifies invalid email format is rejected with a visible validation error.",
+    "category": "User Registration",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /ar/p/users/register"
+      },
+      {
+        "type": "action",
+        "description": "Choose registration method (email)"
+      },
+      {
+        "type": "action",
+        "description": "Fill Test User into the name field"
+      },
+      {
+        "type": "action",
+        "description": "Fill invalid-email into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill a valid password into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify an email validation error is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC020",
+    "title": "Email registration shows validation error for weak/invalid password",
+    "description": "Verifies password constraints are enforced and errors are shown for an invalid password.",
+    "category": "User Registration",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /ar/p/users/register"
+      },
+      {
+        "type": "action",
+        "description": "Choose registration method (email)"
+      },
+      {
+        "type": "action",
+        "description": "Fill Test User into the name field"
+      },
+      {
+        "type": "action",
+        "description": "Fill unique_test_user_2@example.com into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill an invalid password into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a password validation error is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC021",
+    "title": "Phone registration shows validation error for invalid phone number",
+    "description": "Verifies invalid phone numbers are rejected with a visible validation error.",
+    "category": "User Registration",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /ar/p/users/register"
+      },
+      {
+        "type": "action",
+        "description": "Choose registration method (phone)"
+      },
+      {
+        "type": "action",
+        "description": "Fill Test User into the name field"
+      },
+      {
+        "type": "action",
+        "description": "Fill an invalid phone number into the phone number field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a phone number validation error is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC022",
+    "title": "Switching registration method updates the visible required inputs",
+    "description": "Verifies switching between email and phone registration changes the form fields shown.",
+    "category": "User Registration",
+    "priority": "Low",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /ar/p/users/register"
+      },
+      {
+        "type": "action",
+        "description": "Choose registration method (email)"
+      },
+      {
+        "type": "action",
+        "description": "Choose registration method (phone)"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the phone number field is displayed"
+      },
+      {
+        "type": "action",
+        "description": "Choose registration method (email)"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the email field and password field are displayed"
+      }
+    ]
+  },
+  {
+    "id": "TC023",
+    "title": "Register page primary content loads",
+    "description": "Verifies the registration page loads and presents a method choice to start registration.",
+    "category": "User Registration",
+    "priority": "Low",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /ar/p/users/register"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify registration method selection is displayed"
+      }
+    ]
+  },
+  {
+    "id": "TC024",
+    "title": "OTP verification success auto-logs in and redirects to home",
+    "description": "Verifies entering a valid 4-digit OTP completes verification, logs the user in, and redirects to home.",
+    "category": "OTP Verification",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /ar/p/verification/otp"
+      },
+      {
+        "type": "action",
+        "description": "Enter 1234 into the OTP code input"
+      },
+      {
+        "type": "action",
+        "description": "Submit the OTP"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the user is redirected to the home page"
+      }
+    ]
+  },
+  {
+    "id": "TC025",
+    "title": "OTP verification shows error for incorrect code",
+    "description": "Verifies an incorrect OTP code shows an error state.",
+    "category": "OTP Verification",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /ar/p/verification/otp"
+      },
+      {
+        "type": "action",
+        "description": "Enter 0000 into the OTP code input"
+      },
+      {
+        "type": "action",
+        "description": "Submit the OTP"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify an OTP error is displayed"
+      }
+    ]
+  },
+  {
+    "id": "TC026",
+    "title": "OTP resend request shows a resend confirmation",
+    "description": "Verifies the user can request an OTP resend and sees a confirmation state.",
+    "category": "OTP Verification",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /ar/p/verification/otp"
+      },
+      {
+        "type": "action",
+        "description": "Request OTP resend if not received"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a resend confirmation is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC027",
+    "title": "OTP input enforces 4-digit requirement",
+    "description": "Verifies the OTP submission is blocked or errors are shown when code length is incomplete.",
+    "category": "OTP Verification",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /ar/p/verification/otp"
+      },
+      {
+        "type": "action",
+        "description": "Enter 12 into the OTP code input"
+      },
+      {
+        "type": "action",
+        "description": "Submit the OTP"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a code length validation error is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC028",
+    "title": "OTP page primary content loads",
+    "description": "Verifies the OTP page loads and shows an input to enter the verification code.",
+    "category": "OTP Verification",
+    "priority": "Low",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /ar/p/verification/otp"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify an OTP code input is displayed"
+      }
+    ]
+  },
+  {
+    "id": "TC029",
+    "title": "Forgot password page loads and accepts phone input",
+    "description": "Verifies the forgot password page loads and allows entering a phone number to request an OTP.",
+    "category": "Password Reset",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /ar/p/users/forgot-password"
+      },
+      {
+        "type": "action",
+        "description": "Fill a valid phone number into the phone number field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a request confirmation or next-step instruction is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC030",
+    "title": "Forgot password shows validation error for invalid phone number",
+    "description": "Verifies invalid phone numbers cannot be submitted on forgot password.",
+    "category": "Password Reset",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /ar/p/users/forgot-password"
+      },
+      {
+        "type": "action",
+        "description": "Fill an invalid phone number into the phone number field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a phone number validation error is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC031",
+    "title": "Reset password page shows validation error for mismatched passwords",
+    "description": "Verifies reset password form enforces matching new password and confirmation.",
+    "category": "Password Reset",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /ar/p/users/reset-password"
+      },
+      {
+        "type": "action",
+        "description": "Enter 1234 into the OTP code input"
+      },
+      {
+        "type": "action",
+        "description": "Fill a valid new password into the new password field"
+      },
+      {
+        "type": "action",
+        "description": "Fill a different valid password into the confirm password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a password mismatch validation error is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC032",
+    "title": "Reset password shows validation error for missing OTP",
+    "description": "Verifies the reset password form requires an OTP code before submission.",
+    "category": "Password Reset",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /ar/p/users/reset-password"
+      },
+      {
+        "type": "action",
+        "description": "Fill a valid new password into the new password field"
+      },
+      {
+        "type": "action",
+        "description": "Fill the same valid password into the confirm password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify an OTP validation error is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC033",
+    "title": "Reset password with wrong OTP shows an error",
+    "description": "Verifies an invalid OTP on the reset password page shows an error state after submission.",
+    "category": "Password Reset",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /ar/p/users/reset-password"
+      },
+      {
+        "type": "action",
+        "description": "Enter 0000 into the OTP code input"
+      },
+      {
+        "type": "action",
+        "description": "Fill a valid new password into the new password field"
+      },
+      {
+        "type": "action",
+        "description": "Fill the same valid password into the confirm password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify an OTP error is displayed"
+      }
+    ]
+  },
+  {
+    "id": "TC034",
+    "title": "Create listing wizard loads and shows step 1 inputs",
+    "description": "Verifies an authenticated user can open the create-listing wizard and see the initial step for entering listing details.",
+    "category": "Create Listing (3-step wizard)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /ar/p/users/connexion"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /ar/my/add"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the listing details step is displayed with inputs for category, type, title, description, and price"
+      }
+    ]
+  },
+  {
+    "id": "TC035",
+    "title": "Create listing end-to-end without image upload (submit and land on my listings)",
+    "description": "Verifies the user can complete steps 1–3 of the wizard and submit a listing, then is redirected to the listings dashboard.",
+    "category": "Create Listing (3-step wizard)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /ar/p/users/connexion"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /ar/my/add"
+      },
+      {
+        "type": "action",
+        "description": "Select a valid category"
+      },
+      {
+        "type": "action",
+        "description": "Select a valid type"
+      },
+      {
+        "type": "action",
+        "description": "Fill Test Listing Wizard E2E into the title field"
+      },
+      {
+        "type": "action",
+        "description": "Fill Listing created by automated UI test into the description field"
+      },
+      {
+        "type": "action",
+        "description": "Fill a valid price into the price field"
+      },
+      {
+        "type": "action",
+        "description": "Continue to step 2"
+      },
+      {
+        "type": "action",
+        "description": "Select a valid wilaya"
+      },
+      {
+        "type": "action",
+        "description": "Select a valid moughataa if options are available"
+      },
+      {
+        "type": "action",
+        "description": "Continue to step 3"
+      },
+      {
+        "type": "action",
+        "description": "Submit the listing"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the user lands on the my listings dashboard"
+      }
+    ]
+  },
+  {
+    "id": "TC036",
+    "title": "Step 1 validation blocks advancing when required fields are empty",
+    "description": "Verifies that leaving required fields empty prevents proceeding to the next step and shows validation feedback.",
+    "category": "Create Listing (3-step wizard)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /ar/p/users/connexion"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /ar/my/add"
+      },
+      {
+        "type": "action",
+        "description": "Continue to step 2"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify validation errors are visible for the required fields"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the wizard remains on step 1"
+      }
+    ]
+  },
+  {
+    "id": "TC037",
+    "title": "Step navigation preserves entered data when moving forward and back",
+    "description": "Verifies that data entered in step 1 persists when navigating to step 2 and returning to step 1.",
+    "category": "Create Listing (3-step wizard)",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /ar/p/users/connexion"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /ar/my/add"
+      },
+      {
+        "type": "action",
+        "description": "Select a valid category"
+      },
+      {
+        "type": "action",
+        "description": "Select a valid type"
+      },
+      {
+        "type": "action",
+        "description": "Fill Persist Title 1001 into the title field"
+      },
+      {
+        "type": "action",
+        "description": "Fill Persist Description 1001 into the description field"
+      },
+      {
+        "type": "action",
+        "description": "Fill a valid price into the price field"
+      },
+      {
+        "type": "action",
+        "description": "Continue to step 2"
+      },
+      {
+        "type": "action",
+        "description": "Go back to step 1"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the title field value is Persist Title 1001"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the description field value is Persist Description 1001"
+      }
+    ]
+  },
+  {
+    "id": "TC038",
+    "title": "Step 2 allows continuing when moughataa options are empty by using map/approximate location",
+    "description": "Verifies that the user can continue from step 2 even if moughataa options are unavailable by setting an approximate location on the map (or equivalent location input).",
+    "category": "Create Listing (3-step wizard)",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /ar/p/users/connexion"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /ar/my/add"
+      },
+      {
+        "type": "action",
+        "description": "Select a valid category"
+      },
+      {
+        "type": "action",
+        "description": "Select a valid type"
+      },
+      {
+        "type": "action",
+        "description": "Fill Location Fallback Listing into the title field"
+      },
+      {
+        "type": "action",
+        "description": "Fill Listing for testing step 2 location fallback into the description field"
+      },
+      {
+        "type": "action",
+        "description": "Fill a valid price into the price field"
+      },
+      {
+        "type": "action",
+        "description": "Continue to step 2"
+      },
+      {
+        "type": "action",
+        "description": "Select a valid wilaya"
+      },
+      {
+        "type": "action",
+        "description": "Set an approximate location using the map or available location selector"
+      },
+      {
+        "type": "action",
+        "description": "Continue to step 3"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the images step is displayed"
+      }
+    ]
+  },
+  {
+    "id": "TC039",
+    "title": "Step 3 enforces maximum of 8 images (UI prevents adding more)",
+    "description": "Verifies the images step does not allow selecting more than the maximum number of images.",
+    "category": "Create Listing (3-step wizard)",
+    "priority": "Low",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /ar/p/users/connexion"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /ar/my/add"
+      },
+      {
+        "type": "action",
+        "description": "Select a valid category"
+      },
+      {
+        "type": "action",
+        "description": "Select a valid type"
+      },
+      {
+        "type": "action",
+        "description": "Fill Image Limit Listing into the title field"
+      },
+      {
+        "type": "action",
+        "description": "Fill Listing for testing image selection limits into the description field"
+      },
+      {
+        "type": "action",
+        "description": "Fill a valid price into the price field"
+      },
+      {
+        "type": "action",
+        "description": "Continue to step 2"
+      },
+      {
+        "type": "action",
+        "description": "Select a valid wilaya"
+      },
+      {
+        "type": "action",
+        "description": "Select a valid moughataa if options are available"
+      },
+      {
+        "type": "action",
+        "description": "Continue to step 3"
+      },
+      {
+        "type": "action",
+        "description": "Attempt to add more than 8 images using the image picker"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify no more than 8 selected image previews are shown"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify an image limit validation or disabled add control is shown"
+      }
+    ]
+  },
+  {
+    "id": "TC040",
+    "title": "Favorites: View favorites, open a listing, and remove it from favorites",
+    "description": "Verifies a user can view favorites, open a favorite listing details, return, and remove it from the favorites list.",
+    "category": "Favorites",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /ar/p/users/connexion"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /ar/my/favorite"
+      },
+      {
+        "type": "action",
+        "description": "Click a favorited listing to view its details"
+      },
+      {
+        "type": "action",
+        "description": "Click the control to return to the favorites list"
+      },
+      {
+        "type": "action",
+        "description": "Remove that listing from favorites"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the removed listing is no longer displayed in the favorites list"
+      }
+    ]
+  },
+  {
+    "id": "TC041",
+    "title": "Favorites: Favorites page loads and shows empty state or items",
+    "description": "Verifies the favorites page loads successfully and shows either a list of favorites or an empty state.",
+    "category": "Favorites",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /ar/p/users/connexion"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /ar/my/favorite"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the favorites page shows either favorited listings or an empty state message"
+      }
+    ]
+  },
+  {
+    "id": "TC042",
+    "title": "Favorites: Remove a favorite from the list view",
+    "description": "Verifies a user can remove a favorited listing directly from the favorites list view.",
+    "category": "Favorites",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /ar/p/users/connexion"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /ar/my/favorite"
+      },
+      {
+        "type": "action",
+        "description": "If favorites exist, remove the first listing from favorites"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the removed listing no longer appears in the favorites list"
+      }
+    ]
+  },
+  {
+    "id": "TC043",
+    "title": "Favorites: Removed favorite does not reappear after refresh",
+    "description": "Verifies that after removing a favorite, refreshing the page does not show it again.",
+    "category": "Favorites",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /ar/p/users/connexion"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /ar/my/favorite"
+      },
+      {
+        "type": "action",
+        "description": "If favorites exist, remove the first listing from favorites"
+      },
+      {
+        "type": "action",
+        "description": "Reload the page"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the removed listing is still not displayed in the favorites list"
+      }
+    ]
+  },
+  {
+    "id": "TC044",
+    "title": "Favorites: Navigate from favorites to a listing details page",
+    "description": "Verifies a user can open a favorite listing and see listing details content.",
+    "category": "Favorites",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /ar/p/users/connexion"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /ar/my/favorite"
+      },
+      {
+        "type": "action",
+        "description": "Click a favorited listing to view its details"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify listing details content is displayed"
+      }
+    ]
+  },
+  {
+    "id": "TC045",
+    "title": "Favorites: Attempt to remove a favorite and handle UI error state (if presented)",
+    "description": "Verifies that if the UI surfaces an error during favorite removal, the favorite remains visible.",
+    "category": "Favorites",
+    "priority": "Low",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /ar/p/users/connexion"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /ar/my/favorite"
+      },
+      {
+        "type": "action",
+        "description": "Attempt to remove a listing from favorites"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify either the listing is removed from the favorites list or an error state is shown and the listing remains visible"
+      }
+    ]
+  },
+  {
+    "id": "TC046",
+    "title": "Logout: Log out from an authenticated page and return to anonymous home state",
+    "description": "Verifies a user can log out from an authenticated area and is returned to the public home page in an anonymous state.",
+    "category": "Logout",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /ar/p/users/connexion"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /ar/my/list"
+      },
+      {
+        "type": "action",
+        "description": "Initiate logout from the navigation"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the user lands on the public home page"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the user is in an anonymous state with no authenticated navigation options visible"
+      }
+    ]
+  },
+  {
+    "id": "TC047",
+    "title": "Logout: After logout, protected pages require login again",
+    "description": "Verifies that after logging out, navigating to an authenticated page requires logging in again.",
+    "category": "Logout",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /ar/p/users/connexion"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /ar/my/list"
+      },
+      {
+        "type": "action",
+        "description": "Initiate logout from the navigation"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /ar/my/list"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the user is prompted to authenticate to access the page"
+      }
+    ]
   }
 ]
