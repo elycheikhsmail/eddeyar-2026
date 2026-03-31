@@ -179,7 +179,6 @@ const DEMO_ANNONCES = [
     price: 8500000,
     typeAnnonceId: "1001", categorieId: "2001", subcategorieId: "3002",
     classificationFr: "Villas", classificationAr: "فيلات",
-    subcategorieId: "3002",
     lieuId: "2", lieuStr: "Nouakchott-Nord", lieuStrAr: "نواكشوط الشمالية",
     moughataaId: "201", moughataaStr: "Dar Naim", moughataaStrAr: "دار النعيم",
   }),
