@@ -7,13 +7,16 @@
     "build:only": "next build",
     "build": "next build",
     "start": "next start",
+    "start:test": "NODE_ENV=test next start",
     "dev": "next dev --turbopack",
     "dev:test": "NODE_ENV=test next dev",
     "check-types": "tsc --noEmit",
     "mongo:init": "tsx -r dotenv/config script/initMongo.ts",
+    "mongo:init:test": "DOTENV_CONFIG_PATH=.env.test tsx -r dotenv/config script/initMongo.ts",
     "mongo:seed": "tsx -r dotenv/config script/seedMongo.ts",
-    "mongo:init:test": "dotenv -e .env.test -- tsx script/initMongo.ts",
-    "mongo:seed:test": "dotenv -e .env.test -- tsx script/seedMongo.ts",
+    "mongo:seed:test": "DOTENV_CONFIG_PATH=.env.test tsx -r dotenv/config script/seedMongo.ts",
+    "mongo:delete": "tsx -r dotenv/config script/deleteMongo.ts",
+    "mongo:delete:test": "DOTENV_CONFIG_PATH=.env.test tsx -r dotenv/config script/deleteMongo.ts",
     "mongo:migrate": "tsx script/migrate.ts",
     "backup:atlas": "tsx script/backup-atlas.ts",
     "backup:db": "tsx script/backup-db.ts",
@@ -21,7 +24,8 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:setup": "pnpm run mongo:init:test && pnpm run mongo:seed:test",
-     "migrate:options:mongo": "node --env-file=.env scripts/sqlite-options-to-mongodb.mjs"
+    "testwithdata": "pnpm run mongo:delete:test && pnpm run mongo:seed:test && pnpm run build && pnpm run start:test",
+    "migrate:options:mongo": "node --env-file=.env scripts/sqlite-options-to-mongodb.mjs"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.6.0",
