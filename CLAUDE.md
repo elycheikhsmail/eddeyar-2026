@@ -11,18 +11,25 @@ Stack : **Next.js 16 App Router + MongoDB + TypeScript + TailwindCSS + pnpm mono
 pnpm install              # Installer les dépendances
 pnpm run dev              # Serveur de développement (Turbopack, port 3000)
 pnpm run build            # Build de production
+pnpm run start            # Serveur de production (port 3000)
+pnpm run start:test       # Serveur de production avec NODE_ENV=test (.env.test)
 pnpm run check-types      # Vérification TypeScript stricte (sans emit)
 
 # MongoDB (Docker)
 docker compose -f docker-compose.mongo.yml up -d   # Démarrer MongoDB
 pnpm run mongo:init       # Créer collections + index (première fois)
 pnpm run mongo:seed       # Insérer données de référence + démo (à faire après init)
+pnpm run mongo:delete     # Vider toutes les collections (données uniquement)
 pnpm run mongo:migrate    # Migrations
 
 # Base de test séparée (rim-ebay-test) — copier .env.test.exemple vers .env.test
 pnpm run test:e2e:setup   # init + seed la base de test (raccourci)
 pnpm run mongo:init:test  # init collections dans rim-ebay-test
 pnpm run mongo:seed:test  # seed données dans rim-ebay-test
+pnpm run mongo:delete:test # vider toutes les collections dans rim-ebay-test
+
+# Pipeline tests avec données fraîches (delete → seed → build → start:test)
+pnpm run testwithdata
 
 # Tests E2E
 pnpm run test:e2e         # Playwright headless
@@ -95,6 +102,9 @@ data.json                # Données simulées
 ### Règle 4 — Mock avant prod
 Toujours compléter la **version mockée** avant d'implémenter la version réelle.
 
+### Règle 5 — Mettre à jour CLAUDE.md
+Après chaque changement significatif (nouveaux scripts, nouvelles collections, nouvelles conventions), **mettre à jour ce fichier** pour qu'il reste la source de vérité du projet.
+
 ---
 
 ## Variables d'environnement
@@ -127,14 +137,26 @@ Collections principales :
 | Collection | Description |
 |---|---|
 | `users` | Comptes utilisateurs |
+| `contacts` | Téléphones/emails liés aux utilisateurs |
 | `user_sessions` | Tokens JWT (expiration 24h) |
 | `annonces` | Annonces avec images, prix, localisation |
-| `categories` | Catégories / sous-catégories |
-| `type_annonces` | Types : Vente / Location / Service |
-| `wilayas` | Régions mauritaniennes |
-| `moughataas` | Départements (rattachés à une wilaya) |
-| `lieux` | Jointure wilaya → moughataa → GPS |
+| `annonce_publication_checklist` | Statut de publication par annonce |
+| `options` | Catégories, sous-catégories, type_annonces (tag discriminant) |
+| `lieux` | Wilayas + moughataas (depth=1 wilaya, depth=2 moughataa) |
+| `counters` | Auto-incrément ids (options:id, lieux:id) |
 | `images` | Métadonnées images |
+
+### Scripts base de données
+
+| Script | Fichier | Description |
+|---|---|---|
+| `mongo:init` | `script/initMongo.ts` | Crée collections + index |
+| `mongo:seed` | `script/seedMongo.ts` | Insère données de référence + démo |
+| `mongo:delete` | `script/deleteMongo.ts` | Vide toutes les collections |
+| `mongo:*:test` | — | Même scripts sur la base `rim-ebay-test` via `.env.test` |
+
+**Compte démo** (créé par `mongo:seed`) :
+- email : `demo@eddeyar.mr` / téléphone : `36000000` / mot de passe : `Demo1234!`
 
 ---
 
