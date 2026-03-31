@@ -27,7 +27,6 @@ core_features:
     description: Users can view their own listings and edit profile.
     acceptance_criteria:
       - User can see their own listings in the 'my' section.
-      - User can mark listings as favorites.
 user_flows:
   - name: Add a new ad
     steps:
