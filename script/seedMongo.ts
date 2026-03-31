@@ -9,7 +9,7 @@
  */
 
 import { MongoClient, ObjectId } from "mongodb";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import "dotenv/config";
 
 // ---------------------------------------------------------------------------
