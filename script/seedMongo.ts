@@ -391,12 +391,12 @@ async function run() {
     const maxOptionId = Math.max(...SUB_CATEGORIES.map((s) => s.id), ...CATEGORIES.map((c) => c.id), ...TYPE_ANNONCES.map((t) => t.id));
     const maxLieuId = Math.max(...MOUGHATAAS.map(([, id]) => id), ...WILAYAS.map((w) => w.id));
     await countersCol.updateOne(
-      { _id: "options:id" },
+      { _id: "options:id" as any },
       { $max: { seq: maxOptionId } },
       { upsert: true }
     );
     await countersCol.updateOne(
-      { _id: "lieux:id" },
+      { _id: "lieux:id" as any },
       { $max: { seq: maxLieuId } },
       { upsert: true }
     );
