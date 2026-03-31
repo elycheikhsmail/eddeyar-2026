@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/Dell/Documents/eddeyar/rim-ebay-aut-2025-main/eddeyar-2026/**)",
+      "mcp__TestSprite__testsprite_bootstrap",
+      "mcp__TestSprite__testsprite_generate_code_summary",
+      "Bash(find /c/Users/Dell/Documents/eddeyar/rim-ebay-aut-2025-main/eddeyar-2026/app/[locale] -type f \\\\\\( -name \"page.tsx\" -o -name \"layout.tsx\" -o -name \"route.ts\" \\\\\\))",
+      "Bash(head -50 /c/Users/Dell/Documents/eddeyar/rim-ebay-aut-2025-main/eddeyar-2026/app/[locale]/layout.tsx)",
+      "Bash(ls -la /c/Users/Dell/Documents/eddeyar/rim-ebay-aut-2025-main/eddeyar-2026/app/[locale]/my/)",
+      "Bash(wc -l /c/Users/Dell/Documents/eddeyar/rim-ebay-aut-2025-main/eddeyar-2026/app/api/**/*.ts)",
+      "Bash(find /c/Users/Dell/Documents/eddeyar/rim-ebay-aut-2025-main/eddeyar-2026/app/[locale]/p -type f -name \"page.tsx\")",
+      "mcp__TestSprite__testsprite_generate_standardized_prd",
+      "mcp__TestSprite__testsprite_generate_frontend_test_plan",
+      "mcp__TestSprite__testsprite_generate_code_and_execute",
+      "mcp__TestSprite__testsprite_open_test_result_dashboard"
+    ]
+  }
+}

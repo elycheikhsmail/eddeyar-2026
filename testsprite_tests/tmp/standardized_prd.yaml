@@ -1,0 +1,42 @@
+version: "2"
+project_name: "eddeyar-2026 (Rim eBay)"
+description: "A specialized classifieds platform for real estate and other listings in Algeria/Mauritania."
+tech_stack:
+  language: TypeScript
+  framework: Next.js (App Router)
+  ui_library: Tailwind CSS, React 19, Lucide, Leaflet
+  database: MongoDB, SQLite
+  storage: Vercel Blob
+core_features:
+  - name: User Authentication
+    description: Phone-number based auth with OTP.
+    acceptance_criteria:
+      - Account is login-able with verified OTP code.
+      - Session persists after login.
+  - name: Ad Browsing
+    description: Users can search and filter ads by location, type, and price.
+    acceptance_criteria:
+      - Search returns relevant results.
+      - Filters (wilaya, category) correctly narrow down the list.
+  - name: Ad Creation
+    description: Users can add their own ads.
+    acceptance_criteria:
+      - Ad details are saved correctly.
+      - Images are uploaded to storage and displayed.
+  - name: User Account
+    description: Users can view their own listings and edit profile.
+    acceptance_criteria:
+      - User can see their own listings in the 'my' section.
+      - User can mark listings as favorites.
+user_flows:
+  - name: Add a new ad
+    steps:
+      - Login to the platform
+      - Navigate to /my/add
+      - Fill in form details
+      - Upload image
+      - Submit and verify on /my/list
+success_metrics:
+  - Correct routing for localized paths (/[locale]/...)
+  - API endpoints respond correctly to GET/POST
+  - Authentication flow completes successfully
