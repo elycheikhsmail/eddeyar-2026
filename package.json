@@ -48,6 +48,7 @@
     "axios-mock-adapter": "^2.1.0",
     "bcryptjs": "^3.0.3",
     "better-sqlite3": "^12.2.0",
+    "cross-env": "^10.1.0",
     "dotenv": "^16.4.7",
     "intl-locale-textinfo-polyfill": "^2.1.1",
     "jose": "^6.0.12",
