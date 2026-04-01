@@ -201,34 +201,24 @@ Flux JWT + Cookies HTTP-Only :
 
 ## Workflow Git
 
-### Branches
-```
-main          # Production — merge uniquement depuis dev, via PR revue
-dev           # Intégration — toutes les features passent par ici avant main
-claude/<nom>  # Branche de travail Claude par feature (ex: claude/auth-fix)
-```
+### Phase pré-production (actuelle)
+Le projet n'est pas encore en production. **Travailler directement sur `main`** est la stratégie retenue pour aller vite et économiser des tokens Claude.
 
-### Cycle de vie d'une feature
-```
-1. Créer la branche depuis dev
-   git checkout dev && git pull origin dev
-   git checkout -b claude/<nom-feature>
-
-2. Développer + committer sur claude/<nom-feature>
-
-3. Ouvrir une PR : claude/<nom-feature> → dev
-   gh pr create --base dev
-
-4. Review + merge dans dev
-
-5. Quand dev est stable → ouvrir une PR : dev → main
-   gh pr create --base main
+```bash
+git pull origin main          # Toujours puller avant de commencer
+# ... faire les modifications ...
+git add <fichiers>
+git commit -m "feat/fix: ..."
+git push origin main
 ```
 
-### Règles
-- Ne jamais committer directement sur `main` ou `dev`
-- Toute PR doit passer `pnpm run check-types` et `pnpm run build` avant merge
-- Les branches `claude/*` sont supprimées après merge
+### Règles minimales
+- Toujours `git pull` avant de commencer
+- Committer souvent avec des messages clairs
+- Ne jamais `git push --force` sur main
+
+### Quand repasser aux branches (plus tard)
+Dès qu'il y a : plusieurs développeurs, CI/CD actif, ou utilisateurs réels en production.
 
 ---
 
@@ -236,6 +226,6 @@ claude/<nom>  # Branche de travail Claude par feature (ex: claude/auth-fix)
 
 - **Dev local** : `pnpm dev` + Docker MongoDB
 - **Preview** : ngrok pour partage local
-- **Staging** : branche `dev` → Netlify / Firebase / Fly.io / Render
-- **Production** : branche `main` → VPS (Contabo / Hostinger)
+- **Staging** : Netlify / Firebase / Fly.io / Render
+- **Production** : VPS (Contabo / Hostinger)
 - **CI/CD** : GitHub Actions → build + check-types + deploy
