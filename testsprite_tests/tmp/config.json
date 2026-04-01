@@ -4,15 +4,15 @@
   "scope": "codebase",
   "localEndpoint": "http://localhost:3000/ar",
   "executionArgs": {
-    "projectName": "bold-curran",
-    "projectPath": "C:\\Users\\Dell\\Documents\\eddeyar\\rim-ebay-aut-2025-main\\eddeyar-2026\\.claude\\worktrees\\bold-curran",
+    "projectName": "dreamy-elbakyan",
+    "projectPath": "C:\\Users\\Dell\\Documents\\eddeyar\\rim-ebay-aut-2025-main\\eddeyar-2026\\.claude\\worktrees\\dreamy-elbakyan",
     "testIds": [],
-    "additionalInstruction": "",
-    "serverMode": "development",
+    "additionalInstruction": "Use phone number 36000000 and password Demo1234! for all login steps. Never use email format in the phone field.",
+    "serverMode": "production",
     "envs": {
       "API_KEY": "sk-user-QxMHs9LNNGjXHCwem1xBaHobDy_Yu7kxL82KXrSfGMEqhSzlAuIma81hSk1L62ExX48rVc3It1m3OqpmiVW-c7CYzBFLexhXNElYqLWGCLl6UoXa0YgTJOI0Gvp1NCFVX3U"
     }
   },
-  "serverPort": 63917,
-  "proxy": "http://9dd8d32d-d863-4eb1-a052-0b65d57213d4:RQipj4kp85XAFBYvbyA0cnxY5as0XQ72@tun.testsprite.com:8080"
+  "serverPort": 58835,
+  "proxy": "http://5f8839de-55fa-4739-a4c0-675a952a81a8:PG1a1prIrGzL9J2OOEMaMsozrDmgq6Ct@tun.testsprite.com:8080"
 }

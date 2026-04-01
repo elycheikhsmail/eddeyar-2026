@@ -24,7 +24,7 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:setup": "pnpm run mongo:init:test && pnpm run mongo:seed:test",
-    "testwithdata": "pnpm run mongo:delete:test && pnpm run mongo:seed:test && pnpm run build && pnpm run start:test",
+    "testwithdata": "pnpm run mongo:delete:test && pnpm run mongo:init:test && pnpm run mongo:seed:test && pnpm run build && pnpm run start:test",
     "migrate:options:mongo": "node --env-file=.env scripts/sqlite-options-to-mongodb.mjs"
   },
   "dependencies": {
