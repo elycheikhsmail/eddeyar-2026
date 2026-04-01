@@ -376,7 +376,7 @@ async function run() {
             depth: 2,
             priority: s.id,
             tag: "subcategorie",
-            parentID: s.parentID,
+            parentID: String(s.parentID),
             createdAt: now,
           },
         },
