@@ -1,43 +1,43 @@
 # CLAUDE.md — Eddeyar (Rim-eBay)
 
 Marketplace immobilière et généraliste ciblant le marché mauritanien.
-Stack : **Next.js 16 App Router + MongoDB + TypeScript + TailwindCSS + pnpm monorepo**.
+Stack : **Next.js 16 App Router + MongoDB + TypeScript + TailwindCSS + Bun**.
 
 ---
 
 ## Commandes essentielles
 
 ```bash
-pnpm install              # Installer les dépendances
-pnpm run dev              # Serveur de développement (Turbopack, port 3000)
-pnpm run build            # Build de production
-pnpm run start            # Serveur de production (port 3000)
-pnpm run start:test       # Serveur de production avec NODE_ENV=test (.env.test)
-pnpm run check-types      # Vérification TypeScript stricte (sans emit)
+bun install              # Installer les dépendances
+bun run dev              # Serveur de développement (Turbopack, port 3000)
+bun run build            # Build de production
+bun run start            # Serveur de production (port 3000)
+bun run start:test       # Serveur de production avec NODE_ENV=test (.env.test)
+bun run check-types      # Vérification TypeScript stricte (sans emit)
 
 # MongoDB (Docker)
 docker compose -f docker-compose.mongo.yml up -d   # Démarrer MongoDB
-pnpm run mongo:init       # Créer collections + index (première fois)
-pnpm run mongo:seed       # Insérer données de référence + démo (à faire après init)
-pnpm run mongo:delete     # Vider toutes les collections (données uniquement)
-pnpm run mongo:migrate    # Migrations
+bun run mongo:init       # Créer collections + index (première fois)
+bun run mongo:seed       # Insérer données de référence + démo (à faire après init)
+bun run mongo:delete     # Vider toutes les collections (données uniquement)
+bun run mongo:migrate    # Migrations
 
 # Base de test séparée (rim-ebay-test) — copier .env.test.exemple vers .env.test
-pnpm run test:e2e:setup   # init + seed la base de test (raccourci)
-pnpm run mongo:init:test  # init collections dans rim-ebay-test
-pnpm run mongo:seed:test  # seed données dans rim-ebay-test
-pnpm run mongo:delete:test # vider toutes les collections dans rim-ebay-test
+bun run test:e2e:setup   # init + seed la base de test (raccourci)
+bun run mongo:init:test  # init collections dans rim-ebay-test
+bun run mongo:seed:test  # seed données dans rim-ebay-test
+bun run mongo:delete:test # vider toutes les collections dans rim-ebay-test
 
 # Pipeline tests avec données fraîches (delete → seed → build → start:test)
-pnpm run testwithdata
+bun run testwithdata
 
 # Tests E2E
-pnpm run test:e2e         # Playwright headless
-pnpm run test:e2e:ui      # Playwright mode interactif
+bun run test:e2e         # Playwright headless
+bun run test:e2e:ui      # Playwright mode interactif
 
 # Backup
-pnpm run backup:db
-pnpm run restore:temp
+bun run backup:db
+bun run restore:temp
 ```
 
 ---
@@ -196,6 +196,19 @@ Flux JWT + Cookies HTTP-Only :
 - Rapports HTML générés automatiquement
 - Dossiers : `tests/` (actif), `e2e/` (exemples legacy), `testsprite_tests/` (TestSprite)
 - Config : `playwright.config.ts` — Chromium, Firefox, WebKit
+
+### MCP TestSprite — problème de connexion connu
+
+**Symptôme :** `Failed to reconnect to TestSprite` au démarrage de Claude Code.
+
+**Cause :** Le serveur MCP est lancé via `bunx @testsprite/testsprite-mcp@latest` (voir `.mcp.json`). `bunx` résout/télécharge les dépendances à chaque premier lancement à froid, ce qui dépasse le timeout de connexion MCP de Claude Code.
+
+**Solution :** Faire `/mcp` dans Claude Code puis **Reconnect** sur TestSprite. La reconnexion manuelle réussit car le cache `bunx` est déjà chaud.
+
+**Solution permanente (optionnelle) :** Installer le package globalement pour éliminer le délai de démarrage :
+```bash
+bun add -g @testsprite/testsprite-mcp
+```
 
 ---
 
