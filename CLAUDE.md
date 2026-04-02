@@ -233,19 +233,6 @@ Flux JWT + Cookies HTTP-Only :
 - Dossiers : `tests/` (actif), `e2e/` (exemples legacy), `testsprite_tests/` (TestSprite)
 - Config : `playwright.config.ts` — Chromium, Firefox, WebKit
 
-### MCP TestSprite — problème de connexion connu
-
-**Symptôme :** `Failed to reconnect to TestSprite` au démarrage de Claude Code.
-
-**Cause :** Le serveur MCP est lancé via `bunx @testsprite/testsprite-mcp@latest` (voir `.mcp.json`). `bunx` résout/télécharge les dépendances à chaque premier lancement à froid, ce qui dépasse le timeout de connexion MCP de Claude Code.
-
-**Solution :** Faire `/mcp` dans Claude Code puis **Reconnect** sur TestSprite. La reconnexion manuelle réussit car le cache `bunx` est déjà chaud.
-
-**Solution permanente (optionnelle) :** Installer le package globalement pour éliminer le délai de démarrage :
-```bash
-bun add -g @testsprite/testsprite-mcp
-```
-
 ---
 
 ## Workflow Git
