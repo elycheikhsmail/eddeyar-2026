@@ -83,6 +83,7 @@
     "@playwright/test": "^1.58.1",
     "@testsprite/testsprite-mcp": "^0.0.36",
     "@types/better-sqlite3": "^7.6.13",
+    "@types/bun": "^1.3.11",
     "@types/node": "^22.1.0",
     "@types/nodemailer": "^6.4.17",
     "@types/react": "19.2.14",
