@@ -67,3 +67,6 @@ node_modules/
 # Claude Code & MCP (sensitive keys)
 .claude/
 .mcp.json
+
+# TestSprite compiled binaries
+.claude/bin/

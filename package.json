@@ -26,7 +26,7 @@
     "test:e2e:setup": "bun run mongo:init:test && bun run mongo:seed:test",
     "testwithdata": "bun run mongo:delete:test && bun run mongo:init:test && bun run mongo:seed:test && bun run build && bun run start:test",
     "migrate:options:mongo": "bun --env-file=.env scripts/sqlite-options-to-mongodb.mjs",
-    "testsprite:build": "bun scripts/build-testsprite-executable.ts"
+    "testsprite:build": "bun scripts/testsprite-mcp-js-server-to-executable.ts"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.6.0",
