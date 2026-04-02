@@ -168,13 +168,13 @@ export default function AnnonceDetailUI({
       {/* --- Image Gallery Section --- */}
       <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden mb-6" dir="ltr">
         {localAnnonce?.haveImage && Array.isArray(localAnnonce.images) && localAnnonce.images.length > 0 ? (
-          <Carousel 
-            showThumbs={false} 
+          <Carousel
+            showThumbs={false}
             showStatus={false}
-            infiniteLoop 
-            autoPlay 
+            infiniteLoop
+            autoPlay
             interval={5000}
-            key={`carousel-${lang}-${localAnnonce.images.length}`} 
+            key={`carousel-${lang}-${localAnnonce.images.length}`}
             className="rounded-t-3xl overflow-hidden detail-carousel"
           >
             {localAnnonce.images.map((item, idx) => (
@@ -190,6 +190,15 @@ export default function AnnonceDetailUI({
               </div>
             ))}
           </Carousel>
+        ) : localAnnonce?.haveImage && localAnnonce.firstImagePath ? (
+          /* firstImagePath disponible avant le fetch des images */
+          <div className="relative w-full h-64 sm:h-80 lg:h-[500px] overflow-hidden bg-gray-50">
+            <img
+              src={getImageUrl(localAnnonce.firstImagePath)}
+              alt={localAnnonce.title ?? "image"}
+              className="w-full h-full object-contain"
+            />
+          </div>
         ) : (
           <NoImage />
         )}

@@ -260,7 +260,7 @@ Dès qu'il y a : plusieurs développeurs, CI/CD actif, ou utilisateurs réels en
 
 ## Déploiement
 
-- **Dev local** : `pnpm dev` + Docker MongoDB
+- **Dev local** : `bun dev` + Docker MongoDB
 - **Preview** : ngrok pour partage local
 - **Staging** : Netlify / Firebase / Fly.io / Render
 - **Production** : VPS (Contabo / Hostinger)
