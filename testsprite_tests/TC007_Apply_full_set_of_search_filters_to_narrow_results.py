@@ -33,13 +33,31 @@ async def run_test():
         # -> Navigate to http://localhost:3000/ar
         await page.goto("http://localhost:3000/ar", wait_until="commit", timeout=10000)
         
-        # -> Navigate to http://localhost:3000/ar
-        await page.goto("http://localhost:3000/ar", wait_until="commit", timeout=10000)
-        
-        # --> Test passed — verified by AI agent
+        # -> Open the 'نوع' (Type) dropdown so an option can be selected.
         frame = context.pages[-1]
-        current_url = await frame.evaluate("() => window.location.href")
-        assert current_url is not None, "Test completed successfully"
+        # Click element
+        elem = frame.locator('xpath=/html/body/main/div[3]/aside/div/div/aside/div/div/form/div/div/select').nth(0)
+        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
+        
+        frame = context.pages[-1]
+        # Input text
+        elem = frame.locator('xpath=/html/body/main/div/div/div/div/div/input').nth(0)
+        await page.wait_for_timeout(3000); await elem.fill('عقار')
+        
+        frame = context.pages[-1]
+        # Input text
+        elem = frame.locator('xpath=/html/body/main/div[3]/aside/div/div/aside/div/div/form/div[6]/input').nth(0)
+        await page.wait_for_timeout(3000); await elem.fill('1000000')
+        
+        # -> Open the category dropdown (اختر الفئة) so a category option can be chosen (index 628).
+        frame = context.pages[-1]
+        # Click element
+        elem = frame.locator('xpath=/html/body/main/div[3]/aside/div/div/aside/div/div/form/div[2]/div/select').nth(0)
+        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
+        
+        # --> Assertions to verify final state
+        frame = context.pages[-1]
+        await expect(frame.locator('text=نتائج البحث').first).to_be_visible(timeout=3000)
         await asyncio.sleep(5)
 
     finally:

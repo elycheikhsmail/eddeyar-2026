@@ -33,38 +33,32 @@ async def run_test():
         # -> Navigate to http://localhost:3000/ar
         await page.goto("http://localhost:3000/ar", wait_until="commit", timeout=10000)
         
-        # -> Navigate to http://localhost:3000/ar
-        await page.goto("http://localhost:3000/ar", wait_until="commit", timeout=10000)
+        # -> Click the 'إنشاء حساب' (Create account) link to open the registration page (click element index 93).
+        frame = context.pages[-1]
+        # Click element
+        elem = frame.locator('xpath=/html/body/nav/div[2]/div/div/a[3]').nth(0)
+        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
         
-        # -> Navigate to the registration page at /ar/p/users/register and wait for the registration form to load.
-        await page.goto("http://localhost:3000/ar/p/users/register", wait_until="commit", timeout=10000)
-        
-        # -> Fill the phone (36000000), fill password (Demo1234!) and confirm password, then submit the registration form.
+        # -> Fill the phone, password, and confirm password fields, then submit the registration form (click submit).
         frame = context.pages[-1]
         # Input text
         elem = frame.locator('xpath=/html/body/main/div/form/div/input').nth(0)
-        await page.wait_for_timeout(3000); await elem.fill('36000000')
+        await page.wait_for_timeout(3000); await elem.fill('30000001')
         
         frame = context.pages[-1]
         # Input text
         elem = frame.locator('xpath=/html/body/main/div/form/div[2]/div/input').nth(0)
-        await page.wait_for_timeout(3000); await elem.fill('Demo1234!')
+        await page.wait_for_timeout(3000); await elem.fill('Password123!')
         
         frame = context.pages[-1]
         # Input text
         elem = frame.locator('xpath=/html/body/main/div/form/div[3]/div/input').nth(0)
-        await page.wait_for_timeout(3000); await elem.fill('Demo1234!')
+        await page.wait_for_timeout(3000); await elem.fill('Password123!')
         
-        # -> Click the 'انشاء حساب و اضافة اعلان الآن' submit button to submit the registration form and wait for the page to respond (then verify redirection to the OTP verification page).
+        # -> Click the submit button to submit the registration form, then verify that the app redirects to the OTP verification page.
         frame = context.pages[-1]
         # Click element
         elem = frame.locator('xpath=/html/body/main/div/form/div[5]/button').nth(0)
-        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
-        
-        # -> Click the 'Reload' button on the error page to retry loading the registration/OTP flow, then wait for the page to respond.
-        frame = context.pages[-1]
-        # Click element
-        elem = frame.locator('xpath=/html/body/div/div/div[2]/div/button').nth(0)
         await page.wait_for_timeout(3000); await elem.click(timeout=5000)
         
         # --> Assertions to verify final state

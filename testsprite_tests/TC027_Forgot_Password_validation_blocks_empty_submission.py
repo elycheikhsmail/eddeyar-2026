@@ -33,10 +33,22 @@ async def run_test():
         # -> Navigate to http://localhost:3000/ar
         await page.goto("http://localhost:3000/ar", wait_until="commit", timeout=10000)
         
-        # -> Navigate to /ar/p/users/forgot-password and load the forgot-password page
+        # -> Click the 'تسجيل الدخول' (login) link to open the login page, then navigate to the forgot-password flow.
+        frame = context.pages[-1]
+        # Click element
+        elem = frame.locator('xpath=/html/body/nav/div[2]/div/div/a[2]').nth(0)
+        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
+        
+        # -> Click the 'نسيت كلمة المرور؟' (forgot password) button to open the forgot-password flow and then attempt to submit the form without entering a phone number.
+        frame = context.pages[-1]
+        # Click element
+        elem = frame.locator('xpath=/html/body/main/div/div[2]/button[2]').nth(0)
+        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
+        
+        # -> Open the forgot-password page directly by navigating to /ar/p/users/forgot-password so the forgot-password form can be submitted (or validated) without entering a phone number.
         await page.goto("http://localhost:3000/ar/p/users/forgot-password", wait_until="commit", timeout=10000)
         
-        # -> Submit the forgot-password form without entering a phone by clicking the submit button (index 658), then check for a phone validation error message.
+        # -> Click the 'إرسال الرمز' submit button without entering a phone number to trigger required-field validation and observe any validation message.
         frame = context.pages[-1]
         # Click element
         elem = frame.locator('xpath=/html/body/div[3]/div/form/div[2]/button').nth(0)

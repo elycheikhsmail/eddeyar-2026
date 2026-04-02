@@ -33,29 +33,26 @@ async def run_test():
         # -> Navigate to http://localhost:3000/ar
         await page.goto("http://localhost:3000/ar", wait_until="commit", timeout=10000)
         
-        # -> Navigate to http://localhost:3000/ar
-        await page.goto("http://localhost:3000/ar", wait_until="commit", timeout=10000)
-        
-        # -> Navigate to /ar/p/users/register to find the registration form (or OTP flow) and continue the test.
+        # -> Navigate to /ar/p/users/register to load the registration form (use direct navigation since there are no interactive elements on the current page).
         await page.goto("http://localhost:3000/ar/p/users/register", wait_until="commit", timeout=10000)
         
-        # -> Fill the phone and password fields then submit the registration form to reach the OTP verification page.
+        # -> Fill the phone, password, and confirm-password fields, submit the registration form, then check for the OTP verification page.
         frame = context.pages[-1]
         # Input text
         elem = frame.locator('xpath=/html/body/main/div/form/div/input').nth(0)
-        await page.wait_for_timeout(3000); await elem.fill('36000000')
+        await page.wait_for_timeout(3000); await elem.fill('30000001')
         
         frame = context.pages[-1]
         # Input text
         elem = frame.locator('xpath=/html/body/main/div/form/div[2]/div/input').nth(0)
-        await page.wait_for_timeout(3000); await elem.fill('Demo1234!')
+        await page.wait_for_timeout(3000); await elem.fill('Password123!')
         
         frame = context.pages[-1]
         # Input text
         elem = frame.locator('xpath=/html/body/main/div/form/div[3]/div/input').nth(0)
-        await page.wait_for_timeout(3000); await elem.fill('Demo1234!')
+        await page.wait_for_timeout(3000); await elem.fill('Password123!')
         
-        # -> Click the 'انشاء حساب و اضافة اعلان الآن' submit button (index 137) to submit the registration and trigger the OTP verification page.
+        # -> Click the 'انشاء حساب و اضافة اعلان الآن' submit button to send the registration and navigate to the OTP verification page, then inspect the page for a 4-digit OTP input field.
         frame = context.pages[-1]
         # Click element
         elem = frame.locator('xpath=/html/body/main/div/form/div[5]/button').nth(0)

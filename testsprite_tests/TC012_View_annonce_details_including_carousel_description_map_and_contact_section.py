@@ -33,10 +33,16 @@ async def run_test():
         # -> Navigate to http://localhost:3000/ar
         await page.goto("http://localhost:3000/ar", wait_until="commit", timeout=10000)
         
+        # -> Click an annonce card to open its detail page (open the first article).
+        frame = context.pages[-1]
+        # Click element
+        elem = frame.locator('xpath=/html/body/main/div[3]/section/div/div[2]/article').nth(0)
+        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
+        
         # --> Assertions to verify final state
         frame = context.pages[-1]
-        await expect(frame.locator('text=Price').first).to_be_visible(timeout=3000)
-        await expect(frame.locator('text=Contact Seller').first).to_be_visible(timeout=3000)
+        await expect(frame.locator('xpath=//main[.//div[contains(@class,"carousel") or contains(@class,"gallery")] and .//*[contains(. ,"Price")]]').first).to_be_visible(timeout=3000)
+        await expect(frame.locator('xpath=//main[.//iframe[contains(@src,"maps") or contains(@class,"map")] and .//*[contains(. ,"Contact") or contains(. ,"Seller")]]').first).to_be_visible(timeout=3000)
         await asyncio.sleep(5)
 
     finally:

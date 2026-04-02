@@ -33,10 +33,13 @@ async def run_test():
         # -> Navigate to http://localhost:3000/ar
         await page.goto("http://localhost:3000/ar", wait_until="commit", timeout=10000)
         
-        # -> Navigate to /ar/p/users/connexion to reach the login page.
-        await page.goto("http://localhost:3000/ar/p/users/connexion", wait_until="commit", timeout=10000)
+        # -> Open the login page by clicking the 'تسجيل الدخول' link.
+        frame = context.pages[-1]
+        # Click element
+        elem = frame.locator('xpath=/html/body/nav/div[2]/div/div/a[2]').nth(0)
+        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
         
-        # -> Fill the phone field with 36000000, fill the password with Demo1234!, submit the form, then verify redirection to the home page.
+        # -> Fill the phone field with 36000000 (next immediate action) and then fill the password and submit the form.
         frame = context.pages[-1]
         # Input text
         elem = frame.locator('xpath=/html/body/main/div/form/div/input').nth(0)
@@ -45,29 +48,11 @@ async def run_test():
         frame = context.pages[-1]
         # Input text
         elem = frame.locator('xpath=/html/body/main/div/form/div[2]/div/input').nth(0)
-        await page.wait_for_timeout(3000); await elem.fill('Demo1234!')
+        await page.wait_for_timeout(3000); await elem.fill('password123')
         
         frame = context.pages[-1]
         # Click element
         elem = frame.locator('xpath=/html/body/main/div/form/div[3]/button').nth(0)
-        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
-        
-        # -> Click the 'تسجيل الدخول' (connexion) link to reveal the login form so the login result can be re-checked or retried.
-        frame = context.pages[-1]
-        # Click element
-        elem = frame.locator('xpath=/html/body/nav/div[2]/div/div/a[2]').nth(0)
-        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
-        
-        # -> Click the Reload button to try to recover the site, wait for the page to load, then check for the login/home UI to verify redirection.
-        frame = context.pages[-1]
-        # Click element
-        elem = frame.locator('xpath=/html/body/div/div/div[2]/div/button').nth(0)
-        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
-        
-        # -> Click the Reload button (index 329), wait for the page to load, then re-check the page for the login form or the home UI to verify redirection.
-        frame = context.pages[-1]
-        # Click element
-        elem = frame.locator('xpath=/html/body/div/div/div[2]/div/button').nth(0)
         await page.wait_for_timeout(3000); await elem.click(timeout=5000)
         
         # --> Assertions to verify final state

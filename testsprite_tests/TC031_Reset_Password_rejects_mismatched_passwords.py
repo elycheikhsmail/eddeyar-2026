@@ -33,12 +33,40 @@ async def run_test():
         # -> Navigate to http://localhost:3000/ar
         await page.goto("http://localhost:3000/ar", wait_until="commit", timeout=10000)
         
-        # -> Navigate directly to http://localhost:3000/ar/p/users/reset-password to reach the reset password form (explicit navigation requested).
+        # -> Navigate to /ar/p/users/reset-password
         await page.goto("http://localhost:3000/ar/p/users/reset-password", wait_until="commit", timeout=10000)
+        
+        # -> Fill the OTP field with a valid code.
+        frame = context.pages[-1]
+        # Input text
+        elem = frame.locator('xpath=/html/body/div[3]/div/div[2]/form/div/input').nth(0)
+        await page.wait_for_timeout(3000); await elem.fill('123456')
+        
+        frame = context.pages[-1]
+        # Input text
+        elem = frame.locator('xpath=/html/body/div[3]/div/div[2]/form/div[2]/div/input').nth(0)
+        await page.wait_for_timeout(3000); await elem.fill('Password123!')
+        
+        frame = context.pages[-1]
+        # Input text
+        elem = frame.locator('xpath=/html/body/div[3]/div/div[2]/form/div[3]/div/input').nth(0)
+        await page.wait_for_timeout(3000); await elem.fill('Password1234!')
+        
+        # -> Click the 'إعادة تعيين' (Reset) submit button (index 988) to submit the form.
+        frame = context.pages[-1]
+        # Click element
+        elem = frame.locator('xpath=/html/body/div[3]/div/div[2]/form/div[4]/button').nth(0)
+        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
+        
+        # -> Click the 'إعادة تعيين' (Reset) submit button (index 988) to submit the form and then verify that a password mismatch validation error is visible.
+        frame = context.pages[-1]
+        # Click element
+        elem = frame.locator('xpath=/html/body/div[3]/div/div[2]/form/div[4]/button').nth(0)
+        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
         
         # --> Assertions to verify final state
         frame = context.pages[-1]
-        await expect(frame.locator('text=Passwords do not match').first).to_be_visible(timeout=3000)
+        await expect(frame.locator('text=كلمة المرور وتأكيدها غير متطابقتين').first).to_be_visible(timeout=3000)
         await asyncio.sleep(5)
 
     finally:

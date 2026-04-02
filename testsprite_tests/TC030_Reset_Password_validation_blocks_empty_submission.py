@@ -33,10 +33,10 @@ async def run_test():
         # -> Navigate to http://localhost:3000/ar
         await page.goto("http://localhost:3000/ar", wait_until="commit", timeout=10000)
         
-        # -> Navigate to /ar/p/users/reset-password (explicit path from the test steps).
+        # -> Navigate to /ar/p/users/reset-password and open the reset-password form
         await page.goto("http://localhost:3000/ar/p/users/reset-password", wait_until="commit", timeout=10000)
         
-        # -> Click the 'إعادة تعيين' (Reset) submit button to submit the form with empty fields and trigger validation (click element index 148).
+        # -> Click the 'إعادة تعيين' submit button (index 987) to submit the form with empty required fields, then wait briefly so any validation UI can appear.
         frame = context.pages[-1]
         # Click element
         elem = frame.locator('xpath=/html/body/div[3]/div/div[2]/form/div[4]/button').nth(0)

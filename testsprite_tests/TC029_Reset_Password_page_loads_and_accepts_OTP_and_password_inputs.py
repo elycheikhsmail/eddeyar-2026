@@ -33,10 +33,10 @@ async def run_test():
         # -> Navigate to http://localhost:3000/ar
         await page.goto("http://localhost:3000/ar", wait_until="commit", timeout=10000)
         
-        # -> Navigate to http://localhost:3000/ar/p/users/reset-password
+        # -> Navigate to http://localhost:3000/ar/p/users/reset-password (per explicit test step).
         await page.goto("http://localhost:3000/ar/p/users/reset-password", wait_until="commit", timeout=10000)
         
-        # -> Fill the OTP field with 123456, fill new password and confirm with Demo1234!, then submit the reset form.
+        # -> Fill a valid OTP into the OTP field (index 971), then fill new password (index 972) and confirm password (index 973), then submit the form (click index 976). Then wait for the page response and verify the page remains usable.
         frame = context.pages[-1]
         # Input text
         elem = frame.locator('xpath=/html/body/div[3]/div/div[2]/form/div/input').nth(0)
@@ -45,12 +45,18 @@ async def run_test():
         frame = context.pages[-1]
         # Input text
         elem = frame.locator('xpath=/html/body/div[3]/div/div[2]/form/div[2]/div/input').nth(0)
-        await page.wait_for_timeout(3000); await elem.fill('Demo1234!')
+        await page.wait_for_timeout(3000); await elem.fill('NewPassword123!')
         
         frame = context.pages[-1]
         # Input text
         elem = frame.locator('xpath=/html/body/div[3]/div/div[2]/form/div[3]/div/input').nth(0)
-        await page.wait_for_timeout(3000); await elem.fill('Demo1234!')
+        await page.wait_for_timeout(3000); await elem.fill('NewPassword123!')
+        
+        # -> Click the submit button (index 976) and wait for the page response so the page can be verified as still usable.
+        frame = context.pages[-1]
+        # Click element
+        elem = frame.locator('xpath=/html/body/div[3]/div/div[2]/form/div[4]/button').nth(0)
+        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
         
         # --> Test passed — verified by AI agent
         frame = context.pages[-1]

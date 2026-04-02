@@ -33,67 +33,16 @@ async def run_test():
         # -> Navigate to http://localhost:3000/ar
         await page.goto("http://localhost:3000/ar", wait_until="commit", timeout=10000)
         
-        # -> Navigate to http://localhost:3000/ar
-        await page.goto("http://localhost:3000/ar", wait_until="commit", timeout=10000)
-        
-        # -> Click an annonce card to open its detail page (use visible card button).
+        # -> Click an annonce card to open its detail page (click the first listing card).
         frame = context.pages[-1]
         # Click element
-        elem = frame.locator('xpath=/html/body/main/div[3]/section/div/div[2]/article[2]/div[2]/button').nth(0)
+        elem = frame.locator('xpath=/html/body/main/div[3]/section/div/div[2]/article').nth(0)
         await page.wait_for_timeout(3000); await elem.click(timeout=5000)
         
-        # -> Verify the annonce detail page is displayed. If the detail page is not visible, open a listing detail by clicking a visible card button.
+        # -> Open the annonce detail page by clicking the listing title (or card) so the detail view is displayed, then verify detail content appears.
         frame = context.pages[-1]
         # Click element
-        elem = frame.locator('xpath=/html/body/main/div[3]/section/div/div[2]/article[3]/div[2]/button').nth(0)
-        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
-        
-        # -> Click a visible annonce card button (index 244) to open its detail page and then verify the detail page is displayed.
-        frame = context.pages[-1]
-        # Click element
-        elem = frame.locator('xpath=/html/body/main/div[3]/section/div/div[2]/article[2]/div[2]/button').nth(0)
-        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
-        
-        # -> Click a visible annonce card (index 261) to open its detail page, then wait for the SPA to render the detail and verify it opened.
-        frame = context.pages[-1]
-        # Click element
-        elem = frame.locator('xpath=/html/body/main/div[3]/section/div/div[2]/article[3]/div[2]/button').nth(0)
-        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
-        
-        # -> Click a visible annonce card (Grande villa card at index 244) to open its detail page, then wait for the SPA to render the detail and verify it opened.
-        frame = context.pages[-1]
-        # Click element
-        elem = frame.locator('xpath=/html/body/main/div[3]/section/div/div[2]/article[2]/div[2]/button').nth(0)
-        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
-        
-        # -> Click a visible annonce card (index 278) to open its detail page and then wait for the SPA to render and show the detail view.
-        frame = context.pages[-1]
-        # Click element
-        elem = frame.locator('xpath=/html/body/main/div[3]/section/div/div[2]/article[4]/div[2]/button').nth(0)
-        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
-        
-        # -> Click the annonce card button at index 295 to open its detail page, then wait 2 seconds for the SPA to render and show the detail view.
-        frame = context.pages[-1]
-        # Click element
-        elem = frame.locator('xpath=/html/body/main/div[3]/section/div/div[2]/article[5]/div[2]/button').nth(0)
-        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
-        
-        # -> Click the visible annonce card button for the 'Grande villa' card (index 244) and wait for the SPA to render the annonce detail page to verify it opened.
-        frame = context.pages[-1]
-        # Click element
-        elem = frame.locator('xpath=/html/body/main/div[3]/section/div/div[2]/article[2]/div[2]/button').nth(0)
-        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
-        
-        # -> Click a visible annonce card (index 329) to open its detail page, wait 2 seconds for the SPA to render, and then check whether the annonce detail page appears.
-        frame = context.pages[-1]
-        # Click element
-        elem = frame.locator('xpath=/html/body/main/div[3]/section/div/div[2]/article[7]/div[2]/button').nth(0)
-        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
-        
-        # -> Click the annonce card button at index 312 (iPhone 15 Pro card) to try to open its detail page, wait 2 seconds, then check whether the annonce detail page appears.
-        frame = context.pages[-1]
-        # Click element
-        elem = frame.locator('xpath=/html/body/main/div[3]/section/div/div[2]/article[6]/div[2]/button').nth(0)
+        elem = frame.locator('xpath=/html/body/main/div[3]/section/div/div[2]/article/div[3]/h2').nth(0)
         await page.wait_for_timeout(3000); await elem.click(timeout=5000)
         
         # --> Test passed — verified by AI agent

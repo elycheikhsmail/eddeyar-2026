@@ -33,27 +33,30 @@ async def run_test():
         # -> Navigate to http://localhost:3000/ar
         await page.goto("http://localhost:3000/ar", wait_until="commit", timeout=10000)
         
-        # -> Navigate to http://localhost:3000/ar
-        await page.goto("http://localhost:3000/ar", wait_until="commit", timeout=10000)
+        # -> Open the login page by clicking the 'تسجيل الدخول' (Login) button so the forgot-password link can be accessed.
+        frame = context.pages[-1]
+        # Click element
+        elem = frame.locator('xpath=/html/body/nav/div[2]/div/div/a[2]').nth(0)
+        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
         
-        # -> Navigate to /ar/p/users/forgot-password and load the forgot password page
+        # -> Click the 'نسيت كلمة المرور؟' (forgot password) button to open the forgot-password page.
+        frame = context.pages[-1]
+        # Click element
+        elem = frame.locator('xpath=/html/body/main/div/div[2]/button[2]').nth(0)
+        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
+        
+        # -> Navigate to the forgot-password page at /ar/p/users/forgot-password so the page and its phone input can be verified.
         await page.goto("http://localhost:3000/ar/p/users/forgot-password", wait_until="commit", timeout=10000)
         
-        # -> Fill the phone field (input index 644) with 36000000 and click the submit button (index 646).
+        # -> Fill the phone input (index 1177) with a valid phone number and submit the form (click index 1310).
         frame = context.pages[-1]
         # Input text
         elem = frame.locator('xpath=/html/body/div[3]/div/form/div/input').nth(0)
-        await page.wait_for_timeout(3000); await elem.fill('36000000')
+        await page.wait_for_timeout(3000); await elem.fill('36000001')
         
         frame = context.pages[-1]
         # Click element
         elem = frame.locator('xpath=/html/body/div[3]/div/form/div[2]/button').nth(0)
-        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
-        
-        # -> Click the Reload button again to attempt to recover the site UI (index 202).
-        frame = context.pages[-1]
-        # Click element
-        elem = frame.locator('xpath=/html/body/div/div/div[2]/div/button').nth(0)
         await page.wait_for_timeout(3000); await elem.click(timeout=5000)
         
         # --> Test passed — verified by AI agent

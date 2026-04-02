@@ -33,29 +33,26 @@ async def run_test():
         # -> Navigate to http://localhost:3000/ar
         await page.goto("http://localhost:3000/ar", wait_until="commit", timeout=10000)
         
-        # -> Navigate to /ar/p/users/connexion and load the login form
-        await page.goto("http://localhost:3000/ar/p/users/connexion", wait_until="commit", timeout=10000)
+        # -> Click the 'تسجيل الدخول' (login) link to open the login page.
+        frame = context.pages[-1]
+        # Click element
+        elem = frame.locator('xpath=/html/body/nav/div[2]/div/div/a[2]').nth(0)
+        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
         
-        # -> Fill the phone and password fields with the invalid credentials and click the submit button to trigger the invalid-credentials response.
+        # -> Fill an invalid phone number into the phone number field (index 983).
         frame = context.pages[-1]
         # Input text
         elem = frame.locator('xpath=/html/body/main/div/form/div/input').nth(0)
-        await page.wait_for_timeout(3000); await elem.fill('36000000')
+        await page.wait_for_timeout(3000); await elem.fill('12345')
         
         frame = context.pages[-1]
         # Input text
         elem = frame.locator('xpath=/html/body/main/div/form/div[2]/div/input').nth(0)
-        await page.wait_for_timeout(3000); await elem.fill('Demo1234!')
+        await page.wait_for_timeout(3000); await elem.fill('wrongpassword')
         
         frame = context.pages[-1]
         # Click element
         elem = frame.locator('xpath=/html/body/main/div/form/div[3]/button').nth(0)
-        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
-        
-        # -> Reload the page to restore the site (click the Reload button) and then wait for the login UI to appear so the invalid-credentials error can be checked or re-triggered.
-        frame = context.pages[-1]
-        # Click element
-        elem = frame.locator('xpath=/html/body/div/div/div[2]/div/button').nth(0)
         await page.wait_for_timeout(3000); await elem.click(timeout=5000)
         
         # --> Assertions to verify final state

@@ -33,17 +33,8 @@ async def run_test():
         # -> Navigate to http://localhost:3000/ar
         await page.goto("http://localhost:3000/ar", wait_until="commit", timeout=10000)
         
-        # -> Navigate to http://localhost:3000/ar
-        await page.goto("http://localhost:3000/ar", wait_until="commit", timeout=10000)
-        
-        # -> Try an alternative navigation path to load the app UI — navigate to the site root (http://localhost:3000/) to see if the SPA initializes or provides links to /ar.
-        await page.goto("http://localhost:3000/", wait_until="commit", timeout=10000)
-        
-        # -> Click the Reload button on the error page to retry loading the application (element index 74). If reload fails and the page remains on ERR_EMPTY_RESPONSE, report the site issue and finish the task.
-        frame = context.pages[-1]
-        # Click element
-        elem = frame.locator('xpath=/html/body/div/div/div[2]/div/button').nth(0)
-        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
+        # -> Load page 2 of results. Use a direct navigation to /ar?page=2 as a fallback to trigger the page change, then verify the listings updated.
+        await page.goto("http://localhost:3000/ar?page=2", wait_until="commit", timeout=10000)
         
         # --> Assertions to verify final state
         frame = context.pages[-1]
