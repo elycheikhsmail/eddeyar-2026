@@ -12,7 +12,14 @@
       "mcp__TestSprite__testsprite_generate_standardized_prd",
       "mcp__TestSprite__testsprite_generate_frontend_test_plan",
       "mcp__TestSprite__testsprite_generate_code_and_execute",
-      "mcp__TestSprite__testsprite_open_test_result_dashboard"
+      "mcp__TestSprite__testsprite_open_test_result_dashboard",
+      "Bash(bun --version)",
+      "Bash(bunx --version)",
+      "Bash(bunx @testsprite/testsprite-mcp@latest --help)"
     ]
-  }
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "TestSprite"
+  ]
 }
