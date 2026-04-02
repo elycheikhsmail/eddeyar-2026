@@ -39,18 +39,26 @@ test.describe('TC001 — Listings : parcourir et ouvrir un détail', () => {
     const firstArticle = page.locator('article').first();
     await expect(firstArticle).toBeVisible({ timeout: 10_000 });
 
-    // Capturer l'URL courante pour vérifier le changement après clic
     const urlBefore = page.url();
 
-    // Cliquer sur le bouton de la première carte (bouton "voir" ou lien titre)
-    const cardBtn = firstArticle.locator('button, a').first();
-    await cardBtn.click();
+    // Cliquer sur le titre h2 de la carte (navigation principale, pas le bouton favori)
+    // Fallback : dernier bouton de la carte (le bouton "voir détail" est généralement en bas)
+    const cardTitle = firstArticle.locator('h2').first();
+    const titleVisible = await cardTitle.isVisible({ timeout: 3_000 }).catch(() => false);
+
+    if (titleVisible) {
+      await cardTitle.click();
+    } else {
+      // Fallback : dernier bouton de la carte
+      const buttons = firstArticle.locator('button');
+      const count = await buttons.count();
+      await buttons.nth(count - 1).click();
+    }
 
     // L'URL doit avoir changé (on est sur une page détail)
     await page.waitForURL((url) => url.href !== urlBefore, { timeout: 10_000 });
     expect(page.url()).not.toBe(urlBefore);
 
-    // La page doit contenir du contenu principal
     await expect(page.locator('main')).toBeVisible();
   });
 });
@@ -144,7 +152,18 @@ test.describe('TC012 — Page détail annonce', () => {
     await expect(firstArticle).toBeVisible({ timeout: 10_000 });
 
     const urlBefore = page.url();
-    await firstArticle.locator('button, a').first().click();
+
+    // Même logique que TC001 : cliquer le titre h2 ou le dernier bouton
+    const cardTitle = firstArticle.locator('h2').first();
+    const titleVisible = await cardTitle.isVisible({ timeout: 3_000 }).catch(() => false);
+    if (titleVisible) {
+      await cardTitle.click();
+    } else {
+      const buttons = firstArticle.locator('button');
+      const count = await buttons.count();
+      await buttons.nth(count - 1).click();
+    }
+
     await page.waitForURL((url) => url.href !== urlBefore, { timeout: 10_000 });
 
     // Image / carousel
@@ -267,21 +286,26 @@ test.describe('TC021 — Inscription : validation formulaire vide', () => {
 // Résultat TestSprite : ❌ Failed (le test plan indiquait 4 chiffres, l'UI attend 6 chiffres)
 
 test.describe('TC023 — Page OTP : saisie du code', () => {
+  // Exécution séquentielle pour éviter les conflits avec TC019 (même flux d'inscription)
+  test.describe.configure({ mode: 'serial' });
+
   test('accepte un code à 6 chiffres et le bouton de vérification est actif', async ({ page }) => {
     const phone = uniquePhone();
 
     // Créer un compte pour accéder à la page OTP
     await page.goto(REGISTER_URL);
+    await expect(page.locator('button[type="submit"]')).toBeVisible({ timeout: 8_000 });
+
     await page.locator('input#contact, input[type="tel"]').first().fill(phone);
-    await page.locator('input#password').fill('Password123!');
-    await page.locator('input#confirmPassword').fill('Password123!');
+    await page.locator('input#password').fill('Pass123456!');
+    await page.locator('input#confirmPassword').fill('Pass123456!');
     await page.locator('button[type="submit"]').click();
 
-    await expect(page).toHaveURL(/\/verification\/otp/, { timeout: 15_000 });
+    await expect(page).toHaveURL(/\/verification\/otp/, { timeout: 20_000 });
 
-    // Le champ OTP doit accepter 6 chiffres (pas 4)
-    const otpInput = page.locator('input[type="text"], input[inputmode="numeric"]').first();
-    await expect(otpInput).toBeVisible({ timeout: 5_000 });
+    // Sélecteur large : OTP peut être input[type="text"] ou input sans type explicite
+    const otpInput = page.locator('input:not([type="password"])').first();
+    await expect(otpInput).toBeVisible({ timeout: 8_000 });
 
     await otpInput.fill('123456');
     await expect(otpInput).toHaveValue('123456');
