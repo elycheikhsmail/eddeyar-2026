@@ -4,8 +4,8 @@
   "scope": "codebase",
   "localEndpoint": "http://localhost:3000/ar",
   "executionArgs": {
-    "projectName": "eddeyar-2026",
-    "projectPath": "C:/Users/Dell/Documents/eddeyar/rim-ebay-aut-2025-main/eddeyar-2026",
+    "projectName": "inspiring-goodall",
+    "projectPath": "C:\\Users\\Dell\\Documents\\eddeyar\\rim-ebay-aut-2025-main\\eddeyar-2026\\.claude\\worktrees\\inspiring-goodall",
     "testIds": [],
     "additionalInstruction": "",
     "serverMode": "development",
@@ -13,6 +13,6 @@
       "API_KEY": "sk-user-QxMHs9LNNGjXHCwem1xBaHobDy_Yu7kxL82KXrSfGMEqhSzlAuIma81hSk1L62ExX48rVc3It1m3OqpmiVW-c7CYzBFLexhXNElYqLWGCLl6UoXa0YgTJOI0Gvp1NCFVX3U"
     }
   },
-  "serverPort": 55443,
-  "proxy": "http://b41c7043-585f-4857-a008-1289f95c7af7:VVTOkGx9mBpPmHCjS4t8J2CyQvD9aV3T@tun.testsprite.com:8080"
+  "serverPort": 57228,
+  "proxy": "http://a83b7d5a-8512-4b1a-8b52-a2cc219f2ced:yuhjdcqvTVXwM4px7d4y5tgKvrFsZmlG@tun.testsprite.com:8080"
 }

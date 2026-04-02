@@ -1,235 +1,204 @@
-# TestSprite AI Testing Report (MCP)
+
+# TestSprite AI Testing Report(MCP)
 
 ---
 
 ## 1️⃣ Document Metadata
-
-- **Project Name:** eddeyar-2026
-- **Date:** 2026-04-01
+- **Project Name:** inspiring-goodall (Eddeyar / Rim-eBay)
+- **Date:** 2026-04-02
 - **Prepared by:** TestSprite AI Team
-- **Server mode:** Development (localhost:3000)
-- **Total tests run:** 15
-- **Pass rate:** 46.67% (7 passed / 8 failed)
 
 ---
 
 ## 2️⃣ Requirement Validation Summary
 
----
+### Requirement: Listings / Annonces Browsing
+- **Description:** Users can browse annonce listings, view details (carousel, description, map, contact), and navigate between pages.
 
-### Requirement A — Listings Browse & Search
-
-| Test | Status | Summary |
-|------|--------|---------|
-| TC001 | ✅ Passed | Browse listing page and open detail |
-| TC002 | ❌ Failed | Pagination unavailable — no listings shown |
-| TC007 | ❌ Failed | Search filters: category dropdown empty |
-| TC012 | ❌ Failed | Detail page: no image carousel, no map widget |
-
----
-
-#### TC001 — Browse annonces listing and open a listing detail page
+#### Test TC001 Browse annonces listing and open a listing detail page
 - **Test Code:** [TC001_Browse_annonces_listing_and_open_a_listing_detail_page.py](./TC001_Browse_annonces_listing_and_open_a_listing_detail_page.py)
-- **Test Visualization:** https://www.testsprite.com/dashboard/mcp/tests/cedbe8b3-21a3-42be-8a15-06ed203d6124/cf370ca6-6de8-4eb7-a56e-22ec0ef05e94
+- **Test Error:**
+- **Test Visualization and Result:** https://www.testsprite.com/dashboard/mcp/tests/3236fd3c-10a2-4171-9605-ae4249bacafa/0d0fef4f-c3c2-4eeb-bcc3-f6982d0fc478
 - **Status:** ✅ Passed
-- **Analysis:** The listings page loads correctly and clicking a listing navigates to its detail page. Core browse flow is functional.
-
+- **Severity:** LOW
+- **Analysis / Findings:** Listing cards load correctly and navigating to a detail page works as expected.
 ---
 
-#### TC002 — Paginate annonces from page 1 to page 2
+#### Test TC002 Paginate annonces from page 1 to page 2
 - **Test Code:** [TC002_Paginate_annonces_from_page_1_to_page_2.py](./TC002_Paginate_annonces_from_page_1_to_page_2.py)
-- **Test Visualization:** https://www.testsprite.com/dashboard/mcp/tests/cedbe8b3-21a3-42be-8a15-06ed203d6124/e1a7a60a-26f2-48c3-b8ae-04e3745946cb
+- **Test Error:** No next page could be loaded because a second page does not exist. Page indicator reads 'الصفحة 1 من 1'.
+- **Test Visualization and Result:** https://www.testsprite.com/dashboard/mcp/tests/3236fd3c-10a2-4171-9605-ae4249bacafa/82cfce5b-bdd1-40e3-9a9c-4c0e6b0172cc
 - **Status:** ❌ Failed
-- **Error:** Pagination could not be tested — listings area shows "لا توجد إعلانات." and no pagination controls are present.
-- **Analysis:** The dev database likely lacks enough listings to trigger pagination (requires > 1 page). The test environment needs seeded data (`pnpm run mongo:seed`) or the test should run against the test DB (`pnpm run start:test`).
-
+- **Severity:** LOW
+- **Analysis / Findings:** The test database (rim-ebay-test) has insufficient seed data to produce more than one page of results. Pagination UI is present and functional; the failure reflects missing test data, not a code defect. Seed more annonces to cover this scenario.
 ---
 
-#### TC007 — Apply full set of search filters to narrow results
-- **Test Code:** [TC007_Apply_full_set_of_search_filters_to_narrow_results.py](./TC007_Apply_full_set_of_search_filters_to_narrow_results.py)
-- **Test Visualization:** https://www.testsprite.com/dashboard/mcp/tests/cedbe8b3-21a3-42be-8a15-06ed203d6124/ab01f768-605a-4192-82f9-2e698df5a12d
-- **Status:** ❌ Failed
-- **Error:** Category dropdown (اختر الفئة) contains only the placeholder — no real options loaded. Subcategory also empty.
-- **Analysis:** The `options` collection (categories/subcategories) is either not seeded or the API endpoint that populates the filter dropdowns is failing. Verify `pnpm run mongo:seed` was run and the `/api/annonces/options` route returns data.
-
----
-
-#### TC012 — View annonce details (carousel, description, map, contact)
+#### Test TC012 View annonce details including carousel, description, map and contact section
 - **Test Code:** [TC012_View_annonce_details_including_carousel_description_map_and_contact_section.py](./TC012_View_annonce_details_including_carousel_description_map_and_contact_section.py)
-- **Test Visualization:** https://www.testsprite.com/dashboard/mcp/tests/cedbe8b3-21a3-42be-8a15-06ed203d6124/e3689ffa-1dda-455f-b892-e6a8f4604eaf
+- **Test Error:**
+- **Test Visualization and Result:** https://www.testsprite.com/dashboard/mcp/tests/3236fd3c-10a2-4171-9605-ae4249bacafa/3095f082-3d90-4b6f-ad9b-f3c62cea7895
+- **Status:** ✅ Passed
+- **Severity:** LOW
+- **Analysis / Findings:** Detail page correctly renders image carousel, description, interactive map (react-leaflet), and contact section.
+---
+
+### Requirement: Search & Filters
+- **Description:** Users can filter annonces by type, category, subcategory, price range, and location (wilaya / moughataa).
+
+#### Test TC007 Apply full set of search filters to narrow results
+- **Test Code:** [TC007_Apply_full_set_of_search_filters_to_narrow_results.py](./TC007_Apply_full_set_of_search_filters_to_narrow_results.py)
+- **Test Error:** Category dropdown shows only placeholder 'اختر الفئة' with no options. Subcategory and moughataa controls are non-interactive divs.
+- **Test Visualization and Result:** https://www.testsprite.com/dashboard/mcp/tests/3236fd3c-10a2-4171-9605-ae4249bacafa/cbb1f767-856c-4d34-baba-a398fcbc279d
 - **Status:** ❌ Failed
-- **Error:** Detail page loaded (Appartement F3 — Tevragh-Zeina, 2,800,000 UM) but shows "No Image" and no map widget — only a text location is displayed.
-- **Analysis:** Two distinct issues: (1) the demo listing has no images attached, so the carousel shows a placeholder; (2) the `react-leaflet` map component is not rendering, possibly due to SSR/client-only loading issue or missing `dynamic()` import with `ssr: false`.
-
+- **Severity:** HIGH
+- **Analysis / Findings:** Filter dropdowns for category, subcategory, and moughataa are either empty or non-interactive. This is likely a data-loading issue (options collection not seeded / API not returning data) or a client-side rendering bug. The type filter works. Investigate the `options` and `lieux` collections in the test database and the corresponding API routes (`/api/annonces`, `/app/[locale]/ui.tsx` filter components).
 ---
 
-### Requirement B — Authentication: Login
+### Requirement: User Authentication — Login
+- **Description:** Users can log in with phone+password or email+password; invalid credentials show an error.
 
-| Test | Status | Summary |
-|------|--------|---------|
-| TC015 | ❌ Failed | Valid login does not redirect |
-| TC016 | ❌ Failed | Invalid login shows no error message |
-
----
-
-#### TC015 — Login with valid phone and password redirects to home
+#### Test TC015 Login with valid phone and password redirects to home
 - **Test Code:** [TC015_Login_with_valid_phone_and_password_redirects_to_home.py](./TC015_Login_with_valid_phone_and_password_redirects_to_home.py)
-- **Test Visualization:** https://www.testsprite.com/dashboard/mcp/tests/cedbe8b3-21a3-42be-8a15-06ed203d6124/81e07508-0bb0-4bb2-8542-47a20454cdce
+- **Test Error:** After submitting phone=36000000 and password=password123, the page remained on `/ar/p/users/connexion` with no redirect.
+- **Test Visualization and Result:** https://www.testsprite.com/dashboard/mcp/tests/3236fd3c-10a2-4171-9605-ae4249bacafa/1629388c-f8d2-488f-ab6b-0af91ea03d7c
 - **Status:** ❌ Failed
-- **Error:** After submitting phone `36000000` + password, the page stayed on `/ar/p/users/connexion`. No redirect occurred.
-- **Analysis:** Critical blocker. The demo account (`demo@eddeyar.mr` / `36000000` / `Demo1234!`) must exist in the running database. If testing against the dev DB, run `pnpm run mongo:seed`. The login API route (`/api/p/users/connexion`) may also be returning an error silently. Check network response in browser devtools.
-
+- **Severity:** HIGH
+- **Analysis / Findings:** The demo account password seeded by `mongo:seed` is `Demo1234!`, not `password123`. The test used the wrong credential. Either update the test to use the correct password, or document the correct demo credentials clearly. The login flow itself may be functional.
 ---
 
-#### TC016 — Login with invalid credentials shows an error
+#### Test TC016 Login with invalid credentials shows an error
 - **Test Code:** [TC016_Login_with_invalid_credentials_shows_an_error.py](./TC016_Login_with_invalid_credentials_shows_an_error.py)
-- **Test Visualization:** https://www.testsprite.com/dashboard/mcp/tests/cedbe8b3-21a3-42be-8a15-06ed203d6124/dec79c12-6a98-43ae-a61c-1960ac6a6e5c
+- **Test Error:** Submitting incorrect credentials showed no error message; the page stayed on the login screen silently.
+- **Test Visualization and Result:** https://www.testsprite.com/dashboard/mcp/tests/3236fd3c-10a2-4171-9605-ae4249bacafa/cbf60dc6-b429-4ba0-b013-5790a495d0d5
 - **Status:** ❌ Failed
-- **Error:** Submitting invalid credentials (phone `12345`) left the form without any visible error message.
-- **Analysis:** The API likely returns an error response, but the UI component does not display it. The error state from the login handler is probably not wired to a visible element, or the error message key is missing from translations.
-
+- **Severity:** HIGH
+- **Analysis / Findings:** The login API does not appear to surface a visible error message (toast or inline) when credentials are invalid. The UI should display an Arabic error such as 'بيانات الدخول غير صحيحة' on a failed authentication response. Investigate the login route handler and the client-side error state rendering.
 ---
 
-### Requirement C — Authentication: Registration & OTP
+### Requirement: User Authentication — Registration
+- **Description:** New users can register with phone or email; required-field validation is enforced; successful submission navigates to OTP page.
 
-| Test | Status | Summary |
-|------|--------|---------|
-| TC019 | ❌ Failed | Registration does not redirect to OTP page |
-| TC021 | ✅ Passed | Validation errors for missing fields shown correctly |
-| TC023 | ❌ Failed | OTP page never reached (depends on TC019) |
-
----
-
-#### TC019 — Registration submits and redirects to OTP page
+#### Test TC019 Registration submits with required fields and redirects to OTP page
 - **Test Code:** [TC019_Registration_submits_with_required_fields_and_redirects_to_OTP_page.py](./TC019_Registration_submits_with_required_fields_and_redirects_to_OTP_page.py)
-- **Test Visualization:** https://www.testsprite.com/dashboard/mcp/tests/cedbe8b3-21a3-42be-8a15-06ed203d6124/6143234b-3f67-4b23-a1f2-e2d1b4311686
-- **Status:** ❌ Failed
-- **Error:** After submitting with phone `30000001`, the form stayed on `/ar/p/users/register` with no redirect to OTP.
-- **Analysis:** The SMS OTP provider (Chinguisoft) is likely unavailable in the dev/test environment. The registration API may be blocking on the SMS send. Needs a mock SMS provider for test environments or an env variable to bypass OTP sending.
-
+- **Test Error:**
+- **Test Visualization and Result:** https://www.testsprite.com/dashboard/mcp/tests/3236fd3c-10a2-4171-9605-ae4249bacafa/e0fade0d-731a-434b-841e-1415353f8c46
+- **Status:** ✅ Passed
+- **Severity:** LOW
+- **Analysis / Findings:** Registration with required fields correctly redirects to the OTP verification page.
 ---
 
-#### TC021 — Registration shows validation errors for missing required fields
+#### Test TC021 Registration shows validation errors for missing required fields
 - **Test Code:** [TC021_Registration_shows_validation_errors_for_missing_required_fields.py](./TC021_Registration_shows_validation_errors_for_missing_required_fields.py)
-- **Test Visualization:** https://www.testsprite.com/dashboard/mcp/tests/cedbe8b3-21a3-42be-8a15-06ed203d6124/79de8d4e-2650-4af5-9e65-29de7d590ebc
+- **Test Error:**
+- **Test Visualization and Result:** https://www.testsprite.com/dashboard/mcp/tests/3236fd3c-10a2-4171-9605-ae4249bacafa/27ea5639-9b04-4218-b179-f51eeb0cff54
 - **Status:** ✅ Passed
-- **Analysis:** Client-side validation correctly blocks form submission and shows appropriate error messages when required fields are empty.
-
+- **Severity:** LOW
+- **Analysis / Findings:** Client-side validation correctly blocks submission and displays errors for empty required fields.
 ---
 
-#### TC023 — OTP verification page accepts a 4-digit code entry
+### Requirement: OTP Verification
+- **Description:** After registration or phone login, users enter an OTP code to verify their phone number.
+
+#### Test TC023 OTP verification page accepts a 4-digit code entry and allows submission
 - **Test Code:** [TC023_OTP_verification_page_accepts_a_4_digit_code_entry_and_allows_submission.py](./TC023_OTP_verification_page_accepts_a_4_digit_code_entry_and_allows_submission.py)
-- **Test Visualization:** https://www.testsprite.com/dashboard/mcp/tests/cedbe8b3-21a3-42be-8a15-06ed203d6124/6a3c701c-d0a3-43fd-ab39-fbc826e28dfe
+- **Test Error:** The OTP input placeholder reads 'digit code-6' — the form expects a 6-digit code, not 4-digit.
+- **Test Visualization and Result:** https://www.testsprite.com/dashboard/mcp/tests/3236fd3c-10a2-4171-9605-ae4249bacafa/5901fa14-ddd0-4057-8b09-31d470fad2f0
 - **Status:** ❌ Failed
-- **Error:** OTP page never appeared (blocked by TC019 failure). A "تحميل .." (loading) state is visible but no navigation occurs.
-- **Analysis:** Cascading failure from TC019. Fix registration OTP redirect first.
-
+- **Severity:** MEDIUM
+- **Analysis / Findings:** Test expectation (4-digit OTP) does not match the implemented code length (6-digit). If the spec requires 4 digits, update the OTP input component and the Chinguisoft integration. If 6 digits is correct, update the test plan to reflect the actual requirement.
 ---
 
-### Requirement D — Authentication: Forgot / Reset Password
+### Requirement: Password Reset
+- **Description:** Users can reset their password via phone OTP; form validates empty fields and password mismatch.
 
-| Test | Status | Summary |
-|------|--------|---------|
-| TC025 | ✅ Passed | Forgot password page loads and accepts input |
-| TC027 | ✅ Passed | Empty submission blocked by validation |
-| TC029 | ✅ Passed | Reset password page loads and accepts all inputs |
-| TC030 | ✅ Passed | Empty submission blocked by validation |
-| TC031 | ❌ Failed | Mismatched passwords show no error |
-
----
-
-#### TC025 — Forgot Password page loads and accepts phone input
+#### Test TC025 Forgot Password page loads and accepts phone input
 - **Test Code:** [TC025_Forgot_Password_page_loads_and_accepts_phone_input.py](./TC025_Forgot_Password_page_loads_and_accepts_phone_input.py)
-- **Test Visualization:** https://www.testsprite.com/dashboard/mcp/tests/cedbe8b3-21a3-42be-8a15-06ed203d6124/0a8322b4-052e-4348-b98b-716bd2c9a452
+- **Test Error:**
+- **Test Visualization and Result:** https://www.testsprite.com/dashboard/mcp/tests/3236fd3c-10a2-4171-9605-ae4249bacafa/e493ff1d-7755-4436-ae9f-221ad00d12e9
 - **Status:** ✅ Passed
-- **Analysis:** Page renders correctly and accepts phone number input as expected.
-
+- **Severity:** LOW
+- **Analysis / Findings:** Forgot-password page renders correctly and accepts phone input.
 ---
 
-#### TC027 — Forgot Password validation blocks empty submission
+#### Test TC027 Forgot Password validation blocks empty submission
 - **Test Code:** [TC027_Forgot_Password_validation_blocks_empty_submission.py](./TC027_Forgot_Password_validation_blocks_empty_submission.py)
-- **Test Visualization:** https://www.testsprite.com/dashboard/mcp/tests/cedbe8b3-21a3-42be-8a15-06ed203d6124/9cb0b093-2c30-43ca-a51e-364df18dd014
+- **Test Error:**
+- **Test Visualization and Result:** https://www.testsprite.com/dashboard/mcp/tests/3236fd3c-10a2-4171-9605-ae4249bacafa/eb7fc84e-bdd9-4235-ae4b-81724c0084e7
 - **Status:** ✅ Passed
-- **Analysis:** Client-side validation correctly prevents empty phone submission.
-
+- **Severity:** LOW
+- **Analysis / Findings:** Empty submission is correctly blocked with a validation error.
 ---
 
-#### TC029 — Reset Password page loads and accepts OTP and password inputs
+#### Test TC029 Reset Password page loads and accepts OTP and password inputs
 - **Test Code:** [TC029_Reset_Password_page_loads_and_accepts_OTP_and_password_inputs.py](./TC029_Reset_Password_page_loads_and_accepts_OTP_and_password_inputs.py)
-- **Test Visualization:** https://www.testsprite.com/dashboard/mcp/tests/cedbe8b3-21a3-42be-8a15-06ed203d6124/b43b2150-5d5a-4670-8012-eb35aad6567d
+- **Test Error:**
+- **Test Visualization and Result:** https://www.testsprite.com/dashboard/mcp/tests/3236fd3c-10a2-4171-9605-ae4249bacafa/213139df-6572-4e01-bf8c-994077161707
 - **Status:** ✅ Passed
-- **Analysis:** Reset password form renders correctly with OTP, new password, and confirm password fields all accepting input.
-
+- **Severity:** LOW
+- **Analysis / Findings:** Reset password page renders OTP, new password, and confirm password inputs correctly.
 ---
 
-#### TC030 — Reset Password validation blocks empty submission
+#### Test TC030 Reset Password validation blocks empty submission
 - **Test Code:** [TC030_Reset_Password_validation_blocks_empty_submission.py](./TC030_Reset_Password_validation_blocks_empty_submission.py)
-- **Test Visualization:** https://www.testsprite.com/dashboard/mcp/tests/cedbe8b3-21a3-42be-8a15-06ed203d6124/0cb4a86d-c1f6-4cc1-9ed4-8aee8126d955
+- **Test Error:**
+- **Test Visualization and Result:** https://www.testsprite.com/dashboard/mcp/tests/3236fd3c-10a2-4171-9605-ae4249bacafa/0f5bd5fe-1fb1-4a90-9f3e-964b047fc596
 - **Status:** ✅ Passed
-- **Analysis:** Validation correctly blocks empty submission on reset password form.
-
+- **Severity:** LOW
+- **Analysis / Findings:** Empty form submission is correctly blocked.
 ---
 
-#### TC031 — Reset Password rejects mismatched passwords
+#### Test TC031 Reset Password rejects mismatched passwords
 - **Test Code:** [TC031_Reset_Password_rejects_mismatched_passwords.py](./TC031_Reset_Password_rejects_mismatched_passwords.py)
-- **Test Visualization:** https://www.testsprite.com/dashboard/mcp/tests/cedbe8b3-21a3-42be-8a15-06ed203d6124/6bffd7f8-e23c-403a-80bb-a5169b215f30
+- **Test Error:** Submitting mismatched passwords showed a toast 'يرجى إدخال رقم هاتفك.' (unrelated) instead of a password-mismatch error.
+- **Test Visualization and Result:** https://www.testsprite.com/dashboard/mcp/tests/3236fd3c-10a2-4171-9605-ae4249bacafa/3cc5e394-092c-4fce-ba91-33625221197b
 - **Status:** ❌ Failed
-- **Error:** Submitting `Password123!` vs `Password1234!` showed no mismatch error — form remained without feedback.
-- **Analysis:** Password confirmation validation is missing on the reset password form. Need to add a client-side check comparing the two password fields before submission.
-
+- **Severity:** MEDIUM
+- **Analysis / Findings:** The reset-password form lacks client-side validation for password confirmation mismatch. The toast shown ('يرجى إدخال رقم هاتفك.') suggests the form may require phone context passed from the forgot-password flow, which is missing when navigating directly. Add explicit password-match validation in the form and ensure the phone context is propagated correctly.
 ---
 
-### Requirement E — Protected Routes
+### Requirement: Protected Routes
+- **Description:** Authenticated-only pages redirect unauthenticated users to the login page.
 
-| Test | Status | Summary |
-|------|--------|---------|
-| TC033 | ✅ Passed | Unauthenticated user redirected to login |
-
----
-
-#### TC033 — My Annonces List redirects unauthenticated user to login
+#### Test TC033 My Annonces List redirects unauthenticated user to login
 - **Test Code:** [TC033_My_Annonces_List_redirects_unauthenticated_user_to_login.py](./TC033_My_Annonces_List_redirects_unauthenticated_user_to_login.py)
-- **Test Visualization:** https://www.testsprite.com/dashboard/mcp/tests/cedbe8b3-21a3-42be-8a15-06ed203d6124/e4c243cb-24a6-4941-af6f-11c512025f5c
+- **Test Error:**
+- **Test Visualization and Result:** https://www.testsprite.com/dashboard/mcp/tests/3236fd3c-10a2-4171-9605-ae4249bacafa/1eaaf962-f84c-497a-ad1c-473ae5e96077
 - **Status:** ✅ Passed
-- **Analysis:** Route protection is correctly implemented. Accessing `/my/annonces` without a session redirects to the login page.
-
+- **Severity:** LOW
+- **Analysis / Findings:** Unauthenticated access to `/my/annonces` correctly redirects to the login page.
 ---
 
 ## 3️⃣ Coverage & Matching Metrics
 
-- **Pass rate: 46.67%** (7 / 15 tests passed)
+- **60% of tests passed** (9 / 15)
 
-| Requirement | Total | ✅ Passed | ❌ Failed |
-|---|---|---|---|
-| A — Listings Browse & Search | 4 | 1 | 3 |
-| B — Authentication: Login | 2 | 0 | 2 |
-| C — Authentication: Registration & OTP | 3 | 1 | 2 |
-| D — Authentication: Forgot/Reset Password | 5 | 4 | 1 |
-| E — Protected Routes | 1 | 1 | 0 |
-| **Total** | **15** | **7** | **8** |
+| Requirement                          | Total Tests | ✅ Passed | ❌ Failed |
+|--------------------------------------|-------------|-----------|----------|
+| Listings / Annonces Browsing         | 3           | 2         | 1        |
+| Search & Filters                     | 1           | 0         | 1        |
+| User Authentication — Login          | 2           | 0         | 2        |
+| User Authentication — Registration   | 2           | 2         | 0        |
+| OTP Verification                     | 1           | 0         | 1        |
+| Password Reset                       | 5           | 4         | 1        |
+| Protected Routes                     | 1           | 1         | 0        |
+| **Total**                            | **15**      | **9**     | **6**    |
 
 ---
 
 ## 4️⃣ Key Gaps / Risks
 
-### 🔴 Critical (blocks core flows)
+> **60% of tests passed fully (9/15).**
 
-1. **Login non-fonctionnel (TC015, TC016)** — Le formulaire de connexion ne redirige pas et n'affiche pas d'erreur. Risque élevé : bloque toutes les fonctionnalités authentifiées (dashboard, création d'annonce, favoris). Vérifier que la base dev est seedée et que l'API `/api/p/users/connexion` retourne bien le JWT + cookie.
+**Critical issues to fix:**
 
-2. **Inscription / OTP non-fonctionnel (TC019, TC023)** — L'inscription reste bloquée après soumission, probablement parce que Chinguisoft SMS est inaccessible en dev. Prévoir un mock SMS provider pour les environnements non-prod.
+1. **Login error feedback missing (TC016) — HIGH**: Invalid credentials silently fail with no user-facing error message. This is a UX and security-perception risk. Add error state rendering in the login form client component.
 
-### 🟠 Majeur (fonctionnalité dégradée)
+2. **Search filters non-functional (TC007) — HIGH**: Category, subcategory, and moughataa dropdowns render empty or as static divs. This blocks a core discovery feature. Investigate whether `options` and `lieux` collections are seeded in the test database and whether the filter API endpoints return data correctly.
 
-3. **Catégories manquantes dans les filtres (TC007)** — Le dropdown de catégorie est vide. La collection `options` n'est probablement pas seedée. Lancer `pnpm run mongo:seed` et vérifier l'endpoint qui alimente les filtres.
+3. **Login credential mismatch in test data (TC015) — MEDIUM**: The demo account password is `Demo1234!` but the test used `password123`. Standardize demo credentials across test plans and documentation.
 
-4. **Carte (Leaflet) non affichée sur la page détail (TC012)** — `react-leaflet` requiert `dynamic(() => import(...), { ssr: false })`. Vérifier que le composant map est bien importé en client-only.
+4. **Password mismatch validation absent (TC031) — MEDIUM**: The reset-password form does not validate that the two password fields match before submitting. Add client-side `confirmPassword` validation. Also investigate why the form shows a "phone required" toast when accessed without forgot-password flow context.
 
-5. **Pas de message d'erreur sur login invalide (TC016)** — L'état d'erreur de l'API n'est pas affiché dans l'UI. Connecter la réponse d'erreur au composant de feedback visuel.
+5. **OTP code length discrepancy (TC023) — MEDIUM**: The implemented OTP input expects 6 digits; the test plan specified 4. Clarify the correct length with the Chinguisoft SMS provider spec and align the UI and test plan accordingly.
 
-### 🟡 Mineur (polish / UX)
-
-6. **Validation "mots de passe différents" manquante sur reset password (TC031)** — Ajouter une comparaison côté client entre les deux champs avant soumission.
-
-7. **Pagination non testable sans données (TC002)** — La base dev doit contenir suffisamment d'annonces pour dépasser une page. Utiliser `pnpm run mongo:seed` ou `pnpm run start:test` avec la base de test.
-
-8. **Pas d'images sur la démo (TC012)** — L'annonce de démo n'a pas d'images, le carrousel affiche "No Image". Ajouter des images de test dans `mongo:seed`.
+6. **Insufficient seed data for pagination (TC002) — LOW**: Only 1 page of annonces exists in the test database. Add more seed entries to `rim-ebay-test` so that pagination logic can be exercised end-to-end.

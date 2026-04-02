@@ -25,6 +25,8 @@
     "restore:temp": "bun script/restore-temp-db.ts",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
+    "test:ts": "playwright test tests/testsprite.spec.ts",
+    "test:ts:ui": "playwright test tests/testsprite.spec.ts --ui",
     "test:e2e:setup": "bun run mongo:init:test && bun run mongo:seed:test",
     "testwithdata": "bun run mongo:delete:test && bun run mongo:init:test && bun run mongo:seed:test && bun run build && bun run start:test",
     "migrate:options:mongo": "bun --env-file=.env scripts/sqlite-options-to-mongodb.mjs",

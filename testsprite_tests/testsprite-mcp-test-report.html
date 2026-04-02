@@ -1209,11 +1209,11 @@ body {
         <div class="metadata-container">
         <div class="metadata-row">
           <div class="metadata-label text-body-medium">Project Name</div>
-          <div class="metadata-value text-body">eddeyar-2026</div>
+          <div class="metadata-value text-body">inspiring-goodall (Eddeyar / Rim-eBay)</div>
         </div>
         <div class="metadata-row">
           <div class="metadata-label text-body-medium">Date</div>
-          <div class="metadata-value text-body">01/04/2026</div>
+          <div class="metadata-value text-body">02/04/2026</div>
         </div>
         <div class="metadata-row">
           <div class="metadata-label text-body-medium">Prepared by</div>
@@ -1234,40 +1234,31 @@ body {
         
         <div class="coverage-summary">
           <ul class="coverage-list text-body">
-            <li><span class="coverage-highlight">0/0</span> of tests passed</li>
+            <li><span class="coverage-highlight">9/15</span> of tests passed</li>
             <li><span class="coverage-highlight">Key gaps / risks:</span>
             
-              <h3>🔴 Critical (blocks core flows)</h3>
+              <blockquote>
+<p><strong>60% of tests passed fully (9/15).</strong></p>
+</blockquote>
+<p><strong>Critical issues to fix:</strong></p>
 <ol>
 <li>
-<p><strong>Login non-fonctionnel (TC015, TC016)</strong> — Le formulaire de connexion ne redirige pas et n'affiche pas d'erreur. Risque élevé : bloque toutes les fonctionnalités authentifiées (dashboard, création d'annonce, favoris). Vérifier que la base dev est seedée et que l'API <code>/api/p/users/connexion</code> retourne bien le JWT + cookie.</p>
+<p><strong>Login error feedback missing (TC016) — HIGH</strong>: Invalid credentials silently fail with no user-facing error message. This is a UX and security-perception risk. Add error state rendering in the login form client component.</p>
 </li>
 <li>
-<p><strong>Inscription / OTP non-fonctionnel (TC019, TC023)</strong> — L'inscription reste bloquée après soumission, probablement parce que Chinguisoft SMS est inaccessible en dev. Prévoir un mock SMS provider pour les environnements non-prod.</p>
-</li>
-</ol>
-<h3>🟠 Majeur (fonctionnalité dégradée)</h3>
-<ol start="3">
-<li>
-<p><strong>Catégories manquantes dans les filtres (TC007)</strong> — Le dropdown de catégorie est vide. La collection <code>options</code> n'est probablement pas seedée. Lancer <code>pnpm run mongo:seed</code> et vérifier l'endpoint qui alimente les filtres.</p>
+<p><strong>Search filters non-functional (TC007) — HIGH</strong>: Category, subcategory, and moughataa dropdowns render empty or as static divs. This blocks a core discovery feature. Investigate whether <code>options</code> and <code>lieux</code> collections are seeded in the test database and whether the filter API endpoints return data correctly.</p>
 </li>
 <li>
-<p><strong>Carte (Leaflet) non affichée sur la page détail (TC012)</strong> — <code>react-leaflet</code> requiert <code>dynamic(() =&gt; import(...), { ssr: false })</code>. Vérifier que le composant map est bien importé en client-only.</p>
+<p><strong>Login credential mismatch in test data (TC015) — MEDIUM</strong>: The demo account password is <code>Demo1234!</code> but the test used <code>password123</code>. Standardize demo credentials across test plans and documentation.</p>
 </li>
 <li>
-<p><strong>Pas de message d'erreur sur login invalide (TC016)</strong> — L'état d'erreur de l'API n'est pas affiché dans l'UI. Connecter la réponse d'erreur au composant de feedback visuel.</p>
-</li>
-</ol>
-<h3>🟡 Mineur (polish / UX)</h3>
-<ol start="6">
-<li>
-<p><strong>Validation &quot;mots de passe différents&quot; manquante sur reset password (TC031)</strong> — Ajouter une comparaison côté client entre les deux champs avant soumission.</p>
+<p><strong>Password mismatch validation absent (TC031) — MEDIUM</strong>: The reset-password form does not validate that the two password fields match before submitting. Add client-side <code>confirmPassword</code> validation. Also investigate why the form shows a &quot;phone required&quot; toast when accessed without forgot-password flow context.</p>
 </li>
 <li>
-<p><strong>Pagination non testable sans données (TC002)</strong> — La base dev doit contenir suffisamment d'annonces pour dépasser une page. Utiliser <code>pnpm run mongo:seed</code> ou <code>pnpm run start:test</code> avec la base de test.</p>
+<p><strong>OTP code length discrepancy (TC023) — MEDIUM</strong>: The implemented OTP input expects 6 digits; the test plan specified 4. Clarify the correct length with the Chinguisoft SMS provider spec and align the UI and test plan accordingly.</p>
 </li>
 <li>
-<p><strong>Pas d'images sur la démo (TC012)</strong> — L'annonce de démo n'a pas d'images, le carrousel affiche &quot;No Image&quot;. Ajouter des images de test dans <code>mongo:seed</code>.</p>
+<p><strong>Insufficient seed data for pagination (TC002) — LOW</strong>: Only 1 page of annonces exists in the test database. Add more seed entries to <code>rim-ebay-test</code> so that pagination logic can be exercised end-to-end.</p>
 </li>
 </ol>
 
@@ -1294,41 +1285,57 @@ body {
           <div class="table-rows">
             
             <div class="table-row">
-              <div class="table-cell"><span class="text-body">Requirement A — Listings Browse & Search</span></div>
+              <div class="table-cell"><span class="text-body">Requirement: Listings / Annonces Browsing</span></div>
+              <div class="table-cell"><span class="text-body">3</span></div>
+              <div class="table-cell"><span class="text-body">2</span></div>
+              <div class="table-cell"><span class="text-body">1</span></div>
+            </div>
+        
+
+            <div class="table-row">
+              <div class="table-cell"><span class="text-body">Requirement: Search & Filters</span></div>
+              <div class="table-cell"><span class="text-body">1</span></div>
               <div class="table-cell"><span class="text-body">0</span></div>
+              <div class="table-cell"><span class="text-body">1</span></div>
+            </div>
+        
+
+            <div class="table-row">
+              <div class="table-cell"><span class="text-body">Requirement: User Authentication — Login</span></div>
+              <div class="table-cell"><span class="text-body">2</span></div>
               <div class="table-cell"><span class="text-body">0</span></div>
+              <div class="table-cell"><span class="text-body">2</span></div>
+            </div>
+        
+
+            <div class="table-row">
+              <div class="table-cell"><span class="text-body">Requirement: User Authentication — Registration</span></div>
+              <div class="table-cell"><span class="text-body">2</span></div>
+              <div class="table-cell"><span class="text-body">2</span></div>
               <div class="table-cell"><span class="text-body">0</span></div>
             </div>
         
 
             <div class="table-row">
-              <div class="table-cell"><span class="text-body">Requirement B — Authentication: Login</span></div>
+              <div class="table-cell"><span class="text-body">Requirement: OTP Verification</span></div>
+              <div class="table-cell"><span class="text-body">1</span></div>
               <div class="table-cell"><span class="text-body">0</span></div>
-              <div class="table-cell"><span class="text-body">0</span></div>
-              <div class="table-cell"><span class="text-body">0</span></div>
+              <div class="table-cell"><span class="text-body">1</span></div>
             </div>
         
 
             <div class="table-row">
-              <div class="table-cell"><span class="text-body">Requirement C — Authentication: Registration & OTP</span></div>
-              <div class="table-cell"><span class="text-body">0</span></div>
-              <div class="table-cell"><span class="text-body">0</span></div>
-              <div class="table-cell"><span class="text-body">0</span></div>
+              <div class="table-cell"><span class="text-body">Requirement: Password Reset</span></div>
+              <div class="table-cell"><span class="text-body">5</span></div>
+              <div class="table-cell"><span class="text-body">4</span></div>
+              <div class="table-cell"><span class="text-body">1</span></div>
             </div>
         
 
             <div class="table-row">
-              <div class="table-cell"><span class="text-body">Requirement D — Authentication: Forgot / Reset Password</span></div>
-              <div class="table-cell"><span class="text-body">0</span></div>
-              <div class="table-cell"><span class="text-body">0</span></div>
-              <div class="table-cell"><span class="text-body">0</span></div>
-            </div>
-        
-
-            <div class="table-row">
-              <div class="table-cell"><span class="text-body">Requirement E — Protected Routes</span></div>
-              <div class="table-cell"><span class="text-body">0</span></div>
-              <div class="table-cell"><span class="text-body">0</span></div>
+              <div class="table-cell"><span class="text-body">Requirement: Protected Routes</span></div>
+              <div class="table-cell"><span class="text-body">1</span></div>
+              <div class="table-cell"><span class="text-body">1</span></div>
               <div class="table-cell"><span class="text-body">0</span></div>
             </div>
         
@@ -1352,13 +1359,13 @@ body {
           <div class="accordion-header" onclick="toggleAccordion(this)">
             <div class="requirement-content">
                                           <div class="requirement-title-row">
-              <h3 class="title-requirement">Requirement A — Listings Browse & Search</h3>
-                <div class="requirement-status-tag status-success">
+              <h3 class="title-requirement">Requirement: Listings / Annonces Browsing</h3>
+                <div class="requirement-status-tag status-error">
               <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="7.99961" cy="7.99998" r="6.4" fill="#10A363" fill-opacity="0.2"/>
-                <path d="M5.59961 8.00002L7.19961 9.60002L10.3996 6.40002" stroke="#19C379" stroke-width="1.28" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="7.99961" cy="7.99998" r="6.4" fill="#C23539" fill-opacity="0.2"/>
+                <path d="M8 5.59998V7.99698" stroke="#EF4146" stroke-width="1.38478" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 10.394V10.3995" stroke="#EF4146" stroke-width="1.38478" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
-              <span>0/0</span>
+              <span>2/3</span>
             </div>
               </div>
               <p class="text-body-medium requirement-description">Proper error handling for API calls and invalid data scenarios.</p>
@@ -1372,7 +1379,144 @@ body {
 
             <div class="accordion-content">
             <div class="test-wrapper">
-
+<div class="test-card">
+                <div class="test-header">
+                  <h4 class="text-body-medium">TC001 Browse annonces listing and open a listing detail page</h4>
+                </div>
+                <div class="test-content">
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Test Code</div>
+                    <div class="test-field-value text-body">
+                      <a href="./TC001_Browse_annonces_listing_and_open_a_listing_detail_page.py" class="text-link">TC001_Browse_annonces_listing_and_open_a_listing_detail_page.py</a>
+                    </div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Test Error</div>
+                    <div class="test-field-value text-body">- **Test Visualization and Result:** https://www.testsprite.com/dashboard/mcp/tests/3236fd3c-10a2-4171-9605-ae4249bacafa/0d0fef4f-c3c2-4eeb-bcc3-f6982d0fc478</div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Test Visualization and Result</div>
+                    <div class="test-field-value text-body">
+                      <a href="https://www.testsprite.com/dashboard/mcp/tests/3236fd3c-10a2-4171-9605-ae4249bacafa/0d0fef4f-c3c2-4eeb-bcc3-f6982d0fc478" class="text-link">View Results</a>
+                    </div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Status</div>
+                    <div class="test-field-value">
+                      <div class="status-wrapper">
+                <div class="status-icon">
+                    <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="7.99961" cy="7.99998" r="6.4" fill="#10A363" fill-opacity="0.2"/>
+                        <path d="M5.59961 8.00002L7.19961 9.60002L10.3996 6.40002" stroke="#19C379" stroke-width="1.28" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <span class="text-body status-pass">Pass</span>
+            </div>
+                    </div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Severity</div>
+                    <div class="test-field-value text-body">LOW</div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Analysis / Findings</div>
+                    <div class="test-field-value text-body">Listing cards load correctly and navigating to a detail page works as expected.</div>
+                  </div>
+                </div>
+              </div>
+<div class="test-card">
+                <div class="test-header">
+                  <h4 class="text-body-medium">TC002 Paginate annonces from page 1 to page 2</h4>
+                </div>
+                <div class="test-content">
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Test Code</div>
+                    <div class="test-field-value text-body">
+                      <a href="./TC002_Paginate_annonces_from_page_1_to_page_2.py" class="text-link">TC002_Paginate_annonces_from_page_1_to_page_2.py</a>
+                    </div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Test Error</div>
+                    <div class="test-field-value text-body">No next page could be loaded because a second page does not exist. Page indicator reads 'الصفحة 1 من 1'.</div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Test Visualization and Result</div>
+                    <div class="test-field-value text-body">
+                      <a href="https://www.testsprite.com/dashboard/mcp/tests/3236fd3c-10a2-4171-9605-ae4249bacafa/82cfce5b-bdd1-40e3-9a9c-4c0e6b0172cc" class="text-link">View Results</a>
+                    </div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Status</div>
+                    <div class="test-field-value">
+                      
+            <div class="status-wrapper">
+                <div class="status-icon">
+                    <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="7.99961" cy="7.99998" r="6.4" fill="#C23539" fill-opacity="0.2"/>
+<path d="M8 5.59998V7.99698" stroke="#EF4146" stroke-width="1.38478" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M8 10.394V10.3995" stroke="#EF4146" stroke-width="1.38478" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+                </div>
+                <span class="text-body status-fail">Failed</span>
+            </div>
+            
+                    </div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Severity</div>
+                    <div class="test-field-value text-body">LOW</div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Analysis / Findings</div>
+                    <div class="test-field-value text-body">The test database (rim-ebay-test) has insufficient seed data to produce more than one page of results. Pagination UI is present and functional; the failure reflects missing test data, not a code defect. Seed more annonces to cover this scenario.</div>
+                  </div>
+                </div>
+              </div>
+<div class="test-card">
+                <div class="test-header">
+                  <h4 class="text-body-medium">TC012 View annonce details including carousel, description, map and contact section</h4>
+                </div>
+                <div class="test-content">
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Test Code</div>
+                    <div class="test-field-value text-body">
+                      <a href="./TC012_View_annonce_details_including_carousel_description_map_and_contact_section.py" class="text-link">TC012_View_annonce_details_including_carousel_description_map_and_contact_section.py</a>
+                    </div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Test Error</div>
+                    <div class="test-field-value text-body">- **Test Visualization and Result:** https://www.testsprite.com/dashboard/mcp/tests/3236fd3c-10a2-4171-9605-ae4249bacafa/3095f082-3d90-4b6f-ad9b-f3c62cea7895</div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Test Visualization and Result</div>
+                    <div class="test-field-value text-body">
+                      <a href="https://www.testsprite.com/dashboard/mcp/tests/3236fd3c-10a2-4171-9605-ae4249bacafa/3095f082-3d90-4b6f-ad9b-f3c62cea7895" class="text-link">View Results</a>
+                    </div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Status</div>
+                    <div class="test-field-value">
+                      <div class="status-wrapper">
+                <div class="status-icon">
+                    <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="7.99961" cy="7.99998" r="6.4" fill="#10A363" fill-opacity="0.2"/>
+                        <path d="M5.59961 8.00002L7.19961 9.60002L10.3996 6.40002" stroke="#19C379" stroke-width="1.28" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <span class="text-body status-pass">Pass</span>
+            </div>
+                    </div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Severity</div>
+                    <div class="test-field-value text-body">LOW</div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Analysis / Findings</div>
+                    <div class="test-field-value text-body">Detail page correctly renders image carousel, description, interactive map (react-leaflet), and contact section.</div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -1381,13 +1525,13 @@ body {
           <div class="accordion-header" onclick="toggleAccordion(this)">
             <div class="requirement-content">
                                           <div class="requirement-title-row">
-              <h3 class="title-requirement">Requirement B — Authentication: Login</h3>
-                <div class="requirement-status-tag status-success">
+              <h3 class="title-requirement">Requirement: Search & Filters</h3>
+                <div class="requirement-status-tag status-error">
               <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="7.99961" cy="7.99998" r="6.4" fill="#10A363" fill-opacity="0.2"/>
-                <path d="M5.59961 8.00002L7.19961 9.60002L10.3996 6.40002" stroke="#19C379" stroke-width="1.28" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="7.99961" cy="7.99998" r="6.4" fill="#C23539" fill-opacity="0.2"/>
+                <path d="M8 5.59998V7.99698" stroke="#EF4146" stroke-width="1.38478" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 10.394V10.3995" stroke="#EF4146" stroke-width="1.38478" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
-              <span>0/0</span>
+              <span>0/1</span>
             </div>
               </div>
               <p class="text-body-medium requirement-description">Proper error handling for API calls and invalid data scenarios.</p>
@@ -1401,7 +1545,54 @@ body {
 
             <div class="accordion-content">
             <div class="test-wrapper">
-
+<div class="test-card">
+                <div class="test-header">
+                  <h4 class="text-body-medium">TC007 Apply full set of search filters to narrow results</h4>
+                </div>
+                <div class="test-content">
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Test Code</div>
+                    <div class="test-field-value text-body">
+                      <a href="./TC007_Apply_full_set_of_search_filters_to_narrow_results.py" class="text-link">TC007_Apply_full_set_of_search_filters_to_narrow_results.py</a>
+                    </div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Test Error</div>
+                    <div class="test-field-value text-body">Category dropdown shows only placeholder 'اختر الفئة' with no options. Subcategory and moughataa controls are non-interactive divs.</div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Test Visualization and Result</div>
+                    <div class="test-field-value text-body">
+                      <a href="https://www.testsprite.com/dashboard/mcp/tests/3236fd3c-10a2-4171-9605-ae4249bacafa/cbb1f767-856c-4d34-baba-a398fcbc279d" class="text-link">View Results</a>
+                    </div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Status</div>
+                    <div class="test-field-value">
+                      
+            <div class="status-wrapper">
+                <div class="status-icon">
+                    <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="7.99961" cy="7.99998" r="6.4" fill="#C23539" fill-opacity="0.2"/>
+<path d="M8 5.59998V7.99698" stroke="#EF4146" stroke-width="1.38478" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M8 10.394V10.3995" stroke="#EF4146" stroke-width="1.38478" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+                </div>
+                <span class="text-body status-fail">Failed</span>
+            </div>
+            
+                    </div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Severity</div>
+                    <div class="test-field-value text-body">HIGH</div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Analysis / Findings</div>
+                    <div class="test-field-value text-body">Filter dropdowns for category, subcategory, and moughataa are either empty or non-interactive. This is likely a data-loading issue (options collection not seeded / API not returning data) or a client-side rendering bug. The type filter works. Investigate the `options` and `lieux` collections in the test database and the corresponding API routes (`/api/annonces`, `/app/[locale]/ui.tsx` filter components).</div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -1410,13 +1601,13 @@ body {
           <div class="accordion-header" onclick="toggleAccordion(this)">
             <div class="requirement-content">
                                           <div class="requirement-title-row">
-              <h3 class="title-requirement">Requirement C — Authentication: Registration & OTP</h3>
-                <div class="requirement-status-tag status-success">
+              <h3 class="title-requirement">Requirement: User Authentication — Login</h3>
+                <div class="requirement-status-tag status-error">
               <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="7.99961" cy="7.99998" r="6.4" fill="#10A363" fill-opacity="0.2"/>
-                <path d="M5.59961 8.00002L7.19961 9.60002L10.3996 6.40002" stroke="#19C379" stroke-width="1.28" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="7.99961" cy="7.99998" r="6.4" fill="#C23539" fill-opacity="0.2"/>
+                <path d="M8 5.59998V7.99698" stroke="#EF4146" stroke-width="1.38478" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 10.394V10.3995" stroke="#EF4146" stroke-width="1.38478" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
-              <span>0/0</span>
+              <span>0/2</span>
             </div>
               </div>
               <p class="text-body-medium requirement-description">Proper error handling for API calls and invalid data scenarios.</p>
@@ -1430,7 +1621,102 @@ body {
 
             <div class="accordion-content">
             <div class="test-wrapper">
-
+<div class="test-card">
+                <div class="test-header">
+                  <h4 class="text-body-medium">TC015 Login with valid phone and password redirects to home</h4>
+                </div>
+                <div class="test-content">
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Test Code</div>
+                    <div class="test-field-value text-body">
+                      <a href="./TC015_Login_with_valid_phone_and_password_redirects_to_home.py" class="text-link">TC015_Login_with_valid_phone_and_password_redirects_to_home.py</a>
+                    </div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Test Error</div>
+                    <div class="test-field-value text-body">After submitting phone=36000000 and password=password123, the page remained on `/ar/p/users/connexion` with no redirect.</div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Test Visualization and Result</div>
+                    <div class="test-field-value text-body">
+                      <a href="https://www.testsprite.com/dashboard/mcp/tests/3236fd3c-10a2-4171-9605-ae4249bacafa/1629388c-f8d2-488f-ab6b-0af91ea03d7c" class="text-link">View Results</a>
+                    </div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Status</div>
+                    <div class="test-field-value">
+                      
+            <div class="status-wrapper">
+                <div class="status-icon">
+                    <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="7.99961" cy="7.99998" r="6.4" fill="#C23539" fill-opacity="0.2"/>
+<path d="M8 5.59998V7.99698" stroke="#EF4146" stroke-width="1.38478" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M8 10.394V10.3995" stroke="#EF4146" stroke-width="1.38478" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+                </div>
+                <span class="text-body status-fail">Failed</span>
+            </div>
+            
+                    </div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Severity</div>
+                    <div class="test-field-value text-body">HIGH</div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Analysis / Findings</div>
+                    <div class="test-field-value text-body">The demo account password seeded by `mongo:seed` is `Demo1234!`, not `password123`. The test used the wrong credential. Either update the test to use the correct password, or document the correct demo credentials clearly. The login flow itself may be functional.</div>
+                  </div>
+                </div>
+              </div>
+<div class="test-card">
+                <div class="test-header">
+                  <h4 class="text-body-medium">TC016 Login with invalid credentials shows an error</h4>
+                </div>
+                <div class="test-content">
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Test Code</div>
+                    <div class="test-field-value text-body">
+                      <a href="./TC016_Login_with_invalid_credentials_shows_an_error.py" class="text-link">TC016_Login_with_invalid_credentials_shows_an_error.py</a>
+                    </div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Test Error</div>
+                    <div class="test-field-value text-body">Submitting incorrect credentials showed no error message; the page stayed on the login screen silently.</div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Test Visualization and Result</div>
+                    <div class="test-field-value text-body">
+                      <a href="https://www.testsprite.com/dashboard/mcp/tests/3236fd3c-10a2-4171-9605-ae4249bacafa/cbf60dc6-b429-4ba0-b013-5790a495d0d5" class="text-link">View Results</a>
+                    </div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Status</div>
+                    <div class="test-field-value">
+                      
+            <div class="status-wrapper">
+                <div class="status-icon">
+                    <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="7.99961" cy="7.99998" r="6.4" fill="#C23539" fill-opacity="0.2"/>
+<path d="M8 5.59998V7.99698" stroke="#EF4146" stroke-width="1.38478" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M8 10.394V10.3995" stroke="#EF4146" stroke-width="1.38478" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+                </div>
+                <span class="text-body status-fail">Failed</span>
+            </div>
+            
+                    </div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Severity</div>
+                    <div class="test-field-value text-body">HIGH</div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Analysis / Findings</div>
+                    <div class="test-field-value text-body">The login API does not appear to surface a visible error message (toast or inline) when credentials are invalid. The UI should display an Arabic error such as 'بيانات الدخول غير صحيحة' on a failed authentication response. Investigate the login route handler and the client-side error state rendering.</div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -1439,13 +1725,13 @@ body {
           <div class="accordion-header" onclick="toggleAccordion(this)">
             <div class="requirement-content">
                                           <div class="requirement-title-row">
-              <h3 class="title-requirement">Requirement D — Authentication: Forgot / Reset Password</h3>
+              <h3 class="title-requirement">Requirement: User Authentication — Registration</h3>
                 <div class="requirement-status-tag status-success">
               <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="7.99961" cy="7.99998" r="6.4" fill="#10A363" fill-opacity="0.2"/>
                 <path d="M5.59961 8.00002L7.19961 9.60002L10.3996 6.40002" stroke="#19C379" stroke-width="1.28" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
-              <span>0/0</span>
+              <span>2/2</span>
             </div>
               </div>
               <p class="text-body-medium requirement-description">Proper error handling for API calls and invalid data scenarios.</p>
@@ -1459,7 +1745,96 @@ body {
 
             <div class="accordion-content">
             <div class="test-wrapper">
-
+<div class="test-card">
+                <div class="test-header">
+                  <h4 class="text-body-medium">TC019 Registration submits with required fields and redirects to OTP page</h4>
+                </div>
+                <div class="test-content">
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Test Code</div>
+                    <div class="test-field-value text-body">
+                      <a href="./TC019_Registration_submits_with_required_fields_and_redirects_to_OTP_page.py" class="text-link">TC019_Registration_submits_with_required_fields_and_redirects_to_OTP_page.py</a>
+                    </div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Test Error</div>
+                    <div class="test-field-value text-body">- **Test Visualization and Result:** https://www.testsprite.com/dashboard/mcp/tests/3236fd3c-10a2-4171-9605-ae4249bacafa/e0fade0d-731a-434b-841e-1415353f8c46</div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Test Visualization and Result</div>
+                    <div class="test-field-value text-body">
+                      <a href="https://www.testsprite.com/dashboard/mcp/tests/3236fd3c-10a2-4171-9605-ae4249bacafa/e0fade0d-731a-434b-841e-1415353f8c46" class="text-link">View Results</a>
+                    </div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Status</div>
+                    <div class="test-field-value">
+                      <div class="status-wrapper">
+                <div class="status-icon">
+                    <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="7.99961" cy="7.99998" r="6.4" fill="#10A363" fill-opacity="0.2"/>
+                        <path d="M5.59961 8.00002L7.19961 9.60002L10.3996 6.40002" stroke="#19C379" stroke-width="1.28" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <span class="text-body status-pass">Pass</span>
+            </div>
+                    </div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Severity</div>
+                    <div class="test-field-value text-body">LOW</div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Analysis / Findings</div>
+                    <div class="test-field-value text-body">Registration with required fields correctly redirects to the OTP verification page.</div>
+                  </div>
+                </div>
+              </div>
+<div class="test-card">
+                <div class="test-header">
+                  <h4 class="text-body-medium">TC021 Registration shows validation errors for missing required fields</h4>
+                </div>
+                <div class="test-content">
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Test Code</div>
+                    <div class="test-field-value text-body">
+                      <a href="./TC021_Registration_shows_validation_errors_for_missing_required_fields.py" class="text-link">TC021_Registration_shows_validation_errors_for_missing_required_fields.py</a>
+                    </div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Test Error</div>
+                    <div class="test-field-value text-body">- **Test Visualization and Result:** https://www.testsprite.com/dashboard/mcp/tests/3236fd3c-10a2-4171-9605-ae4249bacafa/27ea5639-9b04-4218-b179-f51eeb0cff54</div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Test Visualization and Result</div>
+                    <div class="test-field-value text-body">
+                      <a href="https://www.testsprite.com/dashboard/mcp/tests/3236fd3c-10a2-4171-9605-ae4249bacafa/27ea5639-9b04-4218-b179-f51eeb0cff54" class="text-link">View Results</a>
+                    </div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Status</div>
+                    <div class="test-field-value">
+                      <div class="status-wrapper">
+                <div class="status-icon">
+                    <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="7.99961" cy="7.99998" r="6.4" fill="#10A363" fill-opacity="0.2"/>
+                        <path d="M5.59961 8.00002L7.19961 9.60002L10.3996 6.40002" stroke="#19C379" stroke-width="1.28" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <span class="text-body status-pass">Pass</span>
+            </div>
+                    </div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Severity</div>
+                    <div class="test-field-value text-body">LOW</div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Analysis / Findings</div>
+                    <div class="test-field-value text-body">Client-side validation correctly blocks submission and displays errors for empty required fields.</div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -1468,13 +1843,13 @@ body {
           <div class="accordion-header" onclick="toggleAccordion(this)">
             <div class="requirement-content">
                                           <div class="requirement-title-row">
-              <h3 class="title-requirement">Requirement E — Protected Routes</h3>
-                <div class="requirement-status-tag status-success">
+              <h3 class="title-requirement">Requirement: OTP Verification</h3>
+                <div class="requirement-status-tag status-error">
               <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="7.99961" cy="7.99998" r="6.4" fill="#10A363" fill-opacity="0.2"/>
-                <path d="M5.59961 8.00002L7.19961 9.60002L10.3996 6.40002" stroke="#19C379" stroke-width="1.28" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="7.99961" cy="7.99998" r="6.4" fill="#C23539" fill-opacity="0.2"/>
+                <path d="M8 5.59998V7.99698" stroke="#EF4146" stroke-width="1.38478" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 10.394V10.3995" stroke="#EF4146" stroke-width="1.38478" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
-              <span>0/0</span>
+              <span>0/1</span>
             </div>
               </div>
               <p class="text-body-medium requirement-description">Proper error handling for API calls and invalid data scenarios.</p>
@@ -1488,7 +1863,383 @@ body {
 
             <div class="accordion-content">
             <div class="test-wrapper">
+<div class="test-card">
+                <div class="test-header">
+                  <h4 class="text-body-medium">TC023 OTP verification page accepts a 4-digit code entry and allows submission</h4>
+                </div>
+                <div class="test-content">
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Test Code</div>
+                    <div class="test-field-value text-body">
+                      <a href="./TC023_OTP_verification_page_accepts_a_4_digit_code_entry_and_allows_submission.py" class="text-link">TC023_OTP_verification_page_accepts_a_4_digit_code_entry_and_allows_submission.py</a>
+                    </div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Test Error</div>
+                    <div class="test-field-value text-body">The OTP input placeholder reads 'digit code-6' — the form expects a 6-digit code, not 4-digit.</div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Test Visualization and Result</div>
+                    <div class="test-field-value text-body">
+                      <a href="https://www.testsprite.com/dashboard/mcp/tests/3236fd3c-10a2-4171-9605-ae4249bacafa/5901fa14-ddd0-4057-8b09-31d470fad2f0" class="text-link">View Results</a>
+                    </div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Status</div>
+                    <div class="test-field-value">
+                      
+            <div class="status-wrapper">
+                <div class="status-icon">
+                    <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="7.99961" cy="7.99998" r="6.4" fill="#C23539" fill-opacity="0.2"/>
+<path d="M8 5.59998V7.99698" stroke="#EF4146" stroke-width="1.38478" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M8 10.394V10.3995" stroke="#EF4146" stroke-width="1.38478" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+                </div>
+                <span class="text-body status-fail">Failed</span>
+            </div>
+            
+                    </div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Severity</div>
+                    <div class="test-field-value text-body">MEDIUM</div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Analysis / Findings</div>
+                    <div class="test-field-value text-body">Test expectation (4-digit OTP) does not match the implemented code length (6-digit). If the spec requires 4 digits, update the OTP input component and the Chinguisoft integration. If 6 digits is correct, update the test plan to reflect the actual requirement.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
+                <div class="requirement-wrapper accordion-item active">
+          <div class="accordion-header" onclick="toggleAccordion(this)">
+            <div class="requirement-content">
+                                          <div class="requirement-title-row">
+              <h3 class="title-requirement">Requirement: Password Reset</h3>
+                <div class="requirement-status-tag status-error">
+              <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="7.99961" cy="7.99998" r="6.4" fill="#C23539" fill-opacity="0.2"/>
+                <path d="M8 5.59998V7.99698" stroke="#EF4146" stroke-width="1.38478" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 10.394V10.3995" stroke="#EF4146" stroke-width="1.38478" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <span>4/5</span>
+            </div>
+              </div>
+              <p class="text-body-medium requirement-description">Proper error handling for API calls and invalid data scenarios.</p>
+            </div>
+            <div class="accordion-icon">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M11.4276 6C11.9145 6 12.1687 6.61626 11.875 7.01439L11.8316 7.06689L8.40295 10.817C8.30455 10.9246 8.17364 10.9892 8.03476 10.9988C7.89589 11.0083 7.7586 10.9621 7.64865 10.8688L7.59493 10.817L4.16629 7.06689L4.11886 7.00814L4.088 6.96002L4.05714 6.90002L4.04743 6.87752L4.032 6.83564L4.01371 6.76814L4.008 6.73501L4.00229 6.69751L4 6.66189V6.58814L4.00286 6.55188L4.008 6.51438L4.01371 6.48188L4.032 6.41438L4.04743 6.37251L4.08743 6.29L4.12457 6.23375L4.16629 6.18313L4.22 6.13125L4.26401 6.0975L4.31886 6.06375L4.33944 6.05313L4.37772 6.03625L4.43944 6.01625L4.46972 6.01L4.50401 6.00375L4.53658 6.00125L11.4276 6Z" fill="var(--fg-secondary)"/>
+              </svg>
+            </div>
+          </div>
+
+            <div class="accordion-content">
+            <div class="test-wrapper">
+<div class="test-card">
+                <div class="test-header">
+                  <h4 class="text-body-medium">TC025 Forgot Password page loads and accepts phone input</h4>
+                </div>
+                <div class="test-content">
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Test Code</div>
+                    <div class="test-field-value text-body">
+                      <a href="./TC025_Forgot_Password_page_loads_and_accepts_phone_input.py" class="text-link">TC025_Forgot_Password_page_loads_and_accepts_phone_input.py</a>
+                    </div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Test Error</div>
+                    <div class="test-field-value text-body">- **Test Visualization and Result:** https://www.testsprite.com/dashboard/mcp/tests/3236fd3c-10a2-4171-9605-ae4249bacafa/e493ff1d-7755-4436-ae9f-221ad00d12e9</div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Test Visualization and Result</div>
+                    <div class="test-field-value text-body">
+                      <a href="https://www.testsprite.com/dashboard/mcp/tests/3236fd3c-10a2-4171-9605-ae4249bacafa/e493ff1d-7755-4436-ae9f-221ad00d12e9" class="text-link">View Results</a>
+                    </div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Status</div>
+                    <div class="test-field-value">
+                      <div class="status-wrapper">
+                <div class="status-icon">
+                    <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="7.99961" cy="7.99998" r="6.4" fill="#10A363" fill-opacity="0.2"/>
+                        <path d="M5.59961 8.00002L7.19961 9.60002L10.3996 6.40002" stroke="#19C379" stroke-width="1.28" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <span class="text-body status-pass">Pass</span>
+            </div>
+                    </div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Severity</div>
+                    <div class="test-field-value text-body">LOW</div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Analysis / Findings</div>
+                    <div class="test-field-value text-body">Forgot-password page renders correctly and accepts phone input.</div>
+                  </div>
+                </div>
+              </div>
+<div class="test-card">
+                <div class="test-header">
+                  <h4 class="text-body-medium">TC027 Forgot Password validation blocks empty submission</h4>
+                </div>
+                <div class="test-content">
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Test Code</div>
+                    <div class="test-field-value text-body">
+                      <a href="./TC027_Forgot_Password_validation_blocks_empty_submission.py" class="text-link">TC027_Forgot_Password_validation_blocks_empty_submission.py</a>
+                    </div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Test Error</div>
+                    <div class="test-field-value text-body">- **Test Visualization and Result:** https://www.testsprite.com/dashboard/mcp/tests/3236fd3c-10a2-4171-9605-ae4249bacafa/eb7fc84e-bdd9-4235-ae4b-81724c0084e7</div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Test Visualization and Result</div>
+                    <div class="test-field-value text-body">
+                      <a href="https://www.testsprite.com/dashboard/mcp/tests/3236fd3c-10a2-4171-9605-ae4249bacafa/eb7fc84e-bdd9-4235-ae4b-81724c0084e7" class="text-link">View Results</a>
+                    </div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Status</div>
+                    <div class="test-field-value">
+                      <div class="status-wrapper">
+                <div class="status-icon">
+                    <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="7.99961" cy="7.99998" r="6.4" fill="#10A363" fill-opacity="0.2"/>
+                        <path d="M5.59961 8.00002L7.19961 9.60002L10.3996 6.40002" stroke="#19C379" stroke-width="1.28" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <span class="text-body status-pass">Pass</span>
+            </div>
+                    </div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Severity</div>
+                    <div class="test-field-value text-body">LOW</div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Analysis / Findings</div>
+                    <div class="test-field-value text-body">Empty submission is correctly blocked with a validation error.</div>
+                  </div>
+                </div>
+              </div>
+<div class="test-card">
+                <div class="test-header">
+                  <h4 class="text-body-medium">TC029 Reset Password page loads and accepts OTP and password inputs</h4>
+                </div>
+                <div class="test-content">
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Test Code</div>
+                    <div class="test-field-value text-body">
+                      <a href="./TC029_Reset_Password_page_loads_and_accepts_OTP_and_password_inputs.py" class="text-link">TC029_Reset_Password_page_loads_and_accepts_OTP_and_password_inputs.py</a>
+                    </div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Test Error</div>
+                    <div class="test-field-value text-body">- **Test Visualization and Result:** https://www.testsprite.com/dashboard/mcp/tests/3236fd3c-10a2-4171-9605-ae4249bacafa/213139df-6572-4e01-bf8c-994077161707</div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Test Visualization and Result</div>
+                    <div class="test-field-value text-body">
+                      <a href="https://www.testsprite.com/dashboard/mcp/tests/3236fd3c-10a2-4171-9605-ae4249bacafa/213139df-6572-4e01-bf8c-994077161707" class="text-link">View Results</a>
+                    </div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Status</div>
+                    <div class="test-field-value">
+                      <div class="status-wrapper">
+                <div class="status-icon">
+                    <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="7.99961" cy="7.99998" r="6.4" fill="#10A363" fill-opacity="0.2"/>
+                        <path d="M5.59961 8.00002L7.19961 9.60002L10.3996 6.40002" stroke="#19C379" stroke-width="1.28" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <span class="text-body status-pass">Pass</span>
+            </div>
+                    </div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Severity</div>
+                    <div class="test-field-value text-body">LOW</div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Analysis / Findings</div>
+                    <div class="test-field-value text-body">Reset password page renders OTP, new password, and confirm password inputs correctly.</div>
+                  </div>
+                </div>
+              </div>
+<div class="test-card">
+                <div class="test-header">
+                  <h4 class="text-body-medium">TC030 Reset Password validation blocks empty submission</h4>
+                </div>
+                <div class="test-content">
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Test Code</div>
+                    <div class="test-field-value text-body">
+                      <a href="./TC030_Reset_Password_validation_blocks_empty_submission.py" class="text-link">TC030_Reset_Password_validation_blocks_empty_submission.py</a>
+                    </div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Test Error</div>
+                    <div class="test-field-value text-body">- **Test Visualization and Result:** https://www.testsprite.com/dashboard/mcp/tests/3236fd3c-10a2-4171-9605-ae4249bacafa/0f5bd5fe-1fb1-4a90-9f3e-964b047fc596</div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Test Visualization and Result</div>
+                    <div class="test-field-value text-body">
+                      <a href="https://www.testsprite.com/dashboard/mcp/tests/3236fd3c-10a2-4171-9605-ae4249bacafa/0f5bd5fe-1fb1-4a90-9f3e-964b047fc596" class="text-link">View Results</a>
+                    </div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Status</div>
+                    <div class="test-field-value">
+                      <div class="status-wrapper">
+                <div class="status-icon">
+                    <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="7.99961" cy="7.99998" r="6.4" fill="#10A363" fill-opacity="0.2"/>
+                        <path d="M5.59961 8.00002L7.19961 9.60002L10.3996 6.40002" stroke="#19C379" stroke-width="1.28" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <span class="text-body status-pass">Pass</span>
+            </div>
+                    </div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Severity</div>
+                    <div class="test-field-value text-body">LOW</div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Analysis / Findings</div>
+                    <div class="test-field-value text-body">Empty form submission is correctly blocked.</div>
+                  </div>
+                </div>
+              </div>
+<div class="test-card">
+                <div class="test-header">
+                  <h4 class="text-body-medium">TC031 Reset Password rejects mismatched passwords</h4>
+                </div>
+                <div class="test-content">
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Test Code</div>
+                    <div class="test-field-value text-body">
+                      <a href="./TC031_Reset_Password_rejects_mismatched_passwords.py" class="text-link">TC031_Reset_Password_rejects_mismatched_passwords.py</a>
+                    </div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Test Error</div>
+                    <div class="test-field-value text-body">Submitting mismatched passwords showed a toast 'يرجى إدخال رقم هاتفك.' (unrelated) instead of a password-mismatch error.</div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Test Visualization and Result</div>
+                    <div class="test-field-value text-body">
+                      <a href="https://www.testsprite.com/dashboard/mcp/tests/3236fd3c-10a2-4171-9605-ae4249bacafa/3cc5e394-092c-4fce-ba91-33625221197b" class="text-link">View Results</a>
+                    </div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Status</div>
+                    <div class="test-field-value">
+                      
+            <div class="status-wrapper">
+                <div class="status-icon">
+                    <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="7.99961" cy="7.99998" r="6.4" fill="#C23539" fill-opacity="0.2"/>
+<path d="M8 5.59998V7.99698" stroke="#EF4146" stroke-width="1.38478" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M8 10.394V10.3995" stroke="#EF4146" stroke-width="1.38478" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+                </div>
+                <span class="text-body status-fail">Failed</span>
+            </div>
+            
+                    </div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Severity</div>
+                    <div class="test-field-value text-body">MEDIUM</div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Analysis / Findings</div>
+                    <div class="test-field-value text-body">The reset-password form lacks client-side validation for password confirmation mismatch. The toast shown ('يرجى إدخال رقم هاتفك.') suggests the form may require phone context passed from the forgot-password flow, which is missing when navigating directly. Add explicit password-match validation in the form and ensure the phone context is propagated correctly.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+                <div class="requirement-wrapper accordion-item active">
+          <div class="accordion-header" onclick="toggleAccordion(this)">
+            <div class="requirement-content">
+                                          <div class="requirement-title-row">
+              <h3 class="title-requirement">Requirement: Protected Routes</h3>
+                <div class="requirement-status-tag status-success">
+              <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="7.99961" cy="7.99998" r="6.4" fill="#10A363" fill-opacity="0.2"/>
+                <path d="M5.59961 8.00002L7.19961 9.60002L10.3996 6.40002" stroke="#19C379" stroke-width="1.28" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <span>1/1</span>
+            </div>
+              </div>
+              <p class="text-body-medium requirement-description">Proper error handling for API calls and invalid data scenarios.</p>
+            </div>
+            <div class="accordion-icon">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M11.4276 6C11.9145 6 12.1687 6.61626 11.875 7.01439L11.8316 7.06689L8.40295 10.817C8.30455 10.9246 8.17364 10.9892 8.03476 10.9988C7.89589 11.0083 7.7586 10.9621 7.64865 10.8688L7.59493 10.817L4.16629 7.06689L4.11886 7.00814L4.088 6.96002L4.05714 6.90002L4.04743 6.87752L4.032 6.83564L4.01371 6.76814L4.008 6.73501L4.00229 6.69751L4 6.66189V6.58814L4.00286 6.55188L4.008 6.51438L4.01371 6.48188L4.032 6.41438L4.04743 6.37251L4.08743 6.29L4.12457 6.23375L4.16629 6.18313L4.22 6.13125L4.26401 6.0975L4.31886 6.06375L4.33944 6.05313L4.37772 6.03625L4.43944 6.01625L4.46972 6.01L4.50401 6.00375L4.53658 6.00125L11.4276 6Z" fill="var(--fg-secondary)"/>
+              </svg>
+            </div>
+          </div>
+
+            <div class="accordion-content">
+            <div class="test-wrapper">
+<div class="test-card">
+                <div class="test-header">
+                  <h4 class="text-body-medium">TC033 My Annonces List redirects unauthenticated user to login</h4>
+                </div>
+                <div class="test-content">
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Test Code</div>
+                    <div class="test-field-value text-body">
+                      <a href="./TC033_My_Annonces_List_redirects_unauthenticated_user_to_login.py" class="text-link">TC033_My_Annonces_List_redirects_unauthenticated_user_to_login.py</a>
+                    </div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Test Error</div>
+                    <div class="test-field-value text-body">- **Test Visualization and Result:** https://www.testsprite.com/dashboard/mcp/tests/3236fd3c-10a2-4171-9605-ae4249bacafa/1eaaf962-f84c-497a-ad1c-473ae5e96077</div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Test Visualization and Result</div>
+                    <div class="test-field-value text-body">
+                      <a href="https://www.testsprite.com/dashboard/mcp/tests/3236fd3c-10a2-4171-9605-ae4249bacafa/1eaaf962-f84c-497a-ad1c-473ae5e96077" class="text-link">View Results</a>
+                    </div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Status</div>
+                    <div class="test-field-value">
+                      <div class="status-wrapper">
+                <div class="status-icon">
+                    <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="7.99961" cy="7.99998" r="6.4" fill="#10A363" fill-opacity="0.2"/>
+                        <path d="M5.59961 8.00002L7.19961 9.60002L10.3996 6.40002" stroke="#19C379" stroke-width="1.28" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <span class="text-body status-pass">Pass</span>
+            </div>
+                    </div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Severity</div>
+                    <div class="test-field-value text-body">LOW</div>
+                  </div>
+                  <div class="test-field">
+                    <div class="test-field-label text-body-medium">Analysis / Findings</div>
+                    <div class="test-field-value text-body">Unauthenticated access to `/my/annonces` correctly redirects to the login page.</div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -1509,7 +2260,7 @@ body {
         </div>
         <div class="metadata-row">
           <div class="metadata-label text-body-medium">Code Repo</div>
-          <div class="metadata-value text-body">eddeyar-2026</div>
+          <div class="metadata-value text-body">inspiring-goodall (Eddeyar / Rim-eBay)</div>
         </div>
         <div class="metadata-row">
           <div class="metadata-label text-body-medium">Test Results</div>
