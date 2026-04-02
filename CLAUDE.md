@@ -10,10 +10,10 @@ Stack : **Next.js 16 App Router + MongoDB + TypeScript + TailwindCSS + Bun**.
 ```bash
 bun install              # Installer les dépendances
 bun run dev              # Serveur de développement (Turbopack, port 3000)
-bun run build            # Build de production
+bun run build            # Build de production (~42s — TS check désactivé dans next.config.mjs)
 bun run start            # Serveur de production (port 3000)
 bun run start:test       # Serveur de production avec NODE_ENV=test (.env.test)
-bun run check-types      # Vérification TypeScript stricte (sans emit)
+bun run check-types      # Vérification TypeScript stricte (sans emit — obligatoire avant deploy)
 
 # MongoDB (Docker)
 docker compose -f docker-compose.mongo.yml up -d   # Démarrer MongoDB
