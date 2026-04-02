@@ -35,30 +35,14 @@ test.describe('TC001 — Listings : parcourir et ouvrir un détail', () => {
   test('affiche des cartes annonce et navigue vers la page détail', async ({ page }) => {
     await page.goto('/ar');
 
-    // Au moins une carte annonce doit être visible
-    const firstArticle = page.locator('article').first();
-    await expect(firstArticle).toBeVisible({ timeout: 10_000 });
+    // La carte annonce utilise data-cy="annonce-item" sur l'<article> avec onClick={goToDetails}
+    const firstCard = page.locator('[data-cy="annonce-item"]').first();
+    await expect(firstCard).toBeVisible({ timeout: 10_000 });
 
-    const urlBefore = page.url();
+    await firstCard.click();
 
-    // Cliquer sur le titre h2 de la carte (navigation principale, pas le bouton favori)
-    // Fallback : dernier bouton de la carte (le bouton "voir détail" est généralement en bas)
-    const cardTitle = firstArticle.locator('h2').first();
-    const titleVisible = await cardTitle.isVisible({ timeout: 3_000 }).catch(() => false);
-
-    if (titleVisible) {
-      await cardTitle.click();
-    } else {
-      // Fallback : dernier bouton de la carte
-      const buttons = firstArticle.locator('button');
-      const count = await buttons.count();
-      await buttons.nth(count - 1).click();
-    }
-
-    // L'URL doit avoir changé (on est sur une page détail)
-    await page.waitForURL((url) => url.href !== urlBefore, { timeout: 10_000 });
-    expect(page.url()).not.toBe(urlBefore);
-
+    // Next.js client navigation : attendre l'URL de détail (/{locale}/p/annonces/details/{id})
+    await expect(page).toHaveURL(/\/p\/annonces\/details\//, { timeout: 10_000 });
     await expect(page.locator('main')).toBeVisible();
   });
 });
@@ -148,23 +132,12 @@ test.describe('TC007 — Filtres de recherche', () => {
 test.describe('TC012 — Page détail annonce', () => {
   test('affiche l\'image, la description, la carte et le contact', async ({ page }) => {
     await page.goto('/ar');
-    const firstArticle = page.locator('article').first();
-    await expect(firstArticle).toBeVisible({ timeout: 10_000 });
 
-    const urlBefore = page.url();
+    const firstCard = page.locator('[data-cy="annonce-item"]').first();
+    await expect(firstCard).toBeVisible({ timeout: 10_000 });
 
-    // Même logique que TC001 : cliquer le titre h2 ou le dernier bouton
-    const cardTitle = firstArticle.locator('h2').first();
-    const titleVisible = await cardTitle.isVisible({ timeout: 3_000 }).catch(() => false);
-    if (titleVisible) {
-      await cardTitle.click();
-    } else {
-      const buttons = firstArticle.locator('button');
-      const count = await buttons.count();
-      await buttons.nth(count - 1).click();
-    }
-
-    await page.waitForURL((url) => url.href !== urlBefore, { timeout: 10_000 });
+    await firstCard.click();
+    await expect(page).toHaveURL(/\/p\/annonces\/details\//, { timeout: 10_000 });
 
     // Image / carousel
     await expect(page.locator('img').first()).toBeVisible({ timeout: 8_000 });
