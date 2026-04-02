@@ -92,6 +92,7 @@ export default function RegisterFormPhone({ lang = "ar", urlboot }: { lang?: str
           {t("register.Telephone")}
         </label>
         <input
+          data-cy="input-contact"
           type="tel"
           id="contact"
           value={contact}
@@ -112,6 +113,7 @@ export default function RegisterFormPhone({ lang = "ar", urlboot }: { lang?: str
         </label>
         <div className="relative">
           <input
+            data-cy="input-password"
             type={showPassword ? "text" : "password"}
             id="password"
             value={password}
@@ -138,6 +140,7 @@ export default function RegisterFormPhone({ lang = "ar", urlboot }: { lang?: str
         </label>
         <div className="relative">
           <input
+            data-cy="input-confirm-password"
             type={showConfirmPassword ? "text" : "password"}
             id="confirmPassword"
             value={confirmPassword}
@@ -192,8 +195,9 @@ export default function RegisterFormPhone({ lang = "ar", urlboot }: { lang?: str
       {/* SUBMIT */}
       <div className="pt-4">
         <button
+          data-cy="btn-submit"
           type="submit"
-          className={`w-full flex justify-center items-center font-bold py-3.5 px-4 rounded-xl shadow-lg transition-all duration-200 active:scale-[0.98] 
+          className={`w-full flex justify-center items-center font-bold py-3.5 px-4 rounded-xl shadow-lg transition-all duration-200 active:scale-[0.98]
             ${isLoading ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-primary-600 hover:bg-primary-700 text-white shadow-primary-600/30 hover:shadow-primary-600/40"}`}
           disabled={isLoading}
         >

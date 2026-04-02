@@ -83,6 +83,7 @@ export default function ForgotPasswordForm({ locale }: ForgotPasswordFormProps) 
             {t('forgotPassword.phoneLabel')}
           </label>
           <input
+            data-cy="input-contact"
             id="contact"
             type="tel"
             value={contact}
@@ -97,11 +98,12 @@ export default function ForgotPasswordForm({ locale }: ForgotPasswordFormProps) 
 
         <div className="pt-2">
           <button
+            data-cy="btn-submit"
             type="submit"
             disabled={isLoading}
             className={`w-full flex justify-center items-center font-bold py-3.5 px-4 rounded-xl shadow-lg transition-all duration-200 active:scale-[0.98]
-              ${isLoading 
-                ? "bg-gray-300 text-gray-500 cursor-not-allowed" 
+              ${isLoading
+                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                 : "bg-primary-600 hover:bg-primary-700 text-white shadow-primary-600/30 hover:shadow-primary-600/40"}`}
           >
             {isLoading ? (

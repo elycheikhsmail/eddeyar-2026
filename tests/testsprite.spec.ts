@@ -1,12 +1,27 @@
 /**
  * Tests E2E — Correspondance TestSprite (TC001–TC033)
  *
- * Chaque test correspond à un TC du rapport TestSprite.
+ * Tous les sélecteurs utilisent data-cy pour la stabilité.
  * Statuts connus :  ✅ Passé | ❌ Échoué (bug identifié) | ⚠️ Données insuffisantes
  *
  * Prérequis :
  *   bun run testwithdata   → reset DB + seed + build + start:test
  *   bun run test:ts        → lance uniquement ce fichier
+ *
+ * data-cy ajoutés dans les composants :
+ *   annonce-item         → AnnonceItemUI.tsx    (article card)
+ *   btn-prev-page        → PaginationUI.tsx
+ *   btn-next-page        → PaginationUI.tsx
+ *   pagination-info      → PaginationUI.tsx
+ *   input-phone          → ConnexionFormPhone.tsx
+ *   input-password       → ConnexionFormPhone.tsx / RegisterFormPhone.tsx / reset-password/ui.tsx
+ *   btn-submit           → tous les formulaires
+ *   input-contact        → RegisterFormPhone.tsx / forgot-password/ui.tsx
+ *   input-confirm-password → RegisterFormPhone.tsx
+ *   input-otp            → otp/ui.tsx / reset-password/ui.tsx
+ *   btn-verify           → otp/ui.tsx
+ *   btn-resend           → otp/ui.tsx
+ *   input-confirm        → reset-password/ui.tsx
  */
 
 import { test, expect } from '@playwright/test';
@@ -16,14 +31,13 @@ import { test, expect } from '@playwright/test';
 const DEMO_PHONE    = '36000000';
 const DEMO_PASSWORD = 'Demo1234!';
 
-const REGISTER_URL        = '/ar/p/users/register';
-const LOGIN_URL            = '/ar/p/users/connexion';
-const FORGOT_PASSWORD_URL  = '/ar/p/users/forgot-password';
-const RESET_PASSWORD_URL   = '/ar/p/users/reset-password';
-const MY_LIST_URL          = '/ar/my/list';
+const REGISTER_URL       = '/ar/p/users/register';
+const LOGIN_URL           = '/ar/p/users/connexion';
+const FORGOT_PASSWORD_URL = '/ar/p/users/forgot-password';
+const RESET_PASSWORD_URL  = '/ar/p/users/reset-password';
+const MY_LIST_URL         = '/ar/my/list';
 
 function uniquePhone() {
-  // Génère un numéro mauritanien valide (commence par 2, 3 ou 4, 8 chiffres)
   const rand = Math.floor(1000000 + Math.random() * 8999999);
   return `3${String(rand).slice(0, 7)}`;
 }
@@ -35,13 +49,12 @@ test.describe('TC001 — Listings : parcourir et ouvrir un détail', () => {
   test('affiche des cartes annonce et navigue vers la page détail', async ({ page }) => {
     await page.goto('/ar');
 
-    // La carte annonce utilise data-cy="annonce-item" sur l'<article> avec onClick={goToDetails}
     const firstCard = page.locator('[data-cy="annonce-item"]').first();
     await expect(firstCard).toBeVisible({ timeout: 10_000 });
 
     await firstCard.click();
 
-    // Next.js client navigation : attendre l'URL de détail (/{locale}/p/annonces/details/{id})
+    // Route : /{locale}/p/annonces/details/{id}
     await expect(page).toHaveURL(/\/p\/annonces\/details\//, { timeout: 10_000 });
     await expect(page.locator('main')).toBeVisible();
   });
@@ -49,31 +62,26 @@ test.describe('TC001 — Listings : parcourir et ouvrir un détail', () => {
 
 // ─── TC002 — Pagination : page 1 → page 2 ──────────────────────────────────
 // Résultat TestSprite : ❌ Failed (données insuffisantes — 1 seule page dans la DB de test)
-// ⚠️  Ce test nécessite assez d'annonces pour générer 2 pages (seeder plus de données).
 
 test.describe('TC002 — Listings : pagination', () => {
-  test('affiche le contrôle de pagination et permet de passer à la page 2', async ({ page }) => {
+  test('affiche les contrôles de pagination et permet de passer à la page suivante', async ({ page }) => {
     await page.goto('/ar');
-    await expect(page.locator('article').first()).toBeVisible({ timeout: 10_000 });
+    await expect(page.locator('[data-cy="annonce-item"]').first()).toBeVisible({ timeout: 10_000 });
 
-    // Vérifier que l'indicateur de pagination est présent
-    const pageIndicator = page.locator('text=/الصفحة/').first();
-    await expect(pageIndicator).toBeVisible({ timeout: 8_000 });
+    // L'indicateur de pagination doit être présent
+    const paginationInfo = page.locator('[data-cy="pagination-info"]');
+    await expect(paginationInfo).toBeVisible({ timeout: 8_000 });
 
-    // Tenter de naviguer vers la page 2
-    const page2Btn = page.locator('button, a').filter({ hasText: /^2$/ }).first();
-    const hasPage2 = await page2Btn.isVisible({ timeout: 3_000 }).catch(() => false);
+    // Bouton "page suivante" — désactivé si 1 seule page de données
+    const nextBtn = page.locator('[data-cy="btn-next-page"]');
+    await expect(nextBtn).toBeVisible({ timeout: 5_000 });
 
-    if (hasPage2) {
-      await page2Btn.click();
-      // L'URL doit indiquer la page 2 (query param ou path)
-      await expect(page).toHaveURL(/page=2|p=2|\?page/, { timeout: 10_000 });
+    const isDisabled = await nextBtn.isDisabled();
+    if (!isDisabled) {
+      await nextBtn.click();
+      await expect(page).toHaveURL(/page=2/, { timeout: 10_000 });
     } else {
-      // Seed insuffisant — le test confirme au moins que la pagination UI existe
-      console.warn(
-        'TC002 ⚠️  Une seule page de données. Lancer `bun run mongo:seed:test` avec plus d\'annonces.'
-      );
-      await expect(pageIndicator).toBeVisible();
+      console.warn('TC002 ⚠️  Bouton suivant désactivé — seed insuffisant. Lancer `bun run mongo:seed:test` avec plus d\'annonces.');
     }
   });
 });
@@ -84,29 +92,21 @@ test.describe('TC002 — Listings : pagination', () => {
 test.describe('TC007 — Filtres de recherche', () => {
   test('le filtre "type" est interactif et met à jour les résultats', async ({ page }) => {
     await page.goto('/ar');
-    await expect(page.locator('article').first()).toBeVisible({ timeout: 10_000 });
+    await expect(page.locator('[data-cy="annonce-item"]').first()).toBeVisible({ timeout: 10_000 });
 
-    // Le select "type" (إيجار / بيع) doit exister dans le formulaire de recherche
     const typeSelect = page.locator('form select').first();
     await expect(typeSelect).toBeVisible({ timeout: 8_000 });
 
-    // Sélectionner la première option non-vide
-    const options = await typeSelect.locator('option').all();
-    const nonEmpty = options.filter(async (o) => (await o.getAttribute('value')) !== '');
-    if (nonEmpty.length > 0) {
-      await typeSelect.selectOption({ index: 1 });
-      await page.waitForTimeout(800);
-    }
+    await typeSelect.selectOption({ index: 1 });
+    await page.waitForTimeout(800);
 
-    // La section résultats doit toujours être visible après filtre
     await expect(page.locator('main')).toBeVisible();
   });
 
   test('le filtre catégorie affiche des options (pas uniquement le placeholder)', async ({ page }) => {
     await page.goto('/ar');
-    await expect(page.locator('article').first()).toBeVisible({ timeout: 10_000 });
+    await expect(page.locator('[data-cy="annonce-item"]').first()).toBeVisible({ timeout: 10_000 });
 
-    // Chercher le select ou bouton catégorie
     const categoryControl = page
       .locator('select, [role="listbox"], [role="combobox"]')
       .filter({ hasText: /اختر الفئة|catégorie|category/i })
@@ -114,10 +114,7 @@ test.describe('TC007 — Filtres de recherche', () => {
 
     const controlExists = await categoryControl.isVisible({ timeout: 5_000 }).catch(() => false);
     if (controlExists) {
-      // Il doit y avoir plus qu'un seul élément (le placeholder)
-      const optionCount = await page
-        .locator('option, [role="option"]')
-        .count();
+      const optionCount = await page.locator('option, [role="option"]').count();
       // ❌ Bug connu : si optionCount <= 1, la collection `options` n'est pas seedée
       expect(optionCount).toBeGreaterThan(1);
     } else {
@@ -135,45 +132,32 @@ test.describe('TC012 — Page détail annonce', () => {
 
     const firstCard = page.locator('[data-cy="annonce-item"]').first();
     await expect(firstCard).toBeVisible({ timeout: 10_000 });
-
     await firstCard.click();
+
     await expect(page).toHaveURL(/\/p\/annonces\/details\//, { timeout: 10_000 });
 
-    // Image / carousel
     await expect(page.locator('img').first()).toBeVisible({ timeout: 8_000 });
-
-    // La page doit avoir un titre (h1 ou h2)
     await expect(page.locator('h1, h2').first()).toBeVisible({ timeout: 5_000 });
 
-    // Carte Leaflet (peut ne pas charger immédiatement)
-    const map = page.locator('.leaflet-container, [class*="leaflet"], [class*="map"]').first();
-    await map.waitFor({ state: 'visible', timeout: 10_000 }).catch(() => {
-      // La carte est optionnelle selon les annonces (certaines n'ont pas de coordonnées)
-    });
+    // Carte Leaflet — optionnelle (certaines annonces n'ont pas de coordonnées)
+    await page.locator('.leaflet-container').waitFor({ state: 'visible', timeout: 10_000 }).catch(() => {});
 
-    // Section contact doit être présente quelque part dans la page
     await expect(page.locator('main')).toBeVisible();
   });
 });
 
 // ─── TC015 — Login : identifiants valides ──────────────────────────────────
-// Résultat TestSprite : ❌ Failed (mauvais mot de passe utilisé : password123 au lieu de Demo1234!)
+// Résultat TestSprite : ❌ Failed (mauvais mot de passe : password123 au lieu de Demo1234!)
 
 test.describe('TC015 — Login : identifiants valides', () => {
   test('redirige vers l\'accueil après connexion avec le compte démo', async ({ page }) => {
     await page.goto(LOGIN_URL);
-    await expect(page.locator('button[type="submit"]')).toBeVisible({ timeout: 8_000 });
+    await expect(page.locator('[data-cy="btn-submit"]')).toBeVisible({ timeout: 8_000 });
 
-    // Champ téléphone (input de type tel ou input#contact)
-    const phoneInput = page.locator('input[type="tel"], input#contact').first();
-    await phoneInput.fill(DEMO_PHONE);
+    await page.locator('[data-cy="input-phone"]').fill(DEMO_PHONE);
+    await page.locator('[data-cy="input-password"]').fill(DEMO_PASSWORD);
+    await page.locator('[data-cy="btn-submit"]').click();
 
-    // Champ mot de passe
-    await page.locator('input[type="password"]').first().fill(DEMO_PASSWORD);
-
-    await page.locator('button[type="submit"]').click();
-
-    // Doit sortir de la page de connexion
     await expect(page).not.toHaveURL(/\/p\/users\/connexion/, { timeout: 15_000 });
   });
 });
@@ -184,20 +168,16 @@ test.describe('TC015 — Login : identifiants valides', () => {
 test.describe('TC016 — Login : identifiants invalides', () => {
   test('reste sur la page de connexion et affiche un message d\'erreur', async ({ page }) => {
     await page.goto(LOGIN_URL);
-    await expect(page.locator('button[type="submit"]')).toBeVisible({ timeout: 8_000 });
+    await expect(page.locator('[data-cy="btn-submit"]')).toBeVisible({ timeout: 8_000 });
 
-    await page.locator('input[type="tel"], input#contact').first().fill('12345678');
-    await page.locator('input[type="password"]').first().fill('invalidPassword1!');
-    await page.locator('button[type="submit"]').click();
+    await page.locator('[data-cy="input-phone"]').fill('12345678');
+    await page.locator('[data-cy="input-password"]').fill('invalidPassword1!');
+    await page.locator('[data-cy="btn-submit"]').click();
 
-    // Doit rester sur la page de connexion
     await expect(page).toHaveURL(/\/p\/users\/connexion/, { timeout: 10_000 });
 
-    // ❌ Bug connu : aucun toast/message d'erreur affiché — ce test documente le comportement attendu
-    // Un message d'erreur (toast ou inline) doit apparaître
-    const errorMsg = page
-      .locator('[role="alert"], p.text-red-500, p.text-red-700, .text-red-600')
-      .first();
+    // ❌ Bug connu : aucun message d'erreur affiché — ce test documente le comportement attendu
+    const errorMsg = page.locator('[role="alert"], p.text-red-500, p.text-red-700, .text-red-600').first();
     await expect(errorMsg).toBeVisible({ timeout: 8_000 });
   });
 });
@@ -210,20 +190,15 @@ test.describe('TC019 — Inscription : flux complet', () => {
     const phone = uniquePhone();
 
     await page.goto(REGISTER_URL);
-    await expect(page.locator('button[type="submit"]')).toBeVisible({ timeout: 8_000 });
+    await expect(page.locator('[data-cy="btn-submit"]')).toBeVisible({ timeout: 8_000 });
 
-    await page.locator('input#contact, input[type="tel"]').first().fill(phone);
-    await page.locator('input#password').fill('Password123!');
-    await page.locator('input#confirmPassword').fill('Password123!');
-    await page.locator('button[type="submit"]').click();
+    await page.locator('[data-cy="input-contact"]').fill(phone);
+    await page.locator('[data-cy="input-password"]').fill('Password123!');
+    await page.locator('[data-cy="input-confirm-password"]').fill('Password123!');
+    await page.locator('[data-cy="btn-submit"]').click();
 
-    // Doit rediriger vers la page OTP
     await expect(page).toHaveURL(/\/verification\/otp/, { timeout: 15_000 });
-
-    // Le champ de saisie OTP doit être visible
-    await expect(
-      page.locator('input[type="text"], input[inputmode="numeric"]').first()
-    ).toBeVisible({ timeout: 5_000 });
+    await expect(page.locator('[data-cy="input-otp"]')).toBeVisible({ timeout: 5_000 });
   });
 });
 
@@ -233,25 +208,20 @@ test.describe('TC019 — Inscription : flux complet', () => {
 test.describe('TC021 — Inscription : validation formulaire vide', () => {
   test('bloque la soumission et affiche des erreurs de validation', async ({ page }) => {
     await page.goto(REGISTER_URL);
-    await expect(page.locator('button[type="submit"]')).toBeVisible({ timeout: 8_000 });
+    await expect(page.locator('[data-cy="btn-submit"]')).toBeVisible({ timeout: 8_000 });
 
-    // Soumettre sans rien remplir
-    await page.locator('button[type="submit"]').click();
+    await page.locator('[data-cy="btn-submit"]').click();
 
-    // Doit rester sur la page d'inscription
     await expect(page).toHaveURL(/\/p\/users\/register/);
 
-    // Soit validation HTML5 (attribut required), soit messages custom
-    const contactInput = page.locator('input#contact, input[type="tel"]').first();
+    const contactInput = page.locator('[data-cy="input-contact"]');
     const isRequired = await contactInput.getAttribute('required');
 
     if (isRequired === null) {
-      // Erreurs custom
       await expect(
         page.locator('p.text-red-500, p.text-red-700, [role="alert"]').first()
       ).toBeVisible({ timeout: 5_000 });
     }
-    // Dans tous les cas, on reste sur la page → déjà vérifié ci-dessus
   });
 });
 
@@ -259,35 +229,28 @@ test.describe('TC021 — Inscription : validation formulaire vide', () => {
 // Résultat TestSprite : ❌ Failed (le test plan indiquait 4 chiffres, l'UI attend 6 chiffres)
 
 test.describe('TC023 — Page OTP : saisie du code', () => {
-  // Exécution séquentielle pour éviter les conflits avec TC019 (même flux d'inscription)
   test.describe.configure({ mode: 'serial' });
 
   test('accepte un code à 6 chiffres et le bouton de vérification est actif', async ({ page }) => {
     const phone = uniquePhone();
 
-    // Créer un compte pour accéder à la page OTP
     await page.goto(REGISTER_URL);
-    await expect(page.locator('button[type="submit"]')).toBeVisible({ timeout: 8_000 });
+    await expect(page.locator('[data-cy="btn-submit"]')).toBeVisible({ timeout: 8_000 });
 
-    await page.locator('input#contact, input[type="tel"]').first().fill(phone);
-    await page.locator('input#password').fill('Pass123456!');
-    await page.locator('input#confirmPassword').fill('Pass123456!');
-    await page.locator('button[type="submit"]').click();
+    await page.locator('[data-cy="input-contact"]').fill(phone);
+    await page.locator('[data-cy="input-password"]').fill('Pass123456!');
+    await page.locator('[data-cy="input-confirm-password"]').fill('Pass123456!');
+    await page.locator('[data-cy="btn-submit"]').click();
 
     await expect(page).toHaveURL(/\/verification\/otp/, { timeout: 20_000 });
 
-    // Sélecteur large : OTP peut être input[type="text"] ou input sans type explicite
-    const otpInput = page.locator('input:not([type="password"])').first();
+    const otpInput = page.locator('[data-cy="input-otp"]');
     await expect(otpInput).toBeVisible({ timeout: 8_000 });
 
     await otpInput.fill('123456');
     await expect(otpInput).toHaveValue('123456');
 
-    // Le bouton "تحقق من الرمز" doit être actif
-    const verifyBtn = page
-      .locator('button[type="submit"], button')
-      .filter({ hasText: /تحقق/ })
-      .first();
+    const verifyBtn = page.locator('[data-cy="btn-verify"]');
     await expect(verifyBtn).toBeVisible();
     await expect(verifyBtn).toBeEnabled();
   });
@@ -300,15 +263,13 @@ test.describe('TC025 — Mot de passe oublié : formulaire', () => {
   test('charge la page, accepte un numéro de téléphone et permet la soumission', async ({ page }) => {
     await page.goto(FORGOT_PASSWORD_URL);
 
-    // Le champ téléphone doit être visible (la page peut être un modal, d'où le locator large)
-    const phoneInput = page.locator('input').first();
+    const phoneInput = page.locator('[data-cy="input-contact"]');
     await expect(phoneInput).toBeVisible({ timeout: 8_000 });
 
     await phoneInput.fill(DEMO_PHONE);
     await expect(phoneInput).toHaveValue(DEMO_PHONE);
 
-    // Bouton "إرسال الرمز"
-    const submitBtn = page.locator('button[type="submit"]').first();
+    const submitBtn = page.locator('[data-cy="btn-submit"]');
     await expect(submitBtn).toBeVisible();
     await expect(submitBtn).toBeEnabled();
   });
@@ -321,27 +282,20 @@ test.describe('TC027 — Mot de passe oublié : validation soumission vide', () 
   test('bloque la soumission quand le champ téléphone est vide', async ({ page }) => {
     await page.goto(FORGOT_PASSWORD_URL);
 
-    const submitBtn = page.locator('button[type="submit"]').first();
+    const submitBtn = page.locator('[data-cy="btn-submit"]');
     await expect(submitBtn).toBeVisible({ timeout: 8_000 });
     await submitBtn.click();
 
-    // Doit rester sur la page forgot-password (pas de redirection)
     await page.waitForTimeout(1_000);
     expect(page.url()).toMatch(/forgot-password/);
 
-    // Un message d'erreur, un toast ou l'attribut required doit signaler le problème
-    const phoneInput = page.locator('input').first();
-    const isRequired = await phoneInput.getAttribute('required');
+    // L'input contact a l'attribut required → HTML5 bloque nativement
+    // Si pas de required, un toast doit apparaître
+    const contactInput = page.locator('[data-cy="input-contact"]');
+    const isRequired = await contactInput.getAttribute('required');
     if (isRequired === null) {
-      const errorMsg = page
-        .locator('[role="alert"], p.text-red-500, p.text-red-700, .text-red-600')
-        .first();
-      const hasError = await errorMsg.isVisible({ timeout: 3_000 }).catch(() => false);
-      if (!hasError) {
-        // Toast Headless UI
-        const toast = page.locator('[id*="toast"], [class*="toast"], [class*="alert"]').first();
-        await expect(toast).toBeVisible({ timeout: 3_000 });
-      }
+      const toast = page.locator('[role="alert"], [id*="toast"], [class*="toast"]').first();
+      await expect(toast).toBeVisible({ timeout: 3_000 });
     }
   });
 });
@@ -353,23 +307,22 @@ test.describe('TC029 — Reset password : formulaire', () => {
   test('charge la page et accepte les champs OTP + nouveaux mots de passe', async ({ page }) => {
     await page.goto(RESET_PASSWORD_URL);
 
-    // Champ OTP (premier input)
-    const allInputs = page.locator('input');
-    await expect(allInputs.first()).toBeVisible({ timeout: 8_000 });
+    const otpInput = page.locator('[data-cy="input-otp"]');
+    await expect(otpInput).toBeVisible({ timeout: 8_000 });
+    await otpInput.fill('123456');
+    await expect(otpInput).toHaveValue('123456');
 
-    await allInputs.first().fill('123456');
-    await expect(allInputs.first()).toHaveValue('123456');
+    const passwordInput = page.locator('[data-cy="input-password"]');
+    await expect(passwordInput).toBeVisible();
+    await passwordInput.fill('NewPass123!');
 
-    // Champs mot de passe (au moins 2)
-    const passwordInputs = page.locator('input[type="password"]');
-    await expect(passwordInputs).toHaveCount(2, { timeout: 5_000 });
+    const confirmInput = page.locator('[data-cy="input-confirm"]');
+    await expect(confirmInput).toBeVisible();
+    await confirmInput.fill('NewPass123!');
 
-    await passwordInputs.nth(0).fill('NewPass123!');
-    await passwordInputs.nth(1).fill('NewPass123!');
-
-    // Bouton submit visible et actif
-    await expect(page.locator('button[type="submit"]').first()).toBeVisible();
-    await expect(page.locator('button[type="submit"]').first()).toBeEnabled();
+    const submitBtn = page.locator('[data-cy="btn-submit"]');
+    await expect(submitBtn).toBeVisible();
+    await expect(submitBtn).toBeEnabled();
   });
 });
 
@@ -380,44 +333,35 @@ test.describe('TC030 — Reset password : validation formulaire vide', () => {
   test('bloque la soumission quand tous les champs sont vides', async ({ page }) => {
     await page.goto(RESET_PASSWORD_URL);
 
-    const submitBtn = page.locator('button[type="submit"]').first();
+    const submitBtn = page.locator('[data-cy="btn-submit"]');
     await expect(submitBtn).toBeVisible({ timeout: 8_000 });
     await submitBtn.click();
 
     await page.waitForTimeout(1_000);
-
-    // Doit rester sur la page reset-password
     expect(page.url()).toMatch(/reset-password/);
   });
 });
 
 // ─── TC031 — Reset password : mots de passe non identiques ────────────────
-// Résultat TestSprite : ❌ Failed (aucune validation de correspondance implémentée)
+// Résultat TestSprite : ❌ Failed (validation de correspondance non implémentée)
 
 test.describe('TC031 — Reset password : mots de passe non identiques', () => {
   test('affiche une erreur quand les deux mots de passe ne correspondent pas', async ({ page }) => {
     await page.goto(RESET_PASSWORD_URL);
-    await expect(page.locator('button[type="submit"]').first()).toBeVisible({ timeout: 8_000 });
+    await expect(page.locator('[data-cy="btn-submit"]')).toBeVisible({ timeout: 8_000 });
 
-    await page.locator('input').first().fill('123456');
+    await page.locator('[data-cy="input-otp"]').fill('123456');
+    await page.locator('[data-cy="input-password"]').fill('Password123!');
+    await page.locator('[data-cy="input-confirm"]').fill('Password321!'); // différent
 
-    const passwordInputs = page.locator('input[type="password"]');
-    await passwordInputs.nth(0).fill('Password123!');
-    await passwordInputs.nth(1).fill('Password321!'); // différent intentionnellement
-
-    await page.locator('button[type="submit"]').first().click();
+    await page.locator('[data-cy="btn-submit"]').click();
     await page.waitForTimeout(1_500);
 
-    // Doit rester sur la page (pas de redirection)
     expect(page.url()).toMatch(/reset-password/);
 
-    // ❌ Bug connu : la validation de correspondance n'est pas implémentée.
-    // Ce test passera quand le bug sera corrigé.
+    // ❌ Bug connu : validation de mismatch non implémentée — ce test passera après le fix
     const errorMsg = page
-      .locator(
-        'p.text-red-500, p.text-red-700, [role="alert"], ' +
-        '[class*="error"], [class*="invalid"]'
-      )
+      .locator('p.text-red-500, p.text-red-700, [role="alert"], [class*="error"]')
       .first();
     await expect(errorMsg).toBeVisible({ timeout: 5_000 });
   });
@@ -429,8 +373,6 @@ test.describe('TC031 — Reset password : mots de passe non identiques', () => {
 test.describe('TC033 — Route protégée : redirection login', () => {
   test('redirige /ar/my/list vers /connexion pour un visiteur non connecté', async ({ page }) => {
     await page.goto(MY_LIST_URL);
-
-    // Doit rediriger automatiquement vers la page de connexion
     await expect(page).toHaveURL(/\/p\/users\/connexion/, { timeout: 10_000 });
   });
 });

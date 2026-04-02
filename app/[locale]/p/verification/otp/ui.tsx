@@ -70,6 +70,7 @@ export default function VerifyOtpPageUi() {
       <h1 className="text-xl font-semibold mb-4">أدخل رمز التحقق</h1>
 
       <input
+        data-cy="input-otp"
         type="text"
         value={otp}
         onChange={(e) => setOtp(e.target.value)}
@@ -78,6 +79,7 @@ export default function VerifyOtpPageUi() {
       />
 
       <button
+        data-cy="btn-verify"
         onClick={handleVerify}
         disabled={isLoading}
         className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 mb-3"
@@ -86,6 +88,7 @@ export default function VerifyOtpPageUi() {
       </button>
 
       <button
+        data-cy="btn-resend"
         onClick={handleResend}
         disabled={cooldown > 0}
         className="w-full bg-gray-200 py-2 rounded hover:bg-gray-300"

@@ -137,6 +137,7 @@ export default function ConnexionFormPhone({ lang = "ar" }) {
               هاتف
             </label>
             <input
+              data-cy="input-phone"
               type="tel"
               id="phone"
               value={phone}
@@ -159,6 +160,7 @@ export default function ConnexionFormPhone({ lang = "ar" }) {
             </label>
             <div className="relative">
               <input
+                data-cy="input-password"
                 type={showPassword ? "text" : "password"}
                 id="password"
                 value={password}
@@ -181,6 +183,7 @@ export default function ConnexionFormPhone({ lang = "ar" }) {
           <div className="pt-2">
             <button
               id="submit"
+              data-cy="btn-submit"
               type="submit"
               className={`w-full flex justify-center items-center font-bold py-3.5 px-4 rounded-xl shadow-lg transition-all duration-200 active:scale-[0.98]
                 ${isLoading 

@@ -109,6 +109,7 @@ export default function ResetPasswordUI({ locale }: ResetPasswordUIProps) {
               {t('resetPassword.otpLabel')}
             </label>
             <input
+              data-cy="input-otp"
               id="otp"
               type="text"
               value={otp}
@@ -129,6 +130,7 @@ export default function ResetPasswordUI({ locale }: ResetPasswordUIProps) {
             </label>
             <div className="relative">
               <input
+                data-cy="input-password"
                 id="password"
                 type={showPassword ? "text" : "password"}
                 value={password}
@@ -156,6 +158,7 @@ export default function ResetPasswordUI({ locale }: ResetPasswordUIProps) {
             </label>
             <div className="relative">
               <input
+                data-cy="input-confirm"
                 id="confirm"
                 type={showConfirm ? "text" : "password"}
                 value={confirm}
@@ -175,11 +178,12 @@ export default function ResetPasswordUI({ locale }: ResetPasswordUIProps) {
 
           <div className="pt-2">
             <button
+              data-cy="btn-submit"
               type="submit"
               disabled={isLoading}
               className={`w-full flex justify-center items-center font-bold py-3.5 px-4 rounded-xl shadow-lg transition-all duration-200 active:scale-[0.98]
-                ${isLoading 
-                  ? "bg-gray-300 text-gray-500 cursor-not-allowed" 
+                ${isLoading
+                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                   : "bg-primary-600 hover:bg-primary-700 text-white shadow-primary-600/30 hover:shadow-primary-600/40"}`}
             >
               {isLoading ? (
