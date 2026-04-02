@@ -138,7 +138,7 @@ test.describe('TC012 — Page détail annonce', () => {
 
     await expect(page).toHaveURL(/\/p\/annonces\/details\//, { timeout: 15_000 });
 
-    await expect(page.locator('img').first()).toBeVisible({ timeout: 8_000 });
+    await expect(page.locator('article img').first()).toBeVisible({ timeout: 8_000 });
     await expect(page.locator('h1, h2').first()).toBeVisible({ timeout: 5_000 });
 
     // Carte Leaflet — optionnelle (certaines annonces n'ont pas de coordonnées)

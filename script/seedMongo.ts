@@ -172,6 +172,8 @@ const DEMO_ANNONCES = [
     price: 2800000,
     typeAnnonceId: "1001", categorieId: "2001", subcategorieId: "3001",
     lieuId: "1", moughataaId: "101",
+    haveImage: true,
+    firstImagePath: "https://picsum.photos/seed/annonce1/800/600",
   }),
   makeAnnonce({
     title: "Villa avec jardin — Dar Naim",
