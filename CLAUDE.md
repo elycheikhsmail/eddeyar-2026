@@ -56,11 +56,18 @@ app/
     ui/              # Composants UI spécifiques à la page
   api/               # Route Handlers Next.js (serverless)
     annonces/        # CRUD annonces
+    images/          # Upload / suppression images (Vercel Blob)
+    my/              # Routes authentifiées (annonces, favoris, statut)
     p/users/         # Authentification (email + téléphone)
     otp/             # Vérification OTP
     sms/             # Intégration Chinguisoft
     mail/            # Email transactionnel (Resend + Nodemailer)
     telegram/        # Bot Telegram
+    # Chaque route suit la règle 08 :
+    #   route.ts (slim) + route.handlers/{handler}.interface.ts
+    #                    + route.handlers/{handler}.mocked.ts
+    #                    + route.handlers/{handler}.real.ts
+    #                    + route.handlers/{handler}.ts (switch mock/real)
 
 lib/
   mongodb.ts         # Connexion MongoDB avec cache client (serverless)
@@ -113,8 +120,16 @@ EMAIL_FROM=...
 
 # Chinguisoft (SMS OTP)
 SMS_OTP_PROVIDER_BASE_URL=https://chinguisoft.com/api/sms/validation
+SMS_OTP_URL=https://chinguisoft.com/api/sms/validation
 CHINGUISOFT_VALIDATION_KEY=...
 CHINGUISOFT_VALIDATION_TOKEN=...
+
+# Vercel Blob (stockage images)
+BLOB_READ_WRITE_TOKEN=...
+
+# Telegram (notifications)
+TELEGRAM_BOT_TOKEN=...
+TELEGRAM_CHAT_ID=...
 ```
 
 ---
@@ -135,6 +150,10 @@ Collections principales :
 | `lieux` | Wilayas + moughataas (depth=1 wilaya, depth=2 moughataa) |
 | `counters` | Auto-incrément ids (options:id, lieux:id) |
 | `images` | Métadonnées images |
+| `annonce_images` | Liens annonce ↔ image (many-to-many) |
+| `favorites` | Favoris utilisateur (userId + annonceId) |
+| `password_resets` | Tokens OTP reset mot de passe (TTL 5 min) |
+| `search` | Analytics des recherches utilisateur |
 
 ### Scripts base de données
 
