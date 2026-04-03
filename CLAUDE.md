@@ -258,6 +258,17 @@ git push origin main
 ### Quand repasser aux branches (plus tard)
 Dès qu'il y a : plusieurs développeurs, CI/CD actif, ou utilisateurs réels en production.
 
+### Worktrees Claude Code (important pour les contributeurs)
+Claude Code crée automatiquement des **git worktrees** dans `.claude/worktrees/` lors de certaines tâches.
+Ces worktrees apparaissent dans VS Code Source Control comme des dépôts supplémentaires avec des fichiers modifiés — **c'est normal, ne pas les commiter manuellement**.
+
+Ils sont déjà ignorés dans `.vscode/settings.json` :
+```json
+"git.ignoredRepositories": ["${workspaceFolder}/.claude/worktrees"]
+```
+
+Si un worktree réapparaît dans VS Code après un `Reload Window`, c'est qu'une session Claude Code est en cours — il disparaîtra automatiquement à la fin de la session.
+
 ---
 
 ## Déploiement

@@ -24,5 +24,8 @@
         "titleBar.inactiveBackground": "#36258399",
         "titleBar.inactiveForeground": "#e7e7e799"
     },
-    "peacock.color": "#832561"
+    "peacock.color": "#832561",
+    "git.ignoredRepositories": [
+        "${workspaceFolder}/.claude/worktrees"
+    ]
 }
