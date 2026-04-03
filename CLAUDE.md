@@ -82,85 +82,17 @@ locales/
 
 ## Conventions de code
 
-### Règle 1 — Handlers de page
-Chaque handler dans `page.handlers/` suit cette structure :
+Les règles sont dans le dossier [`rules/`](./rules/) :
 
-```
-handleXxx.interface.ts   # Types / interfaces
-handleXxx.mocked.ts      # Version mockée (à compléter en premier)
-handleXxx.real.ts        # Version production
-handleXxx.ts             # Export principal (switch mock/real)
-data.json                # Données simulées
-```
-
-### Règle 2 — Séparation server / client
-- `page.tsx` → **Server Components uniquement**
-- `ui.tsx` → **Client Components** (`"use client"`)
-
-### Règle 3 — Lecture vs écriture
-- **Lire** les données dans les pages (Server Components) pour la performance
-- **Écrire** les données via les Route Handlers (`route.ts`) pour la sécurité
-
-### Règle 4 — Mock avant prod
-Toujours compléter la **version mockée** avant d'implémenter la version réelle.
-
-### Règle 5 — Attributs `data-cy` pour les tests E2E
-Tout élément jouant un rôle dans un test E2E (bouton, lien, input, carte cliquable…) doit porter un attribut `data-cy` unique et descriptif.
-
-```tsx
-// ✅ correct
-<button data-cy="btn-submit">Envoyer</button>
-<input  data-cy="input-phone" />
-<article data-cy="annonce-item">...</article>
-
-// ❌ incorrect — sélecteur fragile, cassé dès qu'on change le texte ou la classe
-<button className="btn-primary">Envoyer</button>
-```
-
-**Règles :**
-- Utiliser `data-cy` (et non `id` ou `data-testid`) — convention du projet
-- Nommer en kebab-case : `btn-submit`, `input-phone`, `annonce-item`
-- N'ajouter `data-cy` **que** sur les éléments utiles aux tests — pas sur tout le DOM
-- Les sélecteurs `data-cy` existants sont listés en tête de `tests/testsprite.spec.ts`
-
-### Règle 6 — Mettre à jour CLAUDE.md
-Après chaque changement significatif (nouveaux scripts, nouvelles collections, nouvelles conventions), **mettre à jour ce fichier** pour qu'il reste la source de vérité du projet.
-
-### Règle 7 — Tout nouveau MCP Server → compiler en binaire natif
-Pour éviter le délai de démarrage (`bunx` télécharge le package à chaque cold start), **tout nouveau MCP Server doit être compilé en binaire natif** via Bun.
-
-**Procédure obligatoire à chaque ajout de MCP Server :**
-
-1. **Créer le script de build** `scripts/<nom-mcp>-js-server-to-executable.ts` :
-   - Installe le package localement si absent
-   - Détecte l'OS (`process.platform`)
-   - Compile pour l'OS courant uniquement via `bun build --compile`
-   - Windows → `.claude/bin/<nom-mcp>.exe`
-   - Linux  → `.claude/bin/<nom-mcp>-linux`
-
-2. **Créer le script runner** `scripts/<nom-mcp>-runner.ts` :
-   - Vérifie si le binaire existe → l'exécute directement
-   - Sinon → fallback sur `bunx <package>` (dégradé automatique)
-
-3. **Mettre à jour `.mcp.json`** :
-   ```json
-   {
-     "command": "bun",
-     "args": ["scripts/<nom-mcp>-runner.ts"],
-     "env": { ... }
-   }
-   ```
-
-4. **Ajouter le script npm** dans `package.json` :
-   ```json
-   "<nom-mcp>:build": "bun scripts/<nom-mcp>-js-server-to-executable.ts"
-   ```
-
-5. **Exécuter le build** : `bun run <nom-mcp>:build`
-
-6. **Vérifier que `.claude/bin/` est dans `.gitignore`** (les binaires ne sont pas versionnés).
-
-> ⚡ Gain de temps : démarrage ~100ms au lieu de 5-30s avec bunx.
+| # | Règle | Fichier |
+|---|---|---|
+| 1 | Handlers de page | [01-handlers-de-page.md](./rules/01-handlers-de-page.md) |
+| 2 | Séparation server / client | [02-separation-server-client.md](./rules/02-separation-server-client.md) |
+| 3 | Lecture vs écriture | [03-lecture-vs-ecriture.md](./rules/03-lecture-vs-ecriture.md) |
+| 4 | Mock avant prod | [04-mock-avant-prod.md](./rules/04-mock-avant-prod.md) |
+| 5 | Attributs `data-cy` pour les tests E2E | [05-data-cy-tests-e2e.md](./rules/05-data-cy-tests-e2e.md) |
+| 6 | Mettre à jour CLAUDE.md | [06-mettre-a-jour-claude-md.md](./rules/06-mettre-a-jour-claude-md.md) |
+| 7 | MCP Server → binaire natif | [07-mcp-server-binaire-natif.md](./rules/07-mcp-server-binaire-natif.md) |
 
 ---
 
