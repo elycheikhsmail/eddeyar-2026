@@ -1,36 +1,45 @@
-# CLAUDE.md — Eddeyar (Rim-eBay)
+# Eddeyar (Rim-eBay)
 
 Marketplace immobilière et généraliste ciblant le marché mauritanien.
-Stack : **Next.js 16 App Router + MongoDB + TypeScript + TailwindCSS + pnpm monorepo**.
+Stack : **Next.js 16 App Router + MongoDB + TypeScript + TailwindCSS + Bun**.
+
+> **Documentation technique complète** → [`CLAUDE.md`](./CLAUDE.md)
 
 ---
 
 ## Commandes essentielles
 
 ```bash
-pnpm install              # Installer les dépendances
-pnpm run dev              # Serveur de développement (Turbopack, port 3000)
-pnpm run build            # Build de production
-pnpm run check-types      # Vérification TypeScript stricte (sans emit)
+bun install              # Installer les dépendances
+bun run dev              # Serveur de développement (Turbopack, port 3000)
+bun run build            # Build de production (~42s — TS check désactivé)
+bun run start            # Démarrer le serveur de production
+bun run check-types      # Vérification TypeScript stricte (obligatoire avant deploy)
 
 # MongoDB (Docker)
 docker compose -f docker-compose.mongo.yml up -d   # Démarrer MongoDB
-pnpm run mongo:init       # Créer collections + index (première fois)
-pnpm run mongo:seed       # Insérer données de référence + démo (à faire après init)
-pnpm run mongo:migrate    # Migrations
+bun run mongo:init       # Créer collections + index (première fois)
+bun run mongo:seed       # Insérer données de référence + démo (à faire après init)
+bun run mongo:delete     # Vider toutes les collections (données uniquement)
+bun run mongo:migrate    # Migrations
 
 # Base de test séparée (rim-ebay-test) — copier .env.test.exemple vers .env.test
-pnpm run test:e2e:setup   # init + seed la base de test (raccourci)
-pnpm run mongo:init:test  # init collections dans rim-ebay-test
-pnpm run mongo:seed:test  # seed données dans rim-ebay-test
+bun run test:e2e:setup   # init + seed la base de test (raccourci)
+bun run mongo:init:test  # init collections dans rim-ebay-test
+bun run mongo:seed:test  # seed données dans rim-ebay-test
+bun run mongo:delete:test # vider toutes les collections dans rim-ebay-test
+
+# Tests E2E avec données fraîches
+bun run testwithdata     # delete → seed → build → start:test
+bun run testwithdata:norebuild # delete → seed → start:test
 
 # Tests E2E
-pnpm run test:e2e         # Playwright headless
-pnpm run test:e2e:ui      # Playwright mode interactif
+bun run test:e2e         # Playwright headless
+bun run test:e2e:ui      # Playwright mode interactif
 
 # Backup
-pnpm run backup:db
-pnpm run restore:temp
+bun run backup:db
+bun run restore:temp
 ```
 
 ---
