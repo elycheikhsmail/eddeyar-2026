@@ -1,30 +1,16 @@
- 
 // app/[locale]/my/add/page.tsx
 import AddAnnonceWizard from "./AddAnnonceWizard";
-import { getUserFromCookies } from "../../../../utiles/getUserFomCookies";
-import { getUserStatus } from "../../../../lib/services/annoncesService";
+import { handleGetMyStatus } from "./page.handlers/handleGetMyStatus";
 
 export default async function AddAnnonce(props: {
   params: Promise<{ locale: string }>;
 }) {
   const params = await props.params;
 
-  // console.log("Locale from params:", params);
-
   const relavieUrlAnnonce = `/api/my/annonces`;
-  let relavieUrlOptionsModel = `/${params.locale}/p/api/mongodb`;
- 
+  const relavieUrlOptionsModel = `/${params.locale}/p/api/mongodb`;
 
-  let isSamsar;
-
-  const user = await getUserFromCookies();
-  
-  if(user){
-    const status = await getUserStatus(String(user.id));
-    isSamsar = status.isSamsar;
-  }
-
-
+  const { isSamsar } = await handleGetMyStatus();
 
   return (
     <AddAnnonceWizard
