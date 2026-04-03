@@ -3,5 +3,5 @@ import type { HandleSendTelegramInput, HandleSendTelegramOutput } from "./handle
 export async function handleSendTelegramMocked(
   _input: HandleSendTelegramInput
 ): Promise<HandleSendTelegramOutput> {
-  return { ok: true, data: { result: "mock-telegram-sent" } };
+  return { ok: true, data: { result: { message_id: 1, text: "mock" } } };
 }

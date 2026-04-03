@@ -93,6 +93,7 @@ Les règles sont dans le dossier [`rules/`](./rules/) :
 | 5 | Attributs `data-cy` pour les tests E2E | [05-data-cy-tests-e2e.md](./rules/05-data-cy-tests-e2e.md) |
 | 6 | Mettre à jour CLAUDE.md | [06-mettre-a-jour-claude-md.md](./rules/06-mettre-a-jour-claude-md.md) |
 | 7 | MCP Server → binaire natif | [07-mcp-server-binaire-natif.md](./rules/07-mcp-server-binaire-natif.md) |
+| 8 | Handlers de route (API) | [08-handler-de-router.md](./rules/08-handler-de-router.md) |
 
 ---
 

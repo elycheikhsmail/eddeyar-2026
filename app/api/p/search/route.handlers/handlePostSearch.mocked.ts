@@ -1,7 +1,7 @@
 import type { HandlePostSearchInput, HandlePostSearchOutput } from "./handlePostSearch.interface";
 
 export async function handlePostSearchMocked(
-  _input: HandlePostSearchInput
+  input: HandlePostSearchInput
 ): Promise<HandlePostSearchOutput> {
-  return { ok: true, saved: true };
+  return { ...input.body, userId: "mock-user" };
 }

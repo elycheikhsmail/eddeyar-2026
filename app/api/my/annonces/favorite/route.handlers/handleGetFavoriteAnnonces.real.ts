@@ -1,4 +1,4 @@
-import { getDb } from "../../../../../../lib/mongodb";
+import { getFavoriteAnnonces } from "../../../../../../lib/services/annoncesService";
 import { getUserFromCookies } from "../../../../../../utiles/getUserFomCookies";
 import type { HandleGetFavoriteAnnoncesInput, HandleGetFavoriteAnnoncesOutput } from "./handleGetFavoriteAnnonces.interface";
 
@@ -10,22 +10,10 @@ export class UnauthorizedError extends Error {
 }
 
 export async function handleGetFavoriteAnnoncesReal(
-  _input: HandleGetFavoriteAnnoncesInput
+  input: HandleGetFavoriteAnnoncesInput
 ): Promise<HandleGetFavoriteAnnoncesOutput> {
-  const db = await getDb();
   const user = await getUserFromCookies();
-  const userId = String(user?.id ?? "");
-  if (!userId) throw new UnauthorizedError("Unauthorized");
+  if (!user?.id) throw new UnauthorizedError("Unauthorized");
 
-  const rows = await db
-    .collection("favorites")
-    .find({ userId }, { projection: { _id: 0, annonceId: 1, createdAt: 1 } })
-    .sort({ createdAt: -1 })
-    .toArray();
-
-  return {
-    ok: true,
-    data: rows.map((r: any) => String(r.annonceId)),
-    raw: rows,
-  };
+  return await getFavoriteAnnonces({ page: input.page }, String(user.id));
 }

@@ -1,7 +1,7 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { handleGetAnnonces } from "./route.handlers/handleGetAnnonces";
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   try {
     const data = await handleGetAnnonces({
@@ -14,8 +14,8 @@ export async function GET(request: Request) {
       moughataaId: searchParams.get("moughataaId") || undefined,
       issmar: searchParams.get("issmar") || undefined,
       directNegotiation: searchParams.get("directNegotiation") || undefined,
-      mainChoice: searchParams.get("mainChoice") || undefined,
-      subChoice: searchParams.get("subChoice") || undefined,
+      mainChoice: (searchParams.get("mainChoice") as any) || undefined,
+      subChoice: (searchParams.get("subChoice") as any) || undefined,
       aiQuery: searchParams.get("aiQuery") || undefined,
     });
     return NextResponse.json(data);
