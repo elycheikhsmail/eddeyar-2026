@@ -1,0 +1,33 @@
+import { NextRequest } from "next/server";
+
+export interface HandlePatchFavoriteInput {
+  request: NextRequest;
+  params: any;
+}
+
+export interface HandlePatchFavoriteOutput {
+  ok: boolean;
+  annonceId: string;
+  isFavorite: boolean;
+}
+
+export class UnauthorizedError extends Error {
+  constructor(message = "Unauthorized") {
+    super(message);
+    this.name = "UnauthorizedError";
+  }
+}
+
+export class BadRequestError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "BadRequestError";
+  }
+}
+
+export class NotFoundError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "NotFoundError";
+  }
+}
