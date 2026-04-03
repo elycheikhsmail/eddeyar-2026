@@ -260,14 +260,15 @@ Dès qu'il y a : plusieurs développeurs, CI/CD actif, ou utilisateurs réels en
 
 ### Worktrees Claude Code (important pour les contributeurs)
 Claude Code crée automatiquement des **git worktrees** dans `.claude/worktrees/` lors de certaines tâches.
-Ces worktrees apparaissent dans VS Code Source Control comme des dépôts supplémentaires avec des fichiers modifiés — **c'est normal, ne pas les commiter manuellement**.
+Ces worktrees ont des noms aléatoires (`practical-snyder`, `zealous-babbage`, etc.) et apparaissent dans VS Code Source Control — **c'est normal, ne pas les commiter manuellement**.
 
-Ils sont déjà ignorés dans `.vscode/settings.json` :
+Le dossier `.claude` est déjà exclu du scan git dans `.vscode/settings.json` :
 ```json
-"git.ignoredRepositories": ["${workspaceFolder}/.claude/worktrees"]
+"git.repositoryScanIgnore": [".claude"]
 ```
+Cela couvre **tous** les worktrees présents et futurs, peu importe leur nom.
 
-Si un worktree réapparaît dans VS Code après un `Reload Window`, c'est qu'une session Claude Code est en cours — il disparaîtra automatiquement à la fin de la session.
+> **Règle pour Claude :** Ne jamais ajouter manuellement un chemin de worktree dans `git.ignoredRepositories`. Le `git.repositoryScanIgnore` gère tout automatiquement.
 
 ---
 
