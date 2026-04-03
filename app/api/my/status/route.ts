@@ -1,16 +1,9 @@
-
 import { NextResponse } from "next/server";
-import { getUserStatus } from "../../../../lib/services/annoncesService";
-import { getUserFromCookies } from "../../../../utiles/getUserFomCookies";
+import { handleGetMyStatus } from "./route.handlers/handleGetMyStatus";
 
-export async function GET(request: Request) {
-  const user = await getUserFromCookies();
-  if (!user?.id) {
-    return NextResponse.json({ isSamsar: false });
-  }
-
+export async function GET(_request: Request) {
   try {
-    const data = await getUserStatus(String(user.id));
+    const data = await handleGetMyStatus({});
     return NextResponse.json(data);
   } catch (error) {
     console.error("Error fetching user status:", error);

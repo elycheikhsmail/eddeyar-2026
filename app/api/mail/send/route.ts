@@ -1,11 +1,6 @@
-import { sendVerificationEmail } from "../../../../lib/mailer";
+import { handleMailSend } from "./route.handlers/handleMailSend";
 
 export async function GET(_request: Request) {
-   await sendVerificationEmail("onboard@gmail.com", "test-token");
-  return new Response("Mail API is not implemented yet", {
-    status: 501,
-    headers: {
-      "Content-Type": "text/plain",
-    },
-  });
+  const result = await handleMailSend({});
+  return new Response(result.message, { status: result.status, headers: { "Content-Type": "text/plain" } });
 }

@@ -1,0 +1,31 @@
+{
+  "annonce": {
+    "id": "mock-id-123",
+    "typeAnnonceId": "1",
+    "typeAnnonceName": "Mock Type",
+    "typeAnnonceNameAr": "نوع تجريبي",
+    "categorieId": "1",
+    "categorieName": "Mock Category",
+    "categorieNameAr": "تصنيف تجريبي",
+    "classificationFr": "Mock Classification",
+    "classificationAr": "تصنيف",
+    "lieuId": "1",
+    "lieuStr": "Nouakchott",
+    "lieuStrAr": "نواكشوط",
+    "moughataaId": "1",
+    "moughataaStr": "Tevragh Zeina",
+    "moughataaStrAr": "تيفراغ زينة",
+    "userId": "mock-user-id",
+    "title": "Mock Annonce Title",
+    "description": "Mock description for testing purposes.",
+    "price": 100000,
+    "isPriceHidden": false,
+    "contact": "36000000",
+    "haveImage": false,
+    "firstImagePath": "",
+    "images": [],
+    "status": "active",
+    "updatedAt": "2026-01-01T00:00:00.000Z",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  }
+}
