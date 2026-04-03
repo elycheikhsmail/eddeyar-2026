@@ -1,0 +1,36 @@
+{
+  "annonces": [
+    {
+      "id": "mock-my-001",
+      "typeAnnonceId": "1",
+      "typeAnnonceName": "Location",
+      "typeAnnonceNameAr": "إيجار",
+      "categorieId": "2",
+      "categorieName": "Maisons",
+      "categorieNameAr": "منازل",
+      "classificationFr": "Immobilier > Maisons",
+      "classificationAr": "عقارات > منازل",
+      "lieuId": "1",
+      "lieuStr": "Nouakchott",
+      "lieuStrAr": "نواكشوط",
+      "moughataaId": "11",
+      "moughataaStr": "Tevragh-Zeina",
+      "moughataaStrAr": "تفرغ زينة",
+      "userId": "user-mock-1",
+      "title": "Mon appartement à louer",
+      "description": "Appartement F3 en bon état, disponible immédiatement.",
+      "price": 120000,
+      "isPriceHidden": false,
+      "contact": "22012345",
+      "haveImage": false,
+      "firstImagePath": "",
+      "images": [],
+      "status": "active",
+      "updatedAt": "2026-03-15T10:00:00.000Z",
+      "createdAt": "2026-03-01T08:00:00.000Z"
+    }
+  ],
+  "totalPages": 1,
+  "currentPage": 1,
+  "totalCount": 1
+}

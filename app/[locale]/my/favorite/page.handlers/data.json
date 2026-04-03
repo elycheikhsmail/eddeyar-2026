@@ -1,0 +1,38 @@
+{
+  "annonces": [
+    {
+      "id": "mock-fav-001",
+      "typeAnnonceId": "2",
+      "typeAnnonceName": "Vente",
+      "typeAnnonceNameAr": "بيع",
+      "categorieId": "2",
+      "categorieName": "Maisons",
+      "categorieNameAr": "منازل",
+      "classificationFr": "Immobilier > Maisons",
+      "classificationAr": "عقارات > منازل",
+      "lieuId": "1",
+      "lieuStr": "Nouakchott",
+      "lieuStrAr": "نواكشوط",
+      "moughataaId": "12",
+      "moughataaStr": "Ksar",
+      "moughataaStrAr": "القصر",
+      "userId": "user-mock-2",
+      "title": "Villa à vendre - Ksar",
+      "description": "Belle villa de 5 pièces avec jardin, garage et piscine.",
+      "price": 12000000,
+      "isPriceHidden": false,
+      "contact": "36001122",
+      "haveImage": false,
+      "firstImagePath": "",
+      "images": [],
+      "status": "active",
+      "isFavorite": true,
+      "updatedAt": "2026-03-20T10:00:00.000Z",
+      "createdAt": "2026-03-10T08:00:00.000Z"
+    }
+  ],
+  "totalPages": 1,
+  "currentPage": 1,
+  "totalCount": 1,
+  "unauthorized": false
+}
