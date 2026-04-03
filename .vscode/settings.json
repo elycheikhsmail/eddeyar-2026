@@ -28,5 +28,8 @@
     "git.ignoredRepositories": [
         "C:\\Users\\Dell\\Documents\\eddeyar\\rim-ebay-aut-2025-main\\eddeyar-2026\\.claude\\worktrees\\inspiring-goodall",
         "C:\\Users\\Dell\\Documents\\eddeyar\\rim-ebay-aut-2025-main\\eddeyar-2026\\.claude\\worktrees\\zealous-babbage"
+    ],
+    "git.repositoryScanIgnore": [
+        ".claude"
     ]
 }
