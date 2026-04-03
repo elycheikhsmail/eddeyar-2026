@@ -2,15 +2,12 @@
 import ListAnnoncesUI from "./ui/ListAnnoncesUI";
 import { FormSearchUI } from "../../packages/ui/components/FormSearch/FormSearchUI";
 import { getI18n } from "../../locales/server";
-import { Annonce } from "../../packages/mytypes/types";
-import { getAnnonces, Search } from "../../lib/services/annoncesService";
+import { handleGetAnnonces } from "./page.handlers/handleGetAnnonces";
+import type { Search } from "./page.handlers/handleGetAnnonces.interface";
 
 import SearchBar from "../../packages/ui/components/FormSearch/SearchBar";
 
 type Params = { locale: string };
-// Search type imported from service
-
-
 
 export default async function Home({
   params,
@@ -23,7 +20,7 @@ export default async function Home({
   const sp = (await searchParams) ?? {};
   const t = await getI18n();
 
-  const { annonces, totalPages, currentPage, totalCount, isSamsar, favoriteIds } = await getAnnonces(sp);
+  const { annonces, totalPages, currentPage, totalCount, isSamsar, favoriteIds } = await handleGetAnnonces(sp);
 
  const optionsEndpoint = `/${locale}/p/api/mongodb/options`;
   const lieuxEndpoint = `/${locale}/p/api/mongodb/lieux`;
