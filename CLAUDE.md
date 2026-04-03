@@ -30,6 +30,8 @@ bun run mongo:delete:test # vider toutes les collections dans rim-ebay-test
 
 # Pipeline tests avec données fraîches (delete → seed → build → start:test)
 bun run testwithdata
+# Pipeline tests sans rebuild (delete → seed → start:test) — si le code n'a pas changé
+bun run testwithdata:norebuild
 
 # Tests E2E
 bun run test:e2e         # Playwright headless
