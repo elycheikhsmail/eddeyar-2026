@@ -1,89 +1,65 @@
-import { getDb } from "../../../../../../lib/mongodb";
+import { eq, and, gt, sql } from "drizzle-orm";
+import { db } from "../../../../../../lib/db";
+import { contacts, passwordResets } from "../../../../../../lib/schema";
 import type { HandleForgotPasswordInput, HandleForgotPasswordOutput } from "./handleForgotPassword.interface";
 
 const CHINGUI_KEY = process.env.CHINGUISOFT_VALIDATION_KEY;
 const CHINGUI_TOKEN = process.env.CHINGUISOFT_VALIDATION_TOKEN;
 
 export class BadRequestError extends Error {
-  constructor(msg: string) {
-    super(msg);
-    this.name = "BadRequestError";
-  }
+  constructor(msg: string) { super(msg); this.name = "BadRequestError"; }
 }
-
 export class NotFoundError extends Error {
-  constructor(msg: string) {
-    super(msg);
-    this.name = "NotFoundError";
-  }
+  constructor(msg: string) { super(msg); this.name = "NotFoundError"; }
 }
-
 export class TooManyRequestsError extends Error {
-  constructor(msg: string) {
-    super(msg);
-    this.name = "TooManyRequestsError";
-  }
+  constructor(msg: string) { super(msg); this.name = "TooManyRequestsError"; }
 }
-
 export class InternalError extends Error {
-  constructor(msg: string) {
-    super(msg);
-    this.name = "InternalError";
-  }
+  constructor(msg: string) { super(msg); this.name = "InternalError"; }
 }
 
-function isValidChinguPhone(p: string): boolean {
-  return /^[234]\d{7}$/.test(p);
-}
+function isValidChinguPhone(p: string) { return /^[234]\d{7}$/.test(p); }
 
 export async function handleForgotPasswordReal(
   input: HandleForgotPasswordInput
 ): Promise<HandleForgotPasswordOutput> {
   const { contact } = input;
+  if (!contact) throw new BadRequestError("Numéro de téléphone requis");
+  if (!isValidChinguPhone(contact)) throw new BadRequestError("Numéro invalide — doit commencer par 2, 3 ou 4 et contenir 8 chiffres");
 
-  if (!contact) {
-    throw new BadRequestError("Numéro de téléphone requis");
-  }
-  if (!isValidChinguPhone(contact)) {
-    throw new BadRequestError(
-      "Numéro invalide — doit commencer par 2, 3 ou 4 et contenir 8 chiffres"
-    );
-  }
+  const [contactDoc] = await db
+    .select()
+    .from(contacts)
+    .where(and(eq(contacts.contact, contact), eq(contacts.isVerified, true)))
+    .limit(1);
 
-  const db = await getDb();
-  const contacts = db.collection("contacts");
-  const resets = db.collection("password_resets");
+  if (!contactDoc) throw new NotFoundError("Ce numéro de téléphone n'est pas associé à un compte vérifié.");
 
-  const contactDoc = await contacts.findOne({ contact, isVerified: true });
-  if (!contactDoc || !contactDoc.userId) {
-    throw new NotFoundError("Ce numéro de téléphone n'est pas associé à un compte vérifié.");
-  }
+  // Rate limiting : max 5 requêtes par heure
+  const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+  const [{ count }] = await db
+    .select({ count: sql<number>`count(*)::int` })
+    .from(passwordResets)
+    .where(and(eq(passwordResets.contact, contact), gt(passwordResets.createdAt, oneHourAgo)));
 
-  const recentRequests = await resets.countDocuments({
-    contact,
-    createdAt: { $gt: new Date(Date.now() - 60 * 60 * 1000) },
-  });
-  if (recentRequests >= 5) {
-    throw new TooManyRequestsError("Trop de tentatives reçues. Veuillez réessayer plus tard.");
-  }
+  if (count >= 5) throw new TooManyRequestsError("Trop de tentatives reçues. Veuillez réessayer plus tard.");
 
-  await resets.updateMany(
-    { contact, used: { $ne: true } },
-    { $set: { used: true, invalidatedAt: new Date() } }
-  );
+  // Invalider les anciens resets
+  await db
+    .update(passwordResets)
+    .set({ used: true, invalidatedAt: new Date() })
+    .where(and(eq(passwordResets.contact, contact), eq(passwordResets.used, false)));
 
   if (!CHINGUI_KEY || !CHINGUI_TOKEN) {
-    console.error("Chinguisoft env vars not set for password reset");
     throw new InternalError("Service SMS non configuré. Contactez l'administrateur.");
   }
 
   try {
-    const chinguUrl = `https://chinguisoft.com/api/sms/validation/${encodeURIComponent(CHINGUI_KEY)}`;
-    const payload = { phone: contact, lang: "fr" };
-    const resp = await fetch(chinguUrl, {
+    const resp = await fetch(`https://chinguisoft.com/api/sms/validation/${encodeURIComponent(CHINGUI_KEY)}`, {
       method: "POST",
       headers: { "Content-Type": "application/json", "Validation-token": CHINGUI_TOKEN },
-      body: JSON.stringify(payload),
+      body: JSON.stringify({ phone: contact, lang: "fr" }),
     });
 
     if (!resp.ok) {
@@ -96,7 +72,7 @@ export async function handleForgotPasswordReal(
     const otpCode = String(chinguJson.code ?? "");
     const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
 
-    await resets.insertOne({
+    await db.insert(passwordResets).values({
       userId: contactDoc.userId,
       contact,
       token: otpCode,
@@ -107,9 +83,9 @@ export async function handleForgotPasswordReal(
     });
 
     return { message: "Un SMS contenant le code de vérification a été envoyé." };
-  } catch (smsErr) {
-    if (smsErr instanceof InternalError) throw smsErr;
-    console.error("Error sending password reset OTP:", smsErr);
+  } catch (err) {
+    if (err instanceof InternalError) throw err;
+    console.error("Error sending password reset OTP:", err);
     throw new InternalError("Erreur lors de l'envoi du SMS. Réessayez plus tard.");
   }
 }

@@ -48,12 +48,18 @@ export const passwordResets = pgTable(
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
     token: varchar("token", { length: 255 }).notNull(),
+    contact: varchar("contact", { length: 100 }),
+    otpCode: varchar("otp_code", { length: 20 }),
+    used: boolean("used").notNull().default(false),
     expiresAt: timestamp("expires_at").notNull(),
     createdAt: timestamp("created_at").notNull().defaultNow(),
+    usedAt: timestamp("used_at"),
+    invalidatedAt: timestamp("invalidated_at"),
   },
   (t) => [
     index("idx_password_resets_token").on(t.token),
     index("idx_password_resets_expires_at").on(t.expiresAt),
+    index("idx_password_resets_contact").on(t.contact),
   ]
 );
 
@@ -75,6 +81,9 @@ export const contacts = pgTable(
     verifyCode: varchar("verify_code", { length: 10 }).notNull().default(""),
     verifyTokenExpires: timestamp("verify_token_expires"),
     cooldownUntil: timestamp("cooldown_until"),
+    verifyAttempts: integer("verify_attempts").notNull().default(0),
+    lastResendAt: timestamp("last_resend_at"),
+    resendCount: integer("resend_count").notNull().default(0),
   },
   (t) => [
     index("idx_contacts_user_id").on(t.userId),

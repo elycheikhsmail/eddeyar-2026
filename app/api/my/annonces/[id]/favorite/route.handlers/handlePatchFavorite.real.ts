@@ -1,5 +1,6 @@
-import { ObjectId } from "mongodb";
-import { getDb } from "../../../../../../../lib/mongodb";
+import { eq, and } from "drizzle-orm";
+import { db } from "../../../../../../../lib/db";
+import { annonces, favorites } from "../../../../../../../lib/schema";
 import { getUserFromCookies } from "../../../../../../../utiles/getUserFomCookies";
 import {
   HandlePatchFavoriteInput,
@@ -13,61 +14,45 @@ export async function handlePatchFavoriteReal(
   input: HandlePatchFavoriteInput
 ): Promise<HandlePatchFavoriteOutput> {
   const { request, params } = input;
-  const db = await getDb();
 
-  // ---- Auth obligatoire ----
   const user = await getUserFromCookies();
-  const userId = String(user?.id ?? "");
-  if (!userId) {
-    throw new UnauthorizedError("Unauthorized");
-  }
+  const userId = parseInt(String(user?.id ?? ""), 10);
+  if (isNaN(userId)) throw new UnauthorizedError("Unauthorized");
 
-  // ---- Récup annonceId (params OU fallback via pathname) ----
+  // Résolution de l'annonceId
   let annonceIdStr = params?.annonceId;
-
   if (!annonceIdStr) {
     const pathname = request.nextUrl.pathname;
     const parts = pathname.split("/").filter(Boolean);
-    const annoncesIdx = parts.findIndex((p) => p === "annonces");
-    if (annoncesIdx >= 0 && parts.length > annoncesIdx + 1) {
-      annonceIdStr = parts[annoncesIdx + 1];
-    }
+    const idx = parts.findIndex((p) => p === "annonces");
+    if (idx >= 0 && parts.length > idx + 1) annonceIdStr = parts[idx + 1];
   }
+  if (!annonceIdStr) throw new BadRequestError("Missing annonceId");
 
-  if (!annonceIdStr) {
-    throw new BadRequestError("Missing annonceId");
-  }
-  if (!ObjectId.isValid(annonceIdStr)) {
-    throw new BadRequestError("Bad annonceId");
-  }
-  const annonceId = new ObjectId(annonceIdStr);
+  const annonceId = parseInt(annonceIdStr, 10);
+  if (isNaN(annonceId)) throw new BadRequestError("Bad annonceId");
 
-  // ---- Vérifier que l'annonce existe ----
-  const exists = await db
-    .collection("annonces")
-    .findOne({ _id: annonceId }, { projection: { _id: 1 } });
-  if (!exists) {
-    throw new NotFoundError("Annonce not found");
-  }
+  const [exists] = await db
+    .select({ id: annonces.id })
+    .from(annonces)
+    .where(eq(annonces.id, annonceId))
+    .limit(1);
+  if (!exists) throw new NotFoundError("Annonce not found");
 
-  // ---- Lire body ----
   const body = await request.json().catch(() => null as any);
   const isFavorite = body?.isFavorite;
-  if (typeof isFavorite !== "boolean") {
-    throw new BadRequestError("isFavorite must be boolean");
-  }
-
-  // ---- Collection favorites ----
-  const favorites = db.collection("favorites");
+  if (typeof isFavorite !== "boolean") throw new BadRequestError("isFavorite must be boolean");
 
   if (isFavorite) {
-    await favorites.updateOne(
-      { userId, annonceId },
-      { $setOnInsert: { createdAt: new Date() } },
-      { upsert: true }
-    );
+    // Upsert (ignore si déjà présent)
+    await db
+      .insert(favorites)
+      .values({ userId, annonceId, createdAt: new Date() })
+      .onConflictDoNothing();
   } else {
-    await favorites.deleteOne({ userId, annonceId });
+    await db
+      .delete(favorites)
+      .where(and(eq(favorites.userId, userId), eq(favorites.annonceId, annonceId)));
   }
 
   return { ok: true, annonceId: annonceIdStr, isFavorite };
