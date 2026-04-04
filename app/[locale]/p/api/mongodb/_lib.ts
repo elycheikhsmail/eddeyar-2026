@@ -1,16 +1,16 @@
-import { Collection, Db, MongoClient } from "mongodb";
+// app/[locale]/p/api/mongodb/_lib.ts
+// Couche d'accès aux tables `options` et `lieux` — Drizzle ORM (PostgreSQL)
+// Remplace l'ancienne implémentation MongoDB
 
-const MONGODB_URI = String(process.env.DATABASE_URL) 
-const MONGODB_DB_NAME = process.env.MONGODB_DB_NAME || "options_model";
-const COUNTERS_COLLECTION = "counters";
+import { eq, and, asc, isNull } from "drizzle-orm";
+import { db } from "../../../../../lib/db";
+import { options, lieux } from "../../../../../lib/schema";
 
-type CounterDocument = {
-  _id: string;
-  seq: number;
-};
+// ---------------------------------------------------------------------------
+// Types publics (mêmes noms qu'avant pour ne pas casser les imports)
+// ---------------------------------------------------------------------------
 
-export type OptionMongoDocument = {
-  _id: number;
+export type OptionApiDocument = {
   id: number;
   name: string;
   nameAr: string | null;
@@ -20,109 +20,187 @@ export type OptionMongoDocument = {
   parentID: number | null;
 };
 
-export type OptionApiDocument = Omit<OptionMongoDocument, "_id">;
+// ---------------------------------------------------------------------------
+// Requêtes OPTIONS
+// ---------------------------------------------------------------------------
 
-declare global {
-  var __mongoClientPromise: Promise<MongoClient> | undefined;
+export async function getOptions(parentId: number | null): Promise<OptionApiDocument[]> {
+  const rows =
+    parentId === null
+      ? await db
+          .select()
+          .from(options)
+          .where(eq(options.depth, 1))
+          .orderBy(asc(options.id))
+      : await db
+          .select()
+          .from(options)
+          .where(eq(options.parentId, parentId))
+          .orderBy(asc(options.id));
+
+  return rows.map(toOptionApi);
 }
 
-function getMongoClientPromise(): Promise<MongoClient> {
-  if (!globalThis.__mongoClientPromise) {
-    const client = new MongoClient(MONGODB_URI);
-    globalThis.__mongoClientPromise = client.connect();
+export async function createOption(data: {
+  name: string;
+  nameAr: string | null;
+  priority: number;
+  tag: string | null;
+  depth: number;
+  parentId: number | null;
+}): Promise<OptionApiDocument> {
+  const [inserted] = await db
+    .insert(options)
+    .values({
+      name: data.name,
+      nameAr: data.nameAr ?? "",
+      priority: data.priority,
+      tag: data.tag ?? "",
+      depth: data.depth,
+      parentId: data.parentId,
+      createdAt: new Date(),
+    })
+    .returning();
+  return toOptionApi(inserted);
+}
+
+export async function updateOption(
+  id: number,
+  data: {
+    name: string;
+    nameAr: string | null;
+    priority: number;
+    tag: string | null;
+    depth: number;
+    parentId: number | null;
   }
-  return globalThis.__mongoClientPromise;
+): Promise<OptionApiDocument | null> {
+  await db
+    .update(options)
+    .set({
+      name: data.name,
+      nameAr: data.nameAr ?? "",
+      priority: data.priority,
+      tag: data.tag ?? "",
+      depth: data.depth,
+      parentId: data.parentId,
+    })
+    .where(eq(options.id, id));
+
+  const [updated] = await db
+    .select()
+    .from(options)
+    .where(eq(options.id, id))
+    .limit(1);
+
+  return updated ? toOptionApi(updated) : null;
 }
 
-async function getDb(): Promise<Db> {
-  const client = await getMongoClientPromise();
-  return client.db(MONGODB_DB_NAME);
+// ---------------------------------------------------------------------------
+// Requêtes LIEUX
+// ---------------------------------------------------------------------------
+
+export async function getLieux(parentId: number | null): Promise<OptionApiDocument[]> {
+  const rows =
+    parentId === null
+      ? await db
+          .select()
+          .from(lieux)
+          .where(eq(lieux.depth, 1))
+          .orderBy(asc(lieux.id))
+      : await db
+          .select()
+          .from(lieux)
+          .where(eq(lieux.parentId, parentId))
+          .orderBy(asc(lieux.id));
+
+  return rows.map(toLieuApi);
 }
 
-export async function getOptionCollection(
-  collectionName: string,
-): Promise<Collection<OptionMongoDocument>> {
-  const db = await getDb();
-  return db.collection<OptionMongoDocument>(collectionName);
+export async function createLieu(data: {
+  name: string;
+  nameAr: string | null;
+  priority: number;
+  depth: number;
+  parentId: number | null;
+}): Promise<OptionApiDocument> {
+  const [inserted] = await db
+    .insert(lieux)
+    .values({
+      name: data.name,
+      nameAr: data.nameAr ?? "",
+      priority: data.priority,
+      depth: data.depth,
+      parentId: data.parentId,
+    })
+    .returning();
+  return toLieuApi(inserted);
 }
 
-function isDuplicateKeyError(error: unknown): boolean {
-  return (
-    typeof error === "object" &&
-    error !== null &&
-    "code" in error &&
-    (error as { code?: number }).code === 11000
-  );
-}
-
-async function ensureCounterInitialized(collectionName: string): Promise<void> {
-  const db = await getDb();
-  const counters = db.collection<CounterDocument>(COUNTERS_COLLECTION);
-  const counterId = `${collectionName}:id`;
-
-  const existing = await counters.findOne(
-    { _id: counterId },
-    { projection: { _id: 1 } },
-  );
-  if (existing) {
-    return;
+export async function updateLieu(
+  id: number,
+  data: {
+    name: string;
+    nameAr: string | null;
+    priority: number;
+    depth: number;
+    parentId: number | null;
   }
+): Promise<OptionApiDocument | null> {
+  await db
+    .update(lieux)
+    .set({
+      name: data.name,
+      nameAr: data.nameAr ?? "",
+      priority: data.priority,
+      depth: data.depth,
+      parentId: data.parentId,
+    })
+    .where(eq(lieux.id, id));
 
-  const collection = db.collection<OptionMongoDocument>(collectionName);
-  const maxIdDoc = await collection
-    .find({}, { projection: { id: 1 } })
-    .sort({ id: -1 })
-    .limit(1)
-    .next();
-  const seq = typeof maxIdDoc?.id === "number" ? maxIdDoc.id : 0;
+  const [updated] = await db
+    .select()
+    .from(lieux)
+    .where(eq(lieux.id, id))
+    .limit(1);
 
-  try {
-    await counters.insertOne({ _id: counterId, seq });
-  } catch (error) {
-    if (!isDuplicateKeyError(error)) {
-      throw error;
-    }
-  }
+  return updated ? toLieuApi(updated) : null;
 }
 
-export async function getNextOptionId(collectionName: string): Promise<number> {
-  await ensureCounterInitialized(collectionName);
-  const db = await getDb();
-  const counters = db.collection<CounterDocument>(COUNTERS_COLLECTION);
-  const counterId = `${collectionName}:id`;
+// ---------------------------------------------------------------------------
+// Mappers internes
+// ---------------------------------------------------------------------------
 
-  const updated = (await counters.findOneAndUpdate(
-    { _id: counterId },
-    { $inc: { seq: 1 } },
-    { returnDocument: "after" },
-  )) as CounterDocument | null;
-
-  if (!updated || typeof updated.seq !== "number") {
-    throw new Error("Impossible de generer un nouvel id.");
-  }
-  return updated.seq;
+function toOptionApi(row: typeof options.$inferSelect): OptionApiDocument {
+  return {
+    id: row.id,
+    name: row.name,
+    nameAr: row.nameAr ?? null,
+    priority: row.priority,
+    tag: row.tag ?? null,
+    depth: row.depth,
+    parentID: row.parentId ?? null,
+  };
 }
 
-export function sanitizeOptionDocument(
-  doc: OptionMongoDocument | null,
-): OptionApiDocument | null {
-  if (!doc) {
-    return null;
-  }
-  const { _id, ...rest } = doc;
-  return rest;
+function toLieuApi(row: typeof lieux.$inferSelect): OptionApiDocument {
+  return {
+    id: row.id,
+    name: row.name,
+    nameAr: row.nameAr ?? null,
+    priority: row.priority,
+    tag: null,
+    depth: row.depth,
+    parentID: row.parentId ?? null,
+  };
 }
 
-export function sanitizeOptionDocuments(
-  docs: OptionMongoDocument[],
-): OptionApiDocument[] {
-  return docs.map(({ _id, ...rest }) => rest);
-}
+// ---------------------------------------------------------------------------
+// Utilitaires purs (inchangés)
+// ---------------------------------------------------------------------------
 
 export function toNullableNumber(value: unknown): number | null {
-  if (value === null || value === undefined || value === "") {
-    return null;
-  }
+  if (value === null || value === undefined || value === "") return null;
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : null;
 }
