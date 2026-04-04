@@ -1,27 +1,34 @@
 import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
-import { getDb } from "../../../../../lib/mongodb";
+import { db } from "../../../../../lib/db";
+import { searchLogs } from "../../../../../lib/schema";
 import type { HandlePostSearchInput, HandlePostSearchOutput } from "./handlePostSearch.interface";
 
 export async function handlePostSearchReal(
   input: HandlePostSearchInput
 ): Promise<HandlePostSearchOutput> {
-  const db = await getDb();
   const cookieStore = await cookies();
   const jwtCookie = cookieStore.get("jwt");
-  const body = { ...input.body, userId: "" };
+  let userId: number | null = null;
 
   if (jwtCookie && process.env.JWT_SECRET) {
     try {
-      const decodedToken = jwt.verify(jwtCookie.value, process.env.JWT_SECRET);
-      if (typeof decodedToken === "object" && decodedToken !== null && "id" in decodedToken) {
-        body.userId = (decodedToken as any).id;
+      const decoded = jwt.verify(jwtCookie.value, process.env.JWT_SECRET);
+      if (typeof decoded === "object" && decoded !== null && "id" in decoded) {
+        const uid = parseInt(String((decoded as any).id), 10);
+        if (!isNaN(uid)) userId = uid;
       }
-    } catch (err) {
-      console.error("Token verification failed in search analytics:", err);
+    } catch {
+      // token invalide — on ignore
     }
   }
 
-  await db.collection("search").insertOne(body);
-  return body;
+  await db.insert(searchLogs).values({
+    userId,
+    query: typeof input.body?.query === "string" ? input.body.query : null,
+    filters: input.body ? JSON.stringify(input.body) : null,
+    createdAt: new Date(),
+  });
+
+  return { ...input.body, userId: userId ? String(userId) : "" };
 }

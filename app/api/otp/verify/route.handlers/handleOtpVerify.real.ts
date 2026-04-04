@@ -1,32 +1,22 @@
-import { ObjectId } from "mongodb";
 import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
 import { v4 as uuidv4 } from "uuid";
-import { getDb } from "../../../../../lib/mongodb";
+import { eq, and, sql } from "drizzle-orm";
+import { db } from "../../../../../lib/db";
+import { contacts, users, userSessions } from "../../../../../lib/schema";
 import type { HandleOtpVerifyInput, HandleOtpVerifyOutput } from "./handleOtpVerify.interface";
 
 export class BadRequestError extends Error {
   status = 400;
-  constructor(message: string) {
-    super(message);
-    this.name = "BadRequestError";
-  }
+  constructor(message: string) { super(message); this.name = "BadRequestError"; }
 }
-
 export class NotFoundError extends Error {
   status = 404;
-  constructor(message: string) {
-    super(message);
-    this.name = "NotFoundError";
-  }
+  constructor(message: string) { super(message); this.name = "NotFoundError"; }
 }
-
 export class TooManyRequestsError extends Error {
   status = 429;
-  constructor(message: string) {
-    super(message);
-    this.name = "TooManyRequestsError";
-  }
+  constructor(message: string) { super(message); this.name = "TooManyRequestsError"; }
 }
 
 export async function handleOtpVerifyReal(
@@ -35,85 +25,47 @@ export async function handleOtpVerifyReal(
   const { userId, code } = input;
   if (!userId || !code) throw new BadRequestError("userId and code are required");
 
-  const db = await getDb();
-  const contactDoc = await db.collection("contacts").findOne({ userId });
+  const uid = parseInt(String(userId), 10);
+  if (isNaN(uid)) throw new BadRequestError("userId invalide");
+
+  const [contactDoc] = await db.select().from(contacts).where(eq(contacts.userId, uid)).limit(1);
   if (!contactDoc) throw new NotFoundError("Contact not found");
   if (contactDoc.isVerified) throw new BadRequestError("Contact already verified");
+  if (contactDoc.verifyAttempts >= 5) throw new TooManyRequestsError("Too many verification attempts");
 
-  const attempts = contactDoc.verifyAttempts ?? 0;
-  if (attempts >= 5) throw new TooManyRequestsError("Too many verification attempts");
+  const expiresAt = contactDoc.verifyTokenExpires;
+  if (!expiresAt || expiresAt < new Date()) throw new BadRequestError("OTP expired");
 
-  const expiresAt = contactDoc.verifyTokenExpires
-    ? new Date(contactDoc.verifyTokenExpires)
-    : null;
-  if (!expiresAt || isNaN(expiresAt.getTime()) || expiresAt < new Date()) {
-    throw new BadRequestError("OTP expired");
-  }
-
-  if (String(contactDoc.verifyCode ?? "") !== code) {
-    await db.collection("contacts").updateOne(
-      { _id: contactDoc._id },
-      { $inc: { verifyAttempts: 1 } }
-    );
+  if (String(contactDoc.verifyCode) !== String(code)) {
+    await db
+      .update(contacts)
+      .set({ verifyAttempts: sql`${contacts.verifyAttempts} + 1` })
+      .where(eq(contacts.id, contactDoc.id));
     throw new BadRequestError("Invalid OTP code");
   }
 
-  await db.collection("contacts").updateOne(
-    { _id: contactDoc._id },
-    {
-      $set: {
-        isActive: true,
-        isVerified: true,
-        verifyAttempts: 0,
-        verifyTokenExpires: null,
-      },
-    }
-  );
+  await db
+    .update(contacts)
+    .set({ isActive: true, isVerified: true, verifyAttempts: 0, verifyTokenExpires: null })
+    .where(eq(contacts.id, contactDoc.id));
 
-  const user = await db.collection("users").findOne({ _id: new ObjectId(userId) });
+  const [user] = await db.select().from(users).where(eq(users.id, uid)).limit(1);
   if (user) {
-    await db
-      .collection("users")
-      .updateOne({ _id: user._id }, { $set: { isActive: true, lastLogin: new Date() } });
-    await db
-      .collection("user_sessions")
-      .updateMany({ userId: user._id.toString(), isExpired: false }, { $set: { isExpired: true } });
+    await db.update(users).set({ isActive: true, lastLogin: new Date() }).where(eq(users.id, user.id));
+    await db.update(userSessions).set({ isExpired: true }).where(and(eq(userSessions.userId, user.id), eq(userSessions.isExpired, false)));
 
-    const sessionToken = uuidv4();
     if (process.env.JWT_SECRET) {
+      const sessionToken = uuidv4();
       const token = jwt.sign(
-        {
-          id: user._id.toString(),
-          email: user.email,
-          roleName: user.roleName,
-          roleId: user.roleId,
-          sessionToken,
-        },
+        { id: String(user.id), email: user.email, roleName: user.roleName, roleId: user.roleId, sessionToken },
         process.env.JWT_SECRET,
         { expiresIn: "1d" }
       );
-      await db.collection("user_sessions").insertOne({
-        userId: user._id.toString(),
-        token,
-        isExpired: false,
-        lastAccessed: new Date(),
-        createdAt: new Date(),
-      });
-      await db
-        .collection("users")
-        .updateOne({ _id: user._id }, { $set: { lastLogin: new Date() } });
+      await db.insert(userSessions).values({ userId: user.id, token, isExpired: false, lastAccessed: new Date(), createdAt: new Date() });
 
       const cookieStore = await cookies();
-      cookieStore.set({
-        name: "jwt",
-        value: token,
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        maxAge: 60 * 60 * 24,
-        path: "/",
-      });
-      cookieStore.set({ name: "user", value: user._id.toString(), path: "/" });
+      cookieStore.set({ name: "jwt", value: token, httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "strict", maxAge: 86400, path: "/" });
+      cookieStore.set({ name: "user", value: String(user.id), path: "/" });
     }
   }
 

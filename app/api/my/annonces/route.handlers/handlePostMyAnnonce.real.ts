@@ -1,7 +1,8 @@
-import { ObjectId } from "mongodb";
+import { eq, desc, and } from "drizzle-orm";
 import { randomUUID } from "crypto";
 import { put } from "@vercel/blob";
-import { getDb } from "../../../../../lib/mongodb";
+import { db } from "../../../../../lib/db";
+import { annonces, contacts, images, annonceImages } from "../../../../../lib/schema";
 import { getUserFromCookies } from "../../../../../utiles/getUserFomCookies";
 import {
   HandlePostMyAnnonceInput,
@@ -10,166 +11,136 @@ import {
   BadRequestError,
 } from "./handlePostMyAnnonce.interface";
 
-// ---- Config upload ----
 const MAX_FILES = 8;
-const MAX_SIZE_BYTES = 10 * 1024 * 1024; // 10MB
+const MAX_SIZE_BYTES = 10 * 1024 * 1024;
 const ALLOWED_MIME = ["image/jpeg", "image/png", "image/webp", "image/gif", "image/avif"];
 
 function safeName(name: string) {
   return name.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9._-]/g, "");
 }
 
-// ---- Contact user ----
-async function getUserContact(db: any, userIdStr: string): Promise<string | null> {
-  const verified = await db.collection("contacts").findOne(
-    { userId: userIdStr },
-    { projection: { contact: 1 } }
-  );
-  if (verified?.contact) return String(verified.contact);
+async function getUserContact(userId: number): Promise<string | null> {
+  const [verified] = await db
+    .select({ contact: contacts.contact })
+    .from(contacts)
+    .where(and(eq(contacts.userId, userId), eq(contacts.isVerified, true)))
+    .limit(1);
+  if (verified?.contact) return verified.contact;
 
-  const latest = await db
-    .collection("contacts")
-    .find({ userId: userIdStr }, { projection: { contact: 1, createdAt: 1 } })
-    .sort({ createdAt: -1 })
-    .limit(1)
-    .next();
-  if (latest?.contact) return String(latest.contact);
-
-  return null;
+  const [latest] = await db
+    .select({ contact: contacts.contact })
+    .from(contacts)
+    .where(eq(contacts.userId, userId))
+    .orderBy(desc(contacts.createdAt))
+    .limit(1);
+  return latest?.contact ?? null;
 }
 
-// ---- Upload + persistance DB ----
-async function uploadAnnonceImagesAndPersist(
-  db: any,
-  annonceId: ObjectId,
+async function uploadAndPersistImages(
+  annonceId: number,
   files: File[],
   mainIndex: number
-) {
-  if (files.length === 0) {
-    return { images: [] as string[], firstImagePath: null as string | null };
-  }
+): Promise<{ firstImagePath: string | null }> {
   if (files.length > MAX_FILES) throw new Error(`Max ${MAX_FILES} images`);
   if (!Number.isFinite(mainIndex) || mainIndex < 0 || mainIndex >= files.length) mainIndex = 0;
 
   const now = new Date();
-  const uploaded: { url: string; contentType: string; key: string }[] = [];
+  const uploaded: string[] = [];
 
   for (const file of files) {
     if (!ALLOWED_MIME.includes(file.type)) throw new Error(`Type non autorisé: ${file.type}`);
-    if (file.size > MAX_SIZE_BYTES) throw new Error(`Fichier trop volumineux (>10MB)`);
-
-    const key = `annonces/${annonceId.toString()}/${randomUUID()}-${safeName(file.name || "image")}`;
-
+    if (file.size > MAX_SIZE_BYTES) throw new Error("Fichier trop volumineux (>10MB)");
+    const key = `annonces/${annonceId}/${randomUUID()}-${safeName(file.name || "image")}`;
     const { url } = await put(key, file, {
       access: "public",
       token: process.env.BLOB_READ_WRITE_TOKEN,
       contentType: file.type,
       addRandomSuffix: false,
     });
-
-    uploaded.push({ url, contentType: file.type, key });
+    uploaded.push(url);
   }
 
-  // table images
-  const imageIds: ObjectId[] = [];
-  for (const u of uploaded) {
-    try {
-      const res = await db.collection("images").insertOne({
-        imagePath: u.url,
-        createdAt: now,
-        altText: null,
-      });
-      imageIds.push(res.insertedId);
-    } catch (e: any) {
-      if (e?.code === 11000) {
-        const existing = await db
-          .collection("images")
-          .findOne({ imagePath: u.url }, { projection: { _id: 1 } });
-        if (existing?._id) imageIds.push(existing._id);
-        else throw e;
-      } else {
-        throw e;
-      }
+  for (const url of uploaded) {
+    const [ins] = await db
+      .insert(images)
+      .values({ imagePath: url, createdAt: now, altText: null })
+      .onConflictDoNothing()
+      .returning({ id: images.id });
+
+    let imageId: number;
+    if (ins) {
+      imageId = ins.id;
+    } else {
+      const [existing] = await db
+        .select({ id: images.id })
+        .from(images)
+        .where(eq(images.imagePath, url))
+        .limit(1);
+      if (!existing) throw new Error("Image insert failed");
+      imageId = existing.id;
     }
+
+    await db
+      .insert(annonceImages)
+      .values({ annonceId, imageId, createdAt: now })
+      .onConflictDoNothing();
   }
 
-  // liens annonce_images
-  const links = imageIds.map((imgId) => ({ annonceId, imageId: imgId, createdAt: now }));
-  if (links.length) {
-    try {
-      await db.collection("annonce_images").insertMany(links, { ordered: false });
-    } catch (e: any) {
-      if (e?.code !== 11000) throw e;
-    }
-  }
+  const firstImagePath = uploaded[mainIndex] ?? uploaded[0];
+  await db
+    .update(annonces)
+    .set({ haveImage: true, firstImagePath, updatedAt: new Date() })
+    .where(eq(annonces.id, annonceId));
 
-  const firstImagePath = uploaded[mainIndex]?.url ?? uploaded[0].url;
-  await db.collection("annonces").updateOne(
-    { _id: annonceId },
-    { $set: { haveImage: true, firstImagePath, updatedAt: new Date() } }
-  );
-
-  return { images: uploaded.map((u) => u.url), firstImagePath };
+  return { firstImagePath };
 }
 
 export async function handlePostMyAnnonceReal(
   input: HandlePostMyAnnonceInput
 ): Promise<HandlePostMyAnnonceOutput> {
   const { request } = input;
-  const db = await getDb();
 
-  // ---------- Auth ----------
   const user = await getUserFromCookies();
-  console.log("Authenticated user:", user);
-  const userIdStr = String(user?.id ?? "");
-  if (!userIdStr) {
-    throw new UnauthorizedError("Utilisateur non authentifié");
-  }
+  const userId = parseInt(String(user?.id ?? ""), 10);
+  if (isNaN(userId)) throw new UnauthorizedError();
 
   const now = new Date();
   const contentType = request.headers.get("content-type") || "";
 
-  // ============================================================
-  // ========== BRANCHE MULTIPART (wizard Step 3) ===============
-  // ============================================================
+  // ===== BRANCHE MULTIPART =====
   if (contentType.includes("multipart/form-data")) {
     const form = await request.formData();
 
-    const typeAnnonceId = String(form.get("typeAnnonceId") ?? "");
-    const categorieId = form.get("categorieId") ? String(form.get("categorieId")) : null;
-    const subcategorieId = form.get("subcategorieId") ? String(form.get("subcategorieId")) : null;
+    const typeAnnonceId = parseInt(String(form.get("typeAnnonceId") ?? ""), 10);
+    const categorieIdRaw = parseInt(String(form.get("categorieId") ?? ""), 10);
+    const categorieId = isNaN(categorieIdRaw) ? typeAnnonceId : categorieIdRaw;
+    const subcategorieIdRaw = parseInt(String(form.get("subcategorieId") ?? ""), 10);
+    const subcategorieId = isNaN(subcategorieIdRaw) ? null : subcategorieIdRaw;
+
     const title = String(form.get("title") ?? "");
     const description = String(form.get("description") ?? "");
-    const rentalPeriod = String(form.get("rentalPeriod") ?? "");
-    const rentalPeriodAr = String(form.get("rentalPeriodAr") ?? "");
-    const typeAnnonceName = String(form.get("typeAnnonceName") ?? "");
-    const categorieName = String(form.get("categorieName") ?? "");
-    const typeAnnonceNameAr = String(form.get("typeAnnonceNameAr") ?? "");
-    const categorieNameAr = String(form.get("categorieNameAr") ?? "");
 
-    console.log("Form data received:", rentalPeriod);
+    const priceRaw = form.get("price");
+    const price = priceRaw != null && String(priceRaw) !== "" ? String(Number(priceRaw)) : null;
 
-    const priceStr = form.get("price");
-    const price = priceStr != null && String(priceStr) !== "" ? Number(priceStr) : null;
-
-    const classificationFr = form.get("classificationFr")
-      ? String(form.get("classificationFr"))
-      : null;
-    const classificationAr = form.get("classificationAr")
-      ? String(form.get("classificationAr"))
-      : null;
+    const classificationFr = form.get("classificationFr") ? String(form.get("classificationFr")) : null;
+    const classificationAr = form.get("classificationAr") ? String(form.get("classificationAr")) : null;
     const issmar = String(form.get("issmar") ?? "false") === "true";
     const directNegotiation = String(form.get("directNegotiation") ?? "false") === "true";
 
-    const lieuId = String(form.get("lieuId") ?? "");
-    const moughataaId = String(form.get("moughataaId") ?? "");
-    const lieuStr = String(form.get("lieuStr") ?? "");
-    const lieuStrAr = String(form.get("lieuStrAr") ?? "");
-    const moughataaStr = String(form.get("moughataaStr") ?? "");
-    const moughataaStrAr = String(form.get("moughataaStrAr") ?? "");
+    const lieuIdRaw = parseInt(String(form.get("lieuId") ?? ""), 10);
+    const lieuId = isNaN(lieuIdRaw) ? null : lieuIdRaw;
+    const moughataaIdRaw = parseInt(String(form.get("moughataaId") ?? ""), 10);
+    const moughataaId = isNaN(moughataaIdRaw) ? null : moughataaIdRaw;
+    const lieuStr = String(form.get("lieuStr") ?? "") || null;
+    const lieuStrAr = String(form.get("lieuStrAr") ?? "") || null;
+    const moughataaStr = String(form.get("moughataaStr") ?? "") || null;
+    const moughataaStrAr = String(form.get("moughataaStrAr") ?? "") || null;
     const status = String(form.get("status") ?? "active");
     const isPriceHidden = String(form.get("isPriceHidden") ?? "false") === "true";
-    const privateDescription = String(form.get("privateDescription") ?? "");
+    const privateDescription = String(form.get("privateDescription") ?? "") || null;
+    const rentalPeriod = String(form.get("rentalPeriod") ?? "") || null;
+    const rentalPeriodAr = String(form.get("rentalPeriodAr") ?? "") || null;
 
     const files = [
       ...form.getAll("files"),
@@ -180,98 +151,59 @@ export async function handlePostMyAnnonceReal(
     let mainIndex = Number(String(form.get("mainIndex") ?? "0"));
     if (!Number.isFinite(mainIndex) || mainIndex < 0) mainIndex = 0;
 
-    if (!typeAnnonceId || !description) {
-      throw new BadRequestError("Champs requis manquants (type, description)");
+    if (isNaN(typeAnnonceId) || !description) {
+      throw new BadRequestError("Champs requis manquants (typeAnnonceId, description)");
     }
 
-    console.log("Creating annonce for userId:", userIdStr);
-    const contact = await getUserContact(db, userIdStr);
+    const contact = await getUserContact(userId);
+    if (contact === null) throw new BadRequestError("Champs requis manquants (contact)");
 
-    if (contact === null) {
-      throw new BadRequestError("Champs requis manquants (contact)");
-    }
-
-    console.log("User contact:", contact);
-
-    const annonceDoc: any = {
-      typeAnnonceId,
-      categorieId,
-      subcategorieId,
-      userId: userIdStr,
-      classificationFr,
-      classificationAr,
-      title,
-      description,
-      price,
-      rentalPeriod,
-      rentalPeriodAr,
-      typeAnnonceName,
-      categorieName,
-      typeAnnonceNameAr,
-      categorieNameAr,
-      status,
-      isPublished: false,
-      issmar,
-      lieuId: lieuId || null,
-      lieuStr: lieuStr || null,
-      lieuStrAr: lieuStrAr || null,
-      contact,
-      moughataaId: moughataaId || null,
-      moughataaStr: moughataaStr || null,
-      moughataaStrAr: moughataaStrAr || null,
-      haveImage: false,
-      directNegotiation,
-      isSponsored: false,
-      firstImagePath: "",
-      isPriceHidden,
-      privateDescription,
-      createdAt: now,
-      updatedAt: now,
-    };
-
-    console.log("Creating annonce:", annonceDoc, { filesCount: files.length, mainIndex });
-
-    let insertedId: ObjectId;
-    try {
-      const insertRes = await db.collection("annonces").insertOne(annonceDoc);
-      console.log("insertRes : ", insertRes);
-      insertedId = insertRes.insertedId as ObjectId;
-    } catch (e: any) {
-      if (e?.code === 11000) {
-        const existing = await db
-          .collection("annonces")
-          .findOne({ userId: userIdStr }, { projection: { _id: 1, haveImage: 1, firstImagePath: 1 } });
-        if (existing?._id) {
-          return {
-            data: {
-              id: existing._id.toString(),
-              haveImage: existing.haveImage ?? false,
-              firstImagePath: existing.firstImagePath ?? null,
-            },
-            status: 201,
-          };
-        }
-      }
-      throw e;
-    }
+    const [inserted] = await db
+      .insert(annonces)
+      .values({
+        typeAnnonceId,
+        categorieId,
+        subcategorieId,
+        userId,
+        classificationFr,
+        classificationAr,
+        title,
+        description,
+        price,
+        rentalPeriod,
+        rentalPeriodAr,
+        status,
+        isPublished: false,
+        issmar,
+        lieuId,
+        lieuStr,
+        lieuStrAr,
+        contact,
+        moughataaId,
+        moughataaStr,
+        moughataaStrAr,
+        haveImage: false,
+        directNegotiation,
+        isSponsored: false,
+        firstImagePath: null,
+        isPriceHidden,
+        privateDescription,
+        createdAt: now,
+        updatedAt: now,
+      })
+      .returning();
 
     if (files.length > 0) {
       try {
-        const { firstImagePath } = await uploadAnnonceImagesAndPersist(
-          db,
-          insertedId,
-          files,
-          mainIndex
-        );
+        const { firstImagePath } = await uploadAndPersistImages(inserted.id, files, mainIndex);
         return {
-          data: { id: insertedId.toString(), ...annonceDoc, haveImage: true, firstImagePath },
+          data: { id: String(inserted.id), haveImage: true, firstImagePath },
           status: 201,
         };
       } catch (e: any) {
         return {
           data: {
-            id: insertedId.toString(),
-            ...annonceDoc,
+            id: String(inserted.id),
             haveImage: false,
             firstImagePath: null,
             uploadError: String(e?.message ?? e),
@@ -281,12 +213,10 @@ export async function handlePostMyAnnonceReal(
       }
     }
 
-    return { data: { id: insertedId.toString(), ...annonceDoc }, status: 201 };
+    return { data: { ...inserted, id: String(inserted.id) }, status: 201 };
   }
 
-  // ============================================================
-  // ========== BRANCHE JSON (facultative) ======================
-  // ============================================================
+  // ===== BRANCHE JSON =====
   const data = await request.json().catch(() => null);
   if (!data) throw new BadRequestError("Bad payload");
 
@@ -295,55 +225,42 @@ export async function handlePostMyAnnonceReal(
     const v = data[k];
     return v === undefined || v === null || (typeof v === "string" && v.trim() === "");
   });
-  if (missing) {
-    throw new BadRequestError(`Champ requis manquant: ${missing}`);
-  }
+  if (missing) throw new BadRequestError(`Champ requis manquant: ${missing}`);
 
-  const annonceDoc = {
-    typeAnnonceId: String(data.typeAnnonceId),
-    categorieId: data.categorieId ? String(data.categorieId) : null,
-    subcategorieId: data.subcategorieId ? String(data.subcategorieId) : null,
-    userId: userIdStr,
-    title: data.title,
-    description: data.description,
-    price: typeof data.price === "number" ? data.price : null,
-    haveImage: Boolean(data.haveImage ?? false),
-    firstImagePath: data.firstImagePath ?? "",
-    isSponsored: false,
-    status: data.status,
-    isPublished: false,
-    lieuId: data.lieuId ? String(data.lieuId) : null,
-    lieuStr: data.lieuStr ? String(data.lieuStr) : null,
-    lieuStrAr: data.lieuStrAr ? String(data.lieuStrAr) : null,
-    moughataaId: data.moughataaId ? String(data.moughataaId) : null,
-    moughataaStr: data.moughataaStr ? String(data.moughataaStr) : null,
-    moughataaStrAr: data.moughataaStrAr ? String(data.moughataaStrAr) : null,
-    createdAt: now,
-    updatedAt: now,
-  };
+  const typeAnnonceId = parseInt(String(data.typeAnnonceId), 10);
+  if (isNaN(typeAnnonceId)) throw new BadRequestError("typeAnnonceId invalide");
+  const categorieIdRaw = parseInt(String(data.categorieId ?? ""), 10);
+  const categorieId = isNaN(categorieIdRaw) ? typeAnnonceId : categorieIdRaw;
 
-  let insertedId: ObjectId;
-  try {
-    const result = await db.collection("annonces").insertOne(annonceDoc);
-    insertedId = result.insertedId as ObjectId;
-  } catch (e: any) {
-    if (e?.code === 11000) {
-      const existing = await db
-        .collection("annonces")
-        .findOne({ userId: userIdStr }, { projection: { _id: 1, haveImage: 1, firstImagePath: 1 } });
-      if (existing?._id) {
-        return {
-          data: {
-            id: existing._id.toString(),
-            haveImage: existing.haveImage ?? false,
-            firstImagePath: existing.firstImagePath ?? null,
-          },
-          status: 201,
-        };
-      }
-    }
-    throw e;
-  }
+  const contact = await getUserContact(userId);
+  if (contact === null) throw new BadRequestError("Champs requis manquants (contact)");
 
-  return { data: { ...annonceDoc, id: insertedId.toString() }, status: 201 };
+  const [inserted] = await db
+    .insert(annonces)
+    .values({
+      typeAnnonceId,
+      categorieId,
+      subcategorieId: data.subcategorieId ? parseInt(String(data.subcategorieId), 10) : null,
+      userId,
+      title: data.title,
+      description: data.description,
+      price: typeof data.price === "number" ? String(data.price) : null,
+      haveImage: Boolean(data.haveImage ?? false),
+      firstImagePath: data.firstImagePath ?? null,
+      isSponsored: false,
+      status: data.status,
+      isPublished: false,
+      contact,
+      lieuId: data.lieuId ? parseInt(String(data.lieuId), 10) : null,
+      lieuStr: data.lieuStr ? String(data.lieuStr) : null,
+      lieuStrAr: data.lieuStrAr ? String(data.lieuStrAr) : null,
+      moughataaId: data.moughataaId ? parseInt(String(data.moughataaId), 10) : null,
+      moughataaStr: data.moughataaStr ? String(data.moughataaStr) : null,
+      moughataaStrAr: data.moughataaStrAr ? String(data.moughataaStrAr) : null,
+      createdAt: now,
+      updatedAt: now,
+    })
+    .returning();
+
+  return { data: { ...inserted, id: String(inserted.id) }, status: 201 };
 }
