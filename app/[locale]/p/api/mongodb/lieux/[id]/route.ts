@@ -1,45 +1,30 @@
 import { NextRequest, NextResponse } from "next/server";
-import {
-  getOptionCollection,
-  sanitizeOptionDocument,
-  toNullableNumber,
-  toNumberOrDefault,
-} from "../../_lib";
-
-const LIEUX_COLLECTION = process.env.MONGODB_LIEUX_COLLECTION || "lieux";
+import { updateLieu, toNullableNumber, toNumberOrDefault } from "../../_lib";
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id: rawId } = await params;
     const id = Number(rawId);
     const body = await request.json();
-    const { name, nameAr, priority = 1, tag, depth, parentID } = body;
+    const { name, nameAr, priority = 1, depth, parentID } = body;
 
     if (!Number.isFinite(id) || !name || !depth) {
       return new NextResponse("Champs obligatoires manquants", { status: 400 });
     }
 
-    const collection = await getOptionCollection(LIEUX_COLLECTION);
-    await collection.updateOne(
-      { _id: id },
-      {
-        $set: {
-          id,
-          name: String(name),
-          nameAr: nameAr == null ? null : String(nameAr),
-          priority: toNumberOrDefault(priority, 1),
-          tag: tag == null ? null : String(tag),
-          depth: toNumberOrDefault(depth, 0),
-          parentID: toNullableNumber(parentID),
-        },
-      },
-    );
-    const option = await collection.findOne({ _id: id });
+    const doc = await updateLieu(id, {
+      name: String(name),
+      nameAr: nameAr == null ? null : String(nameAr),
+      priority: toNumberOrDefault(priority, 1),
+      depth: toNumberOrDefault(depth, 0),
+      parentId: toNullableNumber(parentID),
+    });
 
-    return NextResponse.json(sanitizeOptionDocument(option), { status: 200 });
+    if (!doc) return new NextResponse("Lieu introuvable", { status: 404 });
+    return NextResponse.json(doc, { status: 200 });
   } catch {
     return new NextResponse("Erreur serveur", { status: 500 });
   }
