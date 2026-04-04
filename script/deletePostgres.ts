@@ -39,13 +39,22 @@ async function run() {
   try {
     console.log("\n🗑️  Suppression de toutes les données PostgreSQL…\n");
 
-    // TRUNCATE en cascade avec reset des séquences SERIAL
-    await client.query(
-      `TRUNCATE TABLE ${TABLES.map((t) => `"${t}"`).join(", ")} RESTART IDENTITY CASCADE`
+    // Filtrer les tables qui existent réellement (base vierge = première exécution)
+    const { rows: existing } = await client.query<{ tablename: string }>(
+      `SELECT tablename FROM pg_tables WHERE schemaname = 'public'`
     );
+    const existingSet = new Set(existing.map((r) => r.tablename));
+    const toTruncate = TABLES.filter((t) => existingSet.has(t));
 
-    for (const t of TABLES) {
-      console.log(`   🗑️  ${t} : vidée`);
+    if (toTruncate.length === 0) {
+      console.log("   ℹ️  Aucune table à vider (base vierge).");
+    } else {
+      await client.query(
+        `TRUNCATE TABLE ${toTruncate.map((t) => `"${t}"`).join(", ")} RESTART IDENTITY CASCADE`
+      );
+      for (const t of toTruncate) {
+        console.log(`   🗑️  ${t} : vidée`);
+      }
     }
 
     // Récupère le nom de la base pour l'affichage

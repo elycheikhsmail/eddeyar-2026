@@ -26,8 +26,8 @@
     "test:ts": "playwright test tests/testsprite.spec.ts",
     "test:ts:ui": "playwright test tests/testsprite.spec.ts --ui",
     "test:e2e:setup": "bun run db:migrate:test && bun run db:seed:test",
-    "testwithdata": "bun run db:delete:test && bun run db:migrate:test && bun run db:seed:test && bun run build && bun run start:test",
-    "testwithdata:norebuild": "bun run db:delete:test && bun run db:migrate:test && bun run db:seed:test && bun run start:test",
+    "testwithdata": "bun run db:migrate:test && bun run db:delete:test && bun run db:seed:test && bun run build && bun run start:test",
+    "testwithdata:norebuild": "bun run db:migrate:test && bun run db:delete:test && bun run db:seed:test && bun run start:test",
 "testsprite:build": "bun scripts/testsprite-mcp-js-server-to-executable.ts"
   },
   "dependencies": {
