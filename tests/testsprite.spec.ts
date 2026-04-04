@@ -82,7 +82,7 @@ test.describe('TC002 — Listings : pagination', () => {
       await nextBtn.click();
       await expect(page).toHaveURL(/page=2/, { timeout: 10_000 });
     } else {
-      console.warn('TC002 ⚠️  Bouton suivant désactivé — seed insuffisant. Lancer `bun run mongo:seed:test` avec plus d\'annonces.');
+      console.warn('TC002 ⚠️  Bouton suivant désactivé — seed insuffisant. Lancer `bun run db:seed:test` avec plus d\'annonces.');
     }
   });
 });
