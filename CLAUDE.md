@@ -1,7 +1,7 @@
 # CLAUDE.md — Eddeyar (Rim-eBay)
 
 Marketplace immobilière et généraliste ciblant le marché mauritanien.
-Stack : **Next.js 16 App Router + MongoDB + TypeScript + TailwindCSS + Bun**.
+Stack : **Next.js 16 App Router + PostgreSQL + Drizzle ORM + TypeScript + TailwindCSS + Bun**.
 
 ---
 
@@ -15,31 +15,27 @@ bun run start            # Serveur de production (port 3000)
 bun run start:test       # Serveur de production avec NODE_ENV=test (.env.test)
 bun run check-types      # Vérification TypeScript stricte (sans emit — obligatoire avant deploy)
 
-# MongoDB (Docker)
-docker compose -f docker-compose.mongo.yml up -d   # Démarrer MongoDB
-bun run mongo:init       # Créer collections + index (première fois)
-bun run mongo:seed       # Insérer données de référence + démo (à faire après init)
-bun run mongo:delete     # Vider toutes les collections (données uniquement)
-bun run mongo:migrate    # Migrations
+# PostgreSQL (installé sur Windows, service postgresql-x64-18)
+bun run db:generate      # Générer les migrations Drizzle (après modif schema)
+bun run db:migrate       # Appliquer les migrations (.env)
+bun run db:seed          # Insérer données de référence + démo (.env)
+bun run db:delete        # Vider toutes les tables (.env)
+bun run db:studio        # Drizzle Studio (UI base de données)
 
-# Base de test séparée (rim-ebay-test) — copier .env.test.exemple vers .env.test
-bun run test:e2e:setup   # init + seed la base de test (raccourci)
-bun run mongo:init:test  # init collections dans rim-ebay-test
-bun run mongo:seed:test  # seed données dans rim-ebay-test
-bun run mongo:delete:test # vider toutes les collections dans rim-ebay-test
+# Base de test séparée — copier .env.test.exemple vers .env.test
+bun run test:e2e:setup   # migrate + seed la base de test (raccourci)
+bun run db:migrate:test  # appliquer migrations dans la base de test
+bun run db:seed:test     # seed données dans la base de test
+bun run db:delete:test   # vider toutes les tables dans la base de test
 
-# Pipeline tests avec données fraîches (delete → seed → build → start:test)
+# Pipeline tests avec données fraîches (delete → migrate → seed → build → start:test)
 bun run testwithdata
-# Pipeline tests sans rebuild (delete → seed → start:test) — si le code n'a pas changé
+# Pipeline tests sans rebuild (delete → migrate → seed → start:test)
 bun run testwithdata:norebuild
 
 # Tests E2E
 bun run test:e2e         # Playwright headless
 bun run test:e2e:ui      # Playwright mode interactif
-
-# Backup
-bun run backup:db
-bun run restore:temp
 ```
 
 ---
@@ -70,10 +66,19 @@ app/
     #                    + route.handlers/{handler}.ts (switch mock/real)
 
 lib/
-  mongodb.ts         # Connexion MongoDB avec cache client (serverless)
+  db.ts              # Connexion PostgreSQL via Pool (pg) + Drizzle ORM
+  schema.ts          # Schéma Drizzle (12 tables PostgreSQL)
   mailer.ts          # Service email
   services/
     annoncesService.ts  # Logique métier principale des annonces
+
+drizzle/
+  migrations/        # Fichiers SQL générés par drizzle-kit
+
+script/
+  migratePostgres.ts # Applique les migrations SQL
+  seedPostgres.ts    # Insère données de référence + démo
+  deletePostgres.ts  # TRUNCATE ... RESTART IDENTITY CASCADE
 
 packages/
   ui/                # Composants réutilisables (monorepo)
@@ -109,8 +114,7 @@ Les règles sont dans le dossier [`rules/`](./rules/) :
 Copier `.env.exemple` vers `.env` et renseigner :
 
 ```env
-DATABASE_URL="mongodb://localhost:27017/rim-ebay"
-MONGODB_DB_NAME="rim-ebay"
+DATABASE_URL="postgresql://postgres:PASSWORD@localhost:5432/eddeyar"
 NODE_ENV=development
 NEXT_PUBLIC_API_URL=http://localhost:3000
 SITE_BASE_URL=http://localhost:3000
@@ -134,37 +138,38 @@ TELEGRAM_CHAT_ID=...
 
 ---
 
-## Base de données (MongoDB)
+## Base de données (PostgreSQL)
 
-MongoDB tourne en mode **ReplicaSet** (requis pour les transactions).
-Collections principales :
+PostgreSQL installé directement sur Windows (service `postgresql-x64-18`).
+ORM : **Drizzle ORM** (`lib/schema.ts` → `drizzle/migrations/`).
+Tables principales :
 
-| Collection | Description |
+| Table | Description |
 |---|---|
-| `users` | Comptes utilisateurs |
-| `contacts` | Téléphones/emails liés aux utilisateurs |
+| `users` | Comptes utilisateurs (email, password, roleName) |
+| `contacts` | Téléphones/emails liés aux utilisateurs + OTP |
 | `user_sessions` | Tokens JWT (expiration 24h) |
 | `annonces` | Annonces avec images, prix, localisation |
 | `annonce_publication_checklist` | Statut de publication par annonce |
 | `options` | Catégories, sous-catégories, type_annonces (tag discriminant) |
 | `lieux` | Wilayas + moughataas (depth=1 wilaya, depth=2 moughataa) |
-| `counters` | Auto-incrément ids (options:id, lieux:id) |
-| `images` | Métadonnées images |
+| `images` | Métadonnées images (URL Vercel Blob) |
 | `annonce_images` | Liens annonce ↔ image (many-to-many) |
 | `favorites` | Favoris utilisateur (userId + annonceId) |
-| `password_resets` | Tokens OTP reset mot de passe (TTL 5 min) |
-| `search` | Analytics des recherches utilisateur |
+| `password_resets` | Tokens OTP reset mot de passe |
+| `search_logs` | Analytics des recherches utilisateur |
 
 ### Scripts base de données
 
-| Script | Fichier | Description |
+| Script npm | Fichier | Description |
 |---|---|---|
-| `mongo:init` | `script/initMongo.ts` | Crée collections + index |
-| `mongo:seed` | `script/seedMongo.ts` | Insère données de référence + démo |
-| `mongo:delete` | `script/deleteMongo.ts` | Vide toutes les collections |
-| `mongo:*:test` | — | Même scripts sur la base `rim-ebay-test` via `.env.test` |
+| `db:generate` | drizzle-kit | Génère les fichiers SQL de migration |
+| `db:migrate` | `script/migratePostgres.ts` | Applique les migrations |
+| `db:seed` | `script/seedPostgres.ts` | Insère données de référence + démo |
+| `db:delete` | `script/deletePostgres.ts` | Vide toutes les tables (RESTART IDENTITY) |
+| `db:*:test` | — | Même scripts sur la base de test via `.env.test` |
 
-**Compte démo** (créé par `mongo:seed`) :
+**Compte démo** (créé par `db:seed`) :
 - email : `demo@eddeyar.mr` / téléphone : `36000000` / mot de passe : `Demo1234!`
 
 ---
@@ -245,7 +250,7 @@ Cela couvre **tous** les worktrees présents et futurs, peu importe leur nom.
 
 ## Déploiement
 
-- **Dev local** : `bun dev` + Docker MongoDB
+- **Dev local** : `bun dev` + PostgreSQL Windows
 - **Preview** : ngrok pour partage local
 - **Staging** : Netlify / Firebase / Fly.io / Render
 - **Production** : VPS (Contabo / Hostinger)

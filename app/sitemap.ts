@@ -1,6 +1,8 @@
 // app/sitemap.ts
 import { MetadataRoute } from 'next';
-import { getDb } from '../lib/mongodb';
+import { eq } from 'drizzle-orm';
+import { db } from '../lib/db';
+import { annonces } from '../lib/schema';
 
 const BASE_URL = process.env.SITE_BASE_URL || 'http://localhost:3000';
 
@@ -24,17 +26,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Pages dynamiques (annonces)
   try {
-    const db = await getDb();
-    const annonces = await db
-      .collection('annonces')
-      .find({ status: 'published' }, { projection: { _id: 1, updatedAt: 1, createdAt: 1 } })
-      .toArray();
+    const rows = await db
+      .select({ id: annonces.id, updatedAt: annonces.updatedAt, createdAt: annonces.createdAt })
+      .from(annonces)
+      .where(eq(annonces.status, 'published'));
 
-    for (const annonce of annonces) {
+    for (const annonce of rows) {
       const lastMod = annonce.updatedAt ?? annonce.createdAt ?? new Date();
       for (const locale of locales) {
         sitemapEntries.push({
-          url: `${BASE_URL}/${locale}/p/annonces/details/${annonce._id}`,
+          url: `${BASE_URL}/${locale}/p/annonces/details/${annonce.id}`,
           lastModified: new Date(lastMod),
           changeFrequency: 'daily',
           priority: 0.6,
