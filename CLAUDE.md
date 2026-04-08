@@ -240,7 +240,7 @@ Ces worktrees ont des noms aléatoires (`practical-snyder`, `zealous-babbage`, e
 
 #### Règle obligatoire — nettoyage des worktrees
 
-**À la fin de chaque tâche validée par l'utilisateur et avant le `git push`**, Claude doit supprimer tous les worktrees dans `.claude/worktrees/` **sauf celui dans lequel il s'exécute actuellement**.
+**À la fin de chaque tâche validée par l'utilisateur et après le `git push`**, Claude doit supprimer tous les worktrees dans `.claude/worktrees/` **sauf celui dans lequel il s'exécute actuellement**.
 
 ```bash
 # Commandes à exécuter depuis le repo principal (pas depuis le worktree)
