@@ -236,15 +236,26 @@ Dès qu'il y a : plusieurs développeurs, CI/CD actif, ou utilisateurs réels en
 
 ### Worktrees Claude Code (important pour les contributeurs)
 Claude Code crée automatiquement des **git worktrees** dans `.claude/worktrees/` lors de certaines tâches.
-Ces worktrees ont des noms aléatoires (`practical-snyder`, `zealous-babbage`, etc.) et apparaissent dans VS Code Source Control — **c'est normal, ne pas les commiter manuellement**.
+Ces worktrees ont des noms aléatoires (`practical-snyder`, `zealous-babbage`, etc.) et apparaissent dans VS Code Source Control.
 
-Le dossier `.claude` est déjà exclu du scan git dans `.vscode/settings.json` :
-```json
-"git.repositoryScanIgnore": [".claude"]
+#### Règle obligatoire — nettoyage des worktrees
+
+**À la fin de chaque tâche validée par l'utilisateur et avant le `git push`**, Claude doit supprimer tous les worktrees dans `.claude/worktrees/` **sauf celui dans lequel il s'exécute actuellement**.
+
+```bash
+# Commandes à exécuter depuis le repo principal (pas depuis le worktree)
+git worktree remove --force .claude/worktrees/<nom>   # répéter pour chaque worktree à supprimer
+git worktree prune                                     # nettoyer les références git orphelines
 ```
-Cela couvre **tous** les worktrees présents et futurs, peu importe leur nom.
 
-> **Règle pour Claude :** Ne jamais ajouter manuellement un chemin de worktree dans `git.ignoredRepositories`. Le `git.repositoryScanIgnore` gère tout automatiquement.
+Pour lister les worktrees existants avant nettoyage :
+```bash
+git worktree list
+```
+
+> **Pourquoi :** Les worktrees s'accumulent et polluent VS Code Source Control, qui les affiche comme des dépôts séparés via `git worktree list` (contournant `git.repositoryScanIgnore`).
+
+> **Règle pour Claude :** Ne jamais ajouter manuellement un chemin de worktree dans `git.ignoredRepositories`.
 
 ---
 
