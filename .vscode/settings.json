@@ -26,6 +26,7 @@
     },
     "peacock.color": "#832561",
     "git.ignoredRepositories": [],
+    "git.autoRepositoryDetection": "openEditors",
     "git.repositoryScanIgnore": [
         ".claude",
         "**/.claude/worktrees/**"
