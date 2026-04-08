@@ -25,11 +25,9 @@
         "titleBar.inactiveForeground": "#e7e7e799"
     },
     "peacock.color": "#832561",
-    "git.ignoredRepositories": [
-        "C:\\Users\\Dell\\Documents\\eddeyar\\rim-ebay-aut-2025-main\\eddeyar-2026\\.claude\\worktrees\\inspiring-goodall",
-        "C:\\Users\\Dell\\Documents\\eddeyar\\rim-ebay-aut-2025-main\\eddeyar-2026\\.claude\\worktrees\\zealous-babbage"
-    ],
+    "git.ignoredRepositories": [],
     "git.repositoryScanIgnore": [
-        ".claude"
+        ".claude",
+        "**/.claude/worktrees/**"
     ]
 }
